@@ -23,10 +23,10 @@ df -h
 section "cmake $CMAKE_ARGS $SRCDIR"
 cmake $CMAKE_ARGS $SRCDIR || { echo "! CMake failed" ; exit 1 ; }
 
-section "make"
-make -j2 || { echo "! Make recheck" ; pwd -P ; df -h ; make -j1 VERBOSE=1 ; echo "! Make failed" ; exit 1 ; }
+section "ninja"
+ninja -j2 || { echo "! ninja recheck" ; pwd -P ; df -h ; ninja -v -j1 ; echo "! Nija failed" ; exit 1 ; }
 
-section "make install"
+section "ninja install"
 
 install_debugging() {
 	ls -la $( find "$1" -type f -name '*.so' )
@@ -39,7 +39,7 @@ echo "# Install"
 DESTDIR=/build/INSTALL_ROOT
 mkdir -p "$DESTDIR"
 
-if make install VERBOSE=1 DESTDIR="$DESTDIR" ;
+if DESTDIR="$DESTDIR" ninja install -v  ;
 then
 	echo "# .. install OK"
 	result=true

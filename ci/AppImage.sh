@@ -183,13 +183,13 @@ if $DO_REBUILD ; then
         cd "$BUILD_DIR/build" &&
         cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib $CMAKE_ARGS
     ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run CMake"; exit 1; }
-    echo "# Running make ..."
+    echo "# Running ninja ..."
     (
         cd "$BUILD_DIR/build" &&
         ninja -j4
     ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run ninja"; exit 1; }
 fi
-echo "# Running make install ..."
+echo "# Running ninja install ..."
 (
     cd "$BUILD_DIR/build" &&
      DESTDIR=../AppDir ninja install
