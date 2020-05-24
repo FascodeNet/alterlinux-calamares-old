@@ -77,8 +77,8 @@ BUILDDIR=$(mktemp -d --suffix=-build --tmpdir=.)
 if test "x$BUILD_DEFAULT" = "xtrue" ; then
     rm -rf "$BUILDDIR"
     mkdir "$BUILDDIR" || { echo "Could not create build directory." ; exit 1 ; }
-    ( cd "$BUILDDIR" && cmake .. && make -j4 ) || { echo "Could not perform test-build in $BUILDDIR." ; exit 1 ; }
-    ( cd "$BUILDDIR" && make test ) || { echo "Tests failed in $BUILDDIR." ; exit 1 ; }
+    ( cd "$BUILDDIR" && cmake -GNinja .. && ninja -j4 ) || { echo "Could not perform test-build in $BUILDDIR." ; exit 1 ; }
+    ( cd "$BUILDDIR" && ctest ) || { echo "Tests failed in $BUILDDIR." ; exit 1 ; }
 fi
 
 ### Build with clang
@@ -89,8 +89,8 @@ if test "x$BUILD_CLANG" = "xtrue" ; then
         # Do build again with clang
         rm -rf "$BUILDDIR"
         mkdir "$BUILDDIR" || { echo "Could not create build directory." ; exit 1 ; }
-        ( cd "$BUILDDIR" && CC=clang CXX=clang++ cmake .. && make -j4 ) || { echo "Could not perform test-build in $BUILDDIR." ; exit 1 ; }
-        ( cd "$BUILDDIR" && make test ) || { echo "Tests failed in $BUILDDIR (clang)." ; exit 1 ; }
+        ( cd "$BUILDDIR" && CC=clang CXX=clang++ cmake -GNinja .. && ninja -j4 ) || { echo "Could not perform test-build in $BUILDDIR." ; exit 1 ; }
+        ( cd "$BUILDDIR" && ctest ) || { echo "Tests failed in $BUILDDIR (clang)." ; exit 1 ; }
     fi
 fi
 
@@ -106,7 +106,7 @@ else
     # Presumably -B was given; just do the cmake part
     rm -rf "$BUILDDIR"
     mkdir "$BUILDDIR" || { echo "Could not create build directory." ; exit 1 ; }
-    ( cd "$BUILDDIR" && cmake .. ) || { echo "Could not run cmake in $BUILDDIR." ; exit 1 ; }
+    ( cd "$BUILDDIR" && cmake -GNinja .. ) || { echo "Could not run cmake in $BUILDDIR." ; exit 1 ; }
 fi
 
 ### Get version number for this release
@@ -139,7 +139,7 @@ TMPDIR=$(mktemp -d --suffix="-calamares-$D")
 test -d "$TMPDIR" || { echo "Could not create tarball-build directory." ; exit 1 ; }
 tar xzf "$TAR_FILE" -C "$TMPDIR" || { echo "Could not unpack tarball." ; exit 1 ; }
 test -d "$TMPDIR/$TAR_V" || { echo "Tarball did not contain source directory." ; exit 1 ; }
-( cd "$TMPDIR/$TAR_V" && cmake . && make -j4 && make test ) || { echo "Tarball build failed in $TMPDIR." ; exit 1 ; }
+( cd "$TMPDIR/$TAR_V" && cmake -GNinja . && ninja -j4 && ctest ) || { echo "Tarball build failed in $TMPDIR." ; exit 1 ; }
 
 ### Cleanup
 #

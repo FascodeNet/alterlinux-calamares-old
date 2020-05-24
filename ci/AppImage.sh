@@ -65,7 +65,7 @@
 ### END USAGE
 
 TOOLS_DIR="."
-CMAKE_ARGS=""
+CMAKE_ARGS="-GNinja"
 DO_REBUILD="true"
 DO_CONDA="false"
 CONFIG_DIR=""
@@ -186,14 +186,14 @@ if $DO_REBUILD ; then
     echo "# Running make ..."
     (
         cd "$BUILD_DIR/build" &&
-        make -j4
-    ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run make"; exit 1; }
+        ninja -j4
+    ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run ninja"; exit 1; }
 fi
 echo "# Running make install ..."
 (
     cd "$BUILD_DIR/build" &&
-    make install DESTDIR=../AppDir
-) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run make install"; exit 1; }
+     DESTDIR=../AppDir ninja install
+) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run ninja install"; exit 1; }
 
 ### Modify installation
 #
