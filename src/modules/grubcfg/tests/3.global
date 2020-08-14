@@ -1,0 +1,10 @@
+---
+bogus: true
+firmwareType: bios
+bootLoader: grub
+rootMountPoint: /tmp/calamares/grubcfg-test-3
+
+branding:
+  bootloaderEntryName: generic
+partitions: []
+

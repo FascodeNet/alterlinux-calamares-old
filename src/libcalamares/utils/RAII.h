@@ -1,6 +1,7 @@
 /* === This file is part of Calamares - <https://github.com/calamares> ===
- * 
+ *
  *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
  *   Calamares is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -15,15 +16,13 @@
  *   You should have received a copy of the GNU General Public License
  *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  *
- *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
- *
  */
 
 #ifndef UTILS_RAII_H
 #define UTILS_RAII_H
 
 #include <QObject>
+#include <QSignalBlocker>
 
 #include <type_traits>
 
@@ -43,5 +42,22 @@ struct cqDeleter
         p = nullptr;
     }
 };
+
+/// @brief Sets a bool to @p value and resets to !value on destruction
+template < bool value >
+struct cBoolSetter
+{
+    bool& m_b;
+
+    cBoolSetter( bool& b )
+        : m_b( b )
+    {
+        m_b = value;
+    }
+    ~cBoolSetter() { m_b = !value; }
+};
+
+/// @brief Blocks signals on a QObject until destruction
+using cSignalBlocker = QSignalBlocker;
 
 #endif

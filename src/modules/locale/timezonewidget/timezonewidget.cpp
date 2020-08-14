@@ -34,9 +34,17 @@
 #define ZONE_NAME QStringLiteral( "zone" )
 #endif
 
-TimeZoneWidget::TimeZoneWidget( QWidget* parent )
+static QPoint
+getLocationPosition( const CalamaresUtils::Locale::TimeZoneData* l )
+{
+    return TimeZoneImageList::getLocationPosition( l->longitude(), l->latitude() );
+}
+
+
+TimeZoneWidget::TimeZoneWidget( const CalamaresUtils::Locale::ZonesModel* zones, QWidget* parent )
     : QWidget( parent )
     , timeZoneImages( TimeZoneImageList::fromQRC() )
+    , m_zonesData( zones )
 {
     setMouseTracking( false );
     setCursor( Qt::PointingHandCursor );
@@ -57,27 +65,13 @@ TimeZoneWidget::TimeZoneWidget( QWidget* parent )
 
 
 void
-TimeZoneWidget::setCurrentLocation( QString regionName, QString zoneName )
+TimeZoneWidget::setCurrentLocation( const TimeZoneData* location )
 {
-    using namespace CalamaresUtils::Locale;
-    const auto& regions = TZRegion::fromZoneTab();
-    auto* region = regions.find< TZRegion >( regionName );
-    if ( !region )
+    if ( location == m_currentLocation )
     {
         return;
     }
 
-    auto* zone = region->zones().find< TZZone >( zoneName );
-    if ( zone )
-    {
-        setCurrentLocation( zone );
-    }
-}
-
-
-void
-TimeZoneWidget::setCurrentLocation( const CalamaresUtils::Locale::TZZone* location )
-{
     m_currentLocation = location;
 
     // Set zone
@@ -93,7 +87,6 @@ TimeZoneWidget::setCurrentLocation( const CalamaresUtils::Locale::TZZone* locati
 
     // Repaint widget
     repaint();
-    emit locationChanged( m_currentLocation );
 }
 
 
@@ -101,11 +94,18 @@ TimeZoneWidget::setCurrentLocation( const CalamaresUtils::Locale::TZZone* locati
 //### Private
 //###
 
+struct PainterEnder
+{
+    QPainter& p;
+    ~PainterEnder() { p.end(); }
+};
+
 void
 TimeZoneWidget::paintEvent( QPaintEvent* )
 {
     QFontMetrics fontMetrics( font );
     QPainter painter( this );
+    PainterEnder painter_end { painter };
 
     painter.setRenderHint( QPainter::Antialiasing );
     painter.setFont( font );
@@ -115,6 +115,11 @@ TimeZoneWidget::paintEvent( QPaintEvent* )
 
     // Draw zone image
     painter.drawImage( 0, 0, currentZoneImage );
+
+    if ( !m_currentLocation )
+    {
+        return;
+    }
 
 #ifdef DEBUG_TIMEZONES
     QPoint point = getLocationPosition( m_currentLocation );
@@ -175,8 +180,6 @@ TimeZoneWidget::paintEvent( QPaintEvent* )
     painter.setPen( Qt::white );
     painter.drawText( rect.x() + 5, rect.bottom() - 4, m_currentLocation ? m_currentLocation->tr() : QString() );
 #endif
-
-    painter.end();
 }
 
 
@@ -188,40 +191,19 @@ TimeZoneWidget::mousePressEvent( QMouseEvent* event )
         return;
     }
 
-    // Set nearest location
-    int nX = 999999, mX = event->pos().x();
-    int nY = 999999, mY = event->pos().y();
+    int mX = event->pos().x();
+    int mY = event->pos().y();
+    auto distance = [&]( const CalamaresUtils::Locale::TimeZoneData* zone ) {
+        QPoint locPos = TimeZoneImageList::getLocationPosition( zone->longitude(), zone->latitude() );
+        return double( abs( mX - locPos.x() ) + abs( mY - locPos.y() ) );
+    };
 
-    using namespace CalamaresUtils::Locale;
-    const TZZone* closest = nullptr;
-    for ( const auto* region_p : TZRegion::fromZoneTab() )
-    {
-        const auto* region = dynamic_cast< const TZRegion* >( region_p );
-        if ( region )
-        {
-            for ( const auto* zone_p : region->zones() )
-            {
-                const auto* zone = dynamic_cast< const TZZone* >( zone_p );
-                if ( zone )
-                {
-                    QPoint locPos = TimeZoneImageList::getLocationPosition( zone->longitude(), zone->latitude() );
-
-                    if ( ( abs( mX - locPos.x() ) + abs( mY - locPos.y() ) < abs( mX - nX ) + abs( mY - nY ) ) )
-                    {
-                        closest = zone;
-                        nX = locPos.x();
-                        nY = locPos.y();
-                    }
-                }
-            }
-        }
-    }
-
+    const auto* closest = m_zonesData->find( distance );
     if ( closest )
     {
         // Set zone image and repaint widget
         setCurrentLocation( closest );
         // Emit signal
-        emit locationChanged( m_currentLocation );
+        emit locationChanged( closest );
     }
 }

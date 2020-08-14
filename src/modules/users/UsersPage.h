@@ -24,10 +24,9 @@
 #ifndef USERSPAGE_H
 #define USERSPAGE_H
 
-#include "CheckPWQuality.h"
-#include "Job.h"
-
 #include <QWidget>
+
+class Config;
 
 class QLabel;
 
@@ -40,45 +39,22 @@ class UsersPage : public QWidget
 {
     Q_OBJECT
 public:
-    explicit UsersPage( QWidget* parent = nullptr );
+    explicit UsersPage( Config* config, QWidget* parent = nullptr );
     virtual ~UsersPage();
 
-    bool isReady();
+    bool isReady() const;
 
-    Calamares::JobList createJobs( const QStringList& defaultGroupsList );
+    void fillGlobalStorage() const;
 
     void onActivate();
 
-    void setWriteRootPassword( bool show );
-    void setPasswordCheckboxVisible( bool visible );
-    void setValidatePasswordDefault( bool checked );
-    void setAutologinDefault( bool checked );
-    void setReusePasswordDefault( bool checked );
-
-    /** @brief Process entries in the passwordRequirements config entry
-     *
-     * Called once for each item in the config entry, which should
-     * be a key-value pair. What makes sense as a value depends on
-     * the key. Supported keys are documented in users.conf.
-     */
-    void addPasswordCheck( const QString& key, const QVariant& value );
-
-    ///@brief Hostname as entered / auto-filled
-    QString getHostname() const;
-    ///@brief Root password, depends on settings, may be empty
-    QString getRootPassword() const;
-    ///@brief User name and password
-    QPair< QString, QString > getUserPassword() const;
-
 protected slots:
     void onFullNameTextEdited( const QString& );
-    void fillSuggestions();
-    void onUsernameTextEdited( const QString& );
-    void validateUsernameText( const QString& );
-    void onHostnameTextEdited( const QString& );
-    void validateHostnameText( const QString& );
+    void reportLoginNameStatus( const QString& );
+    void reportHostNameStatus( const QString& );
     void onPasswordTextChanged( const QString& );
     void onRootPasswordTextChanged( const QString& );
+    void onReuseUserPasswordChanged( const int );
 
 signals:
     void checkReady( bool );
@@ -95,19 +71,13 @@ private:
     void retranslate();
 
     Ui::Page_UserSetup* ui;
-
-    PasswordCheckList m_passwordChecks;
-    bool m_passwordChecksChanged = false;
+    Config* m_config;
 
     bool m_readyFullName;
     bool m_readyUsername;
-    bool m_customUsername;
     bool m_readyHostname;
-    bool m_customHostname;
     bool m_readyPassword;
     bool m_readyRootPassword;
-
-    bool m_writeRootPassword;
 };
 
 #endif  // USERSPAGE_H

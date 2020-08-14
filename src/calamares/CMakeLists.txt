@@ -11,15 +11,12 @@ set( calamaresSources
 )
 
 if( NOT WITH_KF5DBus )
-    set( kdsagSources "" )
-    foreach( _s
-        kdsingleapplicationguard/kdsingleapplicationguard.cpp
-        kdsingleapplicationguard/kdsharedmemorylocker.cpp
-        kdsingleapplicationguard/kdtoolsglobal.cpp
-        kdsingleapplicationguard/kdlockedsharedmemorypointer.cpp
+    set( kdsagSources
+        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplicationguard/kdsingleapplicationguard.cpp
+        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplicationguard/kdsharedmemorylocker.cpp
+        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplicationguard/kdtoolsglobal.cpp
+        ${CMAKE_SOURCE_DIR}/3rdparty/kdsingleapplicationguard/kdlockedsharedmemorypointer.cpp
     )
-        list( APPEND kdsagSources ${CMAKE_SOURCE_DIR}/3rdparty/${_s} )
-    endforeach()
     mark_thirdparty_code( ${kdsagSources} )
     list( APPEND calamaresSources ${kdsagSources} )
 endif()
@@ -34,9 +31,8 @@ include_directories(
 # Translations
 include( CalamaresAddTranslations )
 add_calamares_translations( ${CALAMARES_TRANSLATION_LANGUAGES} )
-qt5_add_resources( calamaresRc calamares.qrc )
 
-add_executable( calamares_bin ${calamaresSources} ${calamaresRc} ${trans_outfile} )
+add_executable( calamares_bin ${calamaresSources} calamares.qrc ${trans_outfile} )
 target_include_directories( calamares_bin PRIVATE ${CMAKE_SOURCE_DIR} )
 set_target_properties(calamares_bin
     PROPERTIES
@@ -45,6 +41,11 @@ set_target_properties(calamares_bin
 )
 calamares_automoc( calamares_bin )
 calamares_autouic( calamares_bin )
+calamares_autorcc( calamares_bin )
+
+if( kdsagSources )
+    set_source_files_properties( ${kdsagSources} PROPERTIES AUTOMOC OFF )
+endif()
 
 target_link_libraries( calamares_bin
     PRIVATE
