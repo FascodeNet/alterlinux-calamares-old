@@ -1,5 +1,5 @@
 /* === This file is part of Calamares - <https://github.com/calamares> ===
- * 
+ *
  *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
  *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
  *
@@ -78,8 +78,8 @@ public:
             }
 
             emitProgress();
-            cDebug() << "Starting" << ( anyFailed ? "EMERGENCY JOB" : "job" ) << job->prettyName() << " (there are"
-                     << m_jobs.count() << " left)";
+            cDebug() << "Starting" << ( anyFailed ? "EMERGENCY JOB" : "job" ) << job->prettyName() << "(there are"
+                     << ( m_jobs.count() - m_jobIndex ) << "left)";
             connect( job.data(), &Job::progress, this, &JobThread::emitProgress );
             JobResult result = job->exec();
             if ( !anyFailed && !result )
@@ -170,7 +170,7 @@ JobQueue::globalStorage() const
 JobQueue::JobQueue( QObject* parent )
     : QObject( parent )
     , m_thread( new JobThread( this ) )
-    , m_storage( new GlobalStorage() )
+    , m_storage( new GlobalStorage( this ) )
 {
     Q_ASSERT( !s_instance );
     s_instance = this;

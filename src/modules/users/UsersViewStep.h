@@ -20,8 +20,6 @@
 #ifndef USERSPAGEPLUGIN_H
 #define USERSPAGEPLUGIN_H
 
-#include "SetHostNameJob.h"
-
 #include "DllMacro.h"
 #include "utils/PluginFactory.h"
 #include "viewpages/ViewStep.h"
@@ -29,6 +27,7 @@
 #include <QObject>
 #include <QVariant>
 
+class Config;
 class UsersPage;
 
 class PLUGINDLLEXPORT UsersViewStep : public Calamares::ViewStep
@@ -60,8 +59,7 @@ private:
     UsersPage* m_widget;
     QList< Calamares::job_ptr > m_jobs;
 
-    QStringList m_defaultGroups;
-    SetHostNameJob::Actions m_actions;
+    Config* m_config;
 };
 
 CALAMARES_PLUGIN_FACTORY_DECLARATION( UsersViewStepFactory )

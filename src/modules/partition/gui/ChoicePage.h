@@ -42,11 +42,12 @@ namespace Calamares
 class PrettyRadioButton;
 }
 
+class Config;
+class DeviceInfoWidget;
 class PartitionBarsView;
 class PartitionSplitterWidget;
 class PartitionLabelsView;
 class PartitionCoreModule;
-class DeviceInfoWidget;
 
 class Device;
 
@@ -61,16 +62,9 @@ class ChoicePage : public QWidget, private Ui::ChoicePage
 {
     Q_OBJECT
 public:
-    enum InstallChoice
-    {
-        NoChoice,
-        Alongside,
-        Erase,
-        Replace,
-        Manual
-    };
+    using InstallChoice = PartitionActions::Choices::InstallChoice;
 
-    explicit ChoicePage( const SwapChoiceSet& swapChoices, QWidget* parent = nullptr );
+    explicit ChoicePage( Config* config, QWidget* parent = nullptr );
     virtual ~ChoicePage();
 
     /**
@@ -126,6 +120,7 @@ private slots:
     void onEraseSwapChoiceChanged();
 
 private:
+    bool calculateNextEnabled() const;
     void updateNextEnabled();
     void setupChoices();
     QComboBox* createBootloaderComboBox( QWidget* parentButton );
@@ -146,6 +141,7 @@ private:
     // Translations support
     void updateSwapChoicesTr( QComboBox* box );
 
+    Config* m_config;
     bool m_nextEnabled;
     PartitionCoreModule* m_core;
 
