@@ -71,12 +71,22 @@ public:
      */
     ModuleSystem::Descriptor moduleDescriptor( const QString& name );
 
+    /** @brief returns the module descriptor structure for the module @p instance
+     *
+     * Descriptors are for the module, which may have multiple instances;
+     * this is the same as moduleDescriptor( instance.module() ).
+     */
+    ModuleSystem::Descriptor moduleDescriptor( const ModuleSystem::InstanceKey& instanceKey )
+    {
+        return moduleDescriptor( instanceKey.module() );
+    }
+
     /**
      * @brief moduleInstance returns a Module object for a given instance key.
      * @param instanceKey the instance key for a module instance.
      * @return a pointer to an object of a subtype of Module.
      */
-    Module* moduleInstance( const QString& instanceKey );
+    Module* moduleInstance( const ModuleSystem::InstanceKey& instanceKey );
 
     /**
      * @brief loadModules does all of the module loading operation.
@@ -162,7 +172,6 @@ private:
     bool checkModuleDependencies( const Module& );
 
     QMap< QString, ModuleSystem::Descriptor > m_availableDescriptorsByModuleName;
-    QMap< QString, QString > m_moduleDirectoriesByModuleName;
     QMap< ModuleSystem::InstanceKey, Module* > m_loadedModulesByInstanceKey;
     const QStringList m_paths;
     RequirementsModel* m_requirementsModel;
