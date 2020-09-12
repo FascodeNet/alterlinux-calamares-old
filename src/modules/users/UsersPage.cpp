@@ -1,26 +1,17 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2017, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2018, Adriaan de Groot <groot@kde.org>
- *   Copyright 2019, Collabora Ltd <arnaud.ferraris@collabora.com>
- *   Copyright 2020, Gabriel Craciunescu <crazy@frugalware.org>
+ *   SPDX-FileCopyrightText: 2014-2017 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019 Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-FileCopyrightText: 2020 Gabriel Craciunescu <crazy@frugalware.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
  *   Portions from the Manjaro Installation Framework
  *   by Roland Singer <roland@manjaro.org>
  *   Copyright (C) 2007 Free Software Foundation, Inc.
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "UsersPage.h"
@@ -54,7 +45,8 @@ static inline void
 labelOk( QLabel* pix, QLabel* label )
 {
     label->clear();
-    pix->setPixmap( CalamaresUtils::defaultPixmap( CalamaresUtils::StatusOk, CalamaresUtils::Original, label->size() ) );
+    pix->setPixmap(
+        CalamaresUtils::defaultPixmap( CalamaresUtils::StatusOk, CalamaresUtils::Original, label->size() ) );
 }
 
 /** @brief Sets error or ok on a label depending on @p status and @p value
@@ -92,12 +84,6 @@ UsersPage::UsersPage( Config* config, QWidget* parent )
 {
     ui->setupUi( this );
 
-    ui->checkBoxReusePassword->setVisible( m_config->writeRootPassword() );
-    ui->checkBoxReusePassword->setChecked( m_config->reuseUserPasswordForRoot() );
-
-    ui->checkBoxValidatePassword->setVisible( m_config->permitWeakPasswords() );
-    ui->checkBoxValidatePassword->setChecked( m_config->requireStrongPasswords() );
-
     // Connect signals and slots
     ui->textBoxUserPassword->setText( config->userPassword() );
     connect( ui->textBoxUserPassword, &QLineEdit::textChanged, config, &Config::setUserPassword );
@@ -115,10 +101,6 @@ UsersPage::UsersPage( Config* config, QWidget* parent )
     connect( config, &Config::rootPasswordSecondaryChanged, ui->textBoxVerifiedRootPassword, &QLineEdit::setText );
     connect( config, &Config::rootPasswordStatusChanged, this, &UsersPage::reportRootPasswordStatus );
 
-    connect( ui->checkBoxValidatePassword, &QCheckBox::stateChanged, this, [this]( int checked ) {
-        m_config->setRequireStrongPasswords( checked != Qt::Unchecked );
-    } );
-
     connect( ui->textBoxFullName, &QLineEdit::textEdited, config, &Config::setFullName );
     connect( config, &Config::fullNameChanged, this, &UsersPage::onFullNameTextEdited );
 
@@ -130,26 +112,29 @@ UsersPage::UsersPage( Config* config, QWidget* parent )
     connect( config, &Config::loginNameChanged, ui->textBoxLoginName, &QLineEdit::setText );
     connect( config, &Config::loginNameStatusChanged, this, &UsersPage::reportLoginNameStatus );
 
+    ui->checkBoxDoAutoLogin->setChecked( m_config->doAutoLogin() );
     connect( ui->checkBoxDoAutoLogin, &QCheckBox::stateChanged, this, [this]( int checked ) {
         m_config->setAutoLogin( checked != Qt::Unchecked );
     } );
     connect( config, &Config::autoLoginChanged, ui->checkBoxDoAutoLogin, &QCheckBox::setChecked );
 
+    ui->checkBoxReusePassword->setVisible( m_config->writeRootPassword() );
+    ui->checkBoxReusePassword->setChecked( m_config->reuseUserPasswordForRoot() );
     if ( m_config->writeRootPassword() )
     {
-        connect( ui->checkBoxReusePassword, &QCheckBox::stateChanged, this, [this]( int checked ) {
-            m_config->setReuseUserPasswordForRoot( checked != Qt::Unchecked );
-        } );
         connect( config, &Config::reuseUserPasswordForRootChanged, ui->checkBoxReusePassword, &QCheckBox::setChecked );
         connect( ui->checkBoxReusePassword, &QCheckBox::stateChanged, this, &UsersPage::onReuseUserPasswordChanged );
     }
 
+    ui->checkBoxRequireStrongPassword->setVisible( m_config->permitWeakPasswords() );
+    ui->checkBoxRequireStrongPassword->setChecked( m_config->requireStrongPasswords() );
     if ( m_config->permitWeakPasswords() )
     {
-        connect( ui->checkBoxValidatePassword, &QCheckBox::stateChanged, this, [this]( int checked ) {
+        connect( ui->checkBoxRequireStrongPassword, &QCheckBox::stateChanged, this, [this]( int checked ) {
             m_config->setRequireStrongPasswords( checked != Qt::Unchecked );
         } );
-        connect( config, &Config::requireStrongPasswordsChanged, ui->checkBoxValidatePassword, &QCheckBox::setChecked );
+        connect(
+            config, &Config::requireStrongPasswordsChanged, ui->checkBoxRequireStrongPassword, &QCheckBox::setChecked );
     }
 
     CALAMARES_RETRANSLATE_SLOT( &UsersPage::retranslate )
@@ -249,6 +234,8 @@ UsersPage::reportUserPasswordStatus( int validity, const QString& message )
 void
 UsersPage::onReuseUserPasswordChanged( const int checked )
 {
+    // Pass the change on to config
+    m_config->setReuseUserPasswordForRoot( checked != Qt::Unchecked );
     /* When "reuse" is checked, hide the fields for explicitly
      * entering the root password. However, if we're going to
      * disable the root password anyway, hide them all regardless of

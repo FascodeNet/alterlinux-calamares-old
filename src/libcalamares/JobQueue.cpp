@@ -1,23 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
  *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
- *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
- *
  *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
+ *
+ *   Calamares is Free Software: see the License-Identifier above.
  *
  */
 
@@ -148,9 +135,28 @@ public:
         {
             emitProgress( 1.0 );
         }
+        m_runningJobs->clear();
         QMetaObject::invokeMethod( m_queue, "finish", Qt::QueuedConnection );
     }
 
+    /** @brief The names of the queued (not running!) jobs.
+     */
+    QStringList queuedJobs() const
+    {
+        QMutexLocker qlock( &m_enqueMutex );
+        QStringList l;
+        l.reserve( m_queuedJobs->count() );
+        for ( const auto& j : *m_queuedJobs )
+        {
+            l << j.job->prettyName();
+        }
+        return l;
+    }
+
+private:
+    /* This is called **only** from run(), while m_runMutex is
+     * already locked, so we can use the m_runningJobs member safely.
+     */
     void emitProgress( qreal percentage ) const
     {
         percentage = qBound( 0.0, percentage, 1.0 );
@@ -172,10 +178,8 @@ public:
             m_queue, "progress", Qt::QueuedConnection, Q_ARG( qreal, progress ), Q_ARG( QString, message ) );
     }
 
-
-private:
-    QMutex m_runMutex;
-    QMutex m_enqueMutex;
+    mutable QMutex m_runMutex;
+    mutable QMutex m_enqueMutex;
 
     std::unique_ptr< WeightedJobList > m_runningJobs = std::make_unique< WeightedJobList >();
     std::unique_ptr< WeightedJobList > m_queuedJobs = std::make_unique< WeightedJobList >();
@@ -242,7 +246,7 @@ JobQueue::enqueue( int moduleWeight, const JobList& jobs )
 {
     Q_ASSERT( !m_thread->isRunning() );
     m_thread->enqueue( moduleWeight, jobs );
-    emit queueChanged( jobs );  // FIXME: bogus
+    emit queueChanged( m_thread->queuedJobs() );
 }
 
 void
@@ -250,6 +254,7 @@ JobQueue::finish()
 {
     m_finished = true;
     emit finished();
+    emit queueChanged( m_thread->queuedJobs() );
 }
 
 GlobalStorage*

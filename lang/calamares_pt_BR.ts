@@ -2323,7 +2323,7 @@ O instalador será fechado e todas as alterações serão perdidas.</translation
     <message>
       <location filename="../src/modules/users/page_usersetup.ui" line="321"/>
       <source>Choose a password to keep your account safe.</source>
-      <translation>Escolha uma senha para mantar a sua conta segura.</translation>
+      <translation>Escolha uma senha para manter a sua conta segura.</translation>
     </message>
     <message>
       <location filename="../src/modules/users/page_usersetup.ui" line="345"/>

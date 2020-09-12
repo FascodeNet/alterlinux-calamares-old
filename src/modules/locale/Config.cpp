@@ -1,21 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
  *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Config.h"
@@ -25,6 +14,7 @@
 #include "GlobalStorage.h"
 #include "JobQueue.h"
 #include "Settings.h"
+#include "locale/Global.h"
 #include "locale/Label.h"
 #include "modulesystem/ModuleManager.h"
 #include "network/Manager.h"
@@ -178,13 +168,7 @@ updateGSLocation( Calamares::GlobalStorage* gs, const CalamaresUtils::Locale::Ti
 static void
 updateGSLocale( Calamares::GlobalStorage* gs, const LocaleConfiguration& locale )
 {
-    auto map = locale.toMap();
-    QVariantMap vm;
-    for ( auto it = map.constBegin(); it != map.constEnd(); ++it )
-    {
-        vm.insert( it.key(), it.value() );
-    }
-    gs->insert( "localeConf", vm );
+    CalamaresUtils::Locale::insertGS( *gs, locale.toMap(), CalamaresUtils::Locale::InsertMode::Overwrite );
 }
 
 Config::Config( QObject* parent )

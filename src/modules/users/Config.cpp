@@ -1,21 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
  *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Config.h"
@@ -40,6 +29,30 @@ static constexpr const int USERNAME_MAX_LENGTH = 31;
 static const QRegExp HOSTNAME_RX( "^[a-zA-Z0-9][-a-zA-Z0-9_]*$" );
 static constexpr const int HOSTNAME_MIN_LENGTH = 2;
 static constexpr const int HOSTNAME_MAX_LENGTH = 63;
+
+static void
+updateGSAutoLogin( bool doAutoLogin, const QString& login )
+{
+    Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
+
+    if ( doAutoLogin && !login.isEmpty() )
+    {
+        gs->insert( "autologinUser", login );
+    }
+    else
+    {
+        gs->remove( "autologinUser" );
+    }
+
+    if ( login.isEmpty() )
+    {
+        gs->remove( "username" );
+    }
+    else
+    {
+        gs->insert( "username", login );
+    }
+}
 
 const NamedEnumTable< HostNameAction >&
 hostNameActionNames()
@@ -121,15 +134,7 @@ Config::setLoginName( const QString& login )
 {
     if ( login != m_loginName )
     {
-        Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
-        if ( login.isEmpty() )
-        {
-            gs->remove( "username" );
-        }
-        else
-        {
-            gs->insert( "username", login );
-        }
+        updateGSAutoLogin( doAutoLogin(), login );
 
         m_customLoginName = !login.isEmpty();
         m_loginName = login;
@@ -341,9 +346,9 @@ Config::setFullName( const QString& name )
             QString login = makeLoginNameSuggestion( cleanParts );
             if ( !login.isEmpty() && login != m_loginName )
             {
-                m_loginName = login;
-                emit loginNameChanged( login );
-                emit loginNameStatusChanged( loginNameStatus() );
+                setLoginName( login );
+                // It's **still** not custom, though setLoginName() sets that
+                m_customLoginName = false;
             }
         }
         if ( !m_customHostName )
@@ -351,9 +356,9 @@ Config::setFullName( const QString& name )
             QString hostname = makeHostnameSuggestion( cleanParts );
             if ( !hostname.isEmpty() && hostname != m_hostName )
             {
-                m_hostName = hostname;
-                emit hostNameChanged( hostname );
-                emit hostNameStatusChanged( hostNameStatus() );
+                setHostName( hostname );
+                // Still not custom
+                m_customHostName = false;
             }
         }
     }
@@ -364,15 +369,7 @@ Config::setAutoLogin( bool b )
 {
     if ( b != m_doAutoLogin )
     {
-        Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
-        if ( b )
-        {
-            gs->insert( "autologinUser", loginName() );
-        }
-        else
-        {
-            gs->remove( "autologinUser" );
-        }
+        updateGSAutoLogin( b, loginName() );
         m_doAutoLogin = b;
         emit autoLoginChanged( b );
     }
@@ -711,14 +708,16 @@ Config::setConfigurationMap( const QVariantMap& configurationMap )
     }
     std::sort( m_passwordChecks.begin(), m_passwordChecks.end() );
 
+    updateGSAutoLogin( doAutoLogin(), loginName() );
     checkReady();
 }
 
 void
 Config::finalizeGlobalStorage() const
 {
-    Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
+    updateGSAutoLogin( doAutoLogin(), loginName() );
 
+    Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
     if ( writeRootPassword() )
     {
         gs->insert( "reuseRootPassword", reuseUserPasswordForRoot() );

@@ -1,7 +1,50 @@
+<!-- SPDX-FileCopyrightText: no
+     SPDX-License-Identifier: CC0-1.0
+-->
+
 This is the changelog for Calamares. For each release, the major changes and
 contributors are listed. Note that Calamares does not have a historical
 changelog -- this log starts with version 3.2.0. The release notes on the
 website will have to do for older versions.
+
+# 3.2.30 (2020-09-03) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Asif Mahmud Shimon
+ - Manzoor Ahmed Munawar
+ - Sai Kamal
+ - Victor Ibragimov
+
+This release has two giant source-code changes that have no effect
+on functionality, but do touch each and every source file:
+ - SPDX headers for licensing information, following the standard
+   set by REUSE.software ; all source files and resources have
+   SPDX-License-Identifier information and copyright notices. All
+   of the boilerplate texts have been removed.
+ - Calamares coding style has been mechanically applied to the entire
+   codebase. This was already done to most of it, but there were
+   some hold-outs.
+
+## Core ##
+ - Network access status is deprecated in Qt 5.15's QNetworkAccessManager,
+   and was not useful already in some previous versions. Replace its
+   use in the Calamares network service by testing-it-ourself directly
+   via a synchronous ping. (Thanks to Asif)
+ - New Telugu translation. (Thanks to Sai)
+ - Urdu translation started. (Thanks to Manzoor)
+ - Timezones translated in Tajik and Russian. (Thanks to Victor)
+
+## Modules ##
+ - *keyboardq* and *localeq* improvements. (Thanks to Anke)
+ - *users* module did not set up autologin properly. This is yet another
+   regression left over from 3.2.28. (Reported by Phil and pcrepix, #1498)
+ - *welcome* module now sets the *LANG* key in the locale configuration
+   (which is shared with the *locale* module and consumed by the
+   *localecfg* module). This makes it feasible to drop the *locale*
+   module and still set the installed system's language to the language
+   selected in Calamares. (Reported by FerenOS)
+
 
 # 3.2.29 (2020-08-20) #
 
