@@ -1,20 +1,15 @@
-# === This file is part of Calamares - <https://github.com/calamares> ===
+# === This file is part of Calamares - <https://calamares.io> ===
 #
 #   SPDX-FileCopyrightText: 2017 Adriaan de Groot <groot@kde.org>
-#   SPDX-License-Identifier: GPL-3.0-or-later
+#   SPDX-License-Identifier: BSD-2-Clause
 #
-#   Calamares is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+###
 #
-#   Calamares is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#   GNU General Public License for more details.
+#   Calamares is Free Software: see the License-Identifier above.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
+#   Individual files may have different licenses (like the CMake
+#   infrastructure, which is BSD-2-Clause licensed). Check the SPDX
+#   identifiers in each file.
 #
 ###
 #
@@ -46,7 +41,7 @@
 # TODO:3.3: Require CMake 3.12
 cmake_minimum_required( VERSION 3.3 FATAL_ERROR )
 project( CALAMARES
-    VERSION 3.2.28.2
+    VERSION 3.2.30
     LANGUAGES C CXX )
 
 set( CALAMARES_VERSION_RC 0 )  # Set to 0 during release cycle, 1 during development
@@ -145,13 +140,14 @@ set( CALAMARES_DESCRIPTION_SUMMARY
 # NOTE: update these lines by running `txstats.py`, or for full automation
 #       `txstats.py -e`. See also
 #
-# Total 68 languages
-set( _tx_complete ca fi_FI he hr nl pt_BR sq tg tr_TR uk zh_TW )
-set( _tx_good as ast az az_AZ be cs_CZ da de es fr hi hu it_IT ja
-    ko lt ml pt_PT ru sk sv zh_CN )
-set( _tx_ok ar bg el en_GB es_MX es_PR et eu fa gl id is mr nb
-    pl ro sl sr sr@latin th )
-set( _tx_incomplete bn ca@valencia eo fr_CH gu ie kk kn lo lv mk ne_NP
+# Total 69 languages
+set( _tx_complete az az_AZ ca cs_CZ da fi_FI he hi hr ja nl pt_BR
+    sq sv tg tr_TR uk zh_TW )
+set( _tx_good as ast be de es fr hu it_IT ko lt ml pt_PT ru sk
+    zh_CN )
+set( _tx_ok ar bg bn el en_GB es_MX es_PR et eu fa gl id is mr nb
+    pl ro sl sr sr@latin te th )
+set( _tx_incomplete ca@valencia eo fr_CH gu ie kk kn lo lv mk ne_NP
     ur uz )
 
 ### Required versions

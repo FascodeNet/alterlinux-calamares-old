@@ -1,28 +1,20 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2019 Adriaan de Groot <groot@kde.org>
  *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
+#include "locale/Global.h"
 #include "locale/LabelModel.h"
 #include "locale/TimeZone.h"
 #include "locale/TranslatableConfiguration.h"
 
 #include "CalamaresVersion.h"
+#include "GlobalStorage.h"
 #include "utils/Logger.h"
 
 #include <QtTest/QtTest>
@@ -55,6 +47,9 @@ private Q_SLOTS:
     void testLocationLookup_data();
     void testLocationLookup();
     void testLocationLookup2();
+
+    // Global Storage updates
+    void testGSUpdates();
 };
 
 LocaleTests::LocaleTests() {}
@@ -454,6 +449,72 @@ LocaleTests::testLocationLookup2()
     // -2928, that's -29 and 28/60 of a degree, is almost half, but we don't want
     //   to fall foul of variations in double-precision
     QCOMPARE( trunc( altzone->latitude() * 1000.0 ), -29466 );
+}
+
+void
+LocaleTests::testGSUpdates()
+{
+    Calamares::GlobalStorage gs;
+
+    const QString gsKey( "localeConf" );
+
+    QCOMPARE( gs.value( gsKey ), QVariant() );
+
+    // Insert one
+    {
+        CalamaresUtils::Locale::insertGS( gs, "LANG", "en_US" );
+        auto map = gs.value( gsKey ).toMap();
+        QCOMPARE( map.count(), 1 );
+        QCOMPARE( map.value( "LANG" ).toString(), QString( "en_US" ) );
+    }
+
+    // Overwrite one
+    {
+        CalamaresUtils::Locale::insertGS( gs, "LANG", "nl_BE" );
+        auto map = gs.value( gsKey ).toMap();
+        QCOMPARE( map.count(), 1 );
+        QCOMPARE( map.value( "LANG" ).toString(), QString( "nl_BE" ) );
+    }
+
+    // Insert a second value
+    {
+        CalamaresUtils::Locale::insertGS( gs, "LC_TIME", "UTC" );
+        auto map = gs.value( gsKey ).toMap();
+        QCOMPARE( map.count(), 2 );
+        QCOMPARE( map.value( "LANG" ).toString(), QString( "nl_BE" ) );
+        QCOMPARE( map.value( "LC_TIME" ).toString(), QString( "UTC" ) );
+    }
+
+    // Overwrite parts
+    {
+        QMap< QString, QString > kv;
+        kv.insert( "LANG", "en_SU" );
+        kv.insert( "LC_CURRENCY", "rbl" );
+
+        // Overwrite one, add one
+        CalamaresUtils::Locale::insertGS( gs, kv, CalamaresUtils::Locale::InsertMode::Merge );
+        auto map = gs.value( gsKey ).toMap();
+        QCOMPARE( map.count(), 3 );
+        QCOMPARE( map.value( "LANG" ).toString(), QString( "en_SU" ) );
+        QCOMPARE( map.value( "LC_TIME" ).toString(), QString( "UTC" ) );  // unchanged
+        QCOMPARE( map.value( "LC_CURRENCY" ).toString(), QString( "rbl" ) );
+    }
+
+    // Overwrite with clear
+    {
+        QMap< QString, QString > kv;
+        kv.insert( "LANG", "en_US" );
+        kv.insert( "LC_CURRENCY", "peso" );
+
+        // Overwrite one, add one
+        CalamaresUtils::Locale::insertGS( gs, kv, CalamaresUtils::Locale::InsertMode::Overwrite );
+        auto map = gs.value( gsKey ).toMap();
+        QCOMPARE( map.count(), 2 );  // the rest were cleared
+        QCOMPARE( map.value( "LANG" ).toString(), QString( "en_US" ) );
+        QVERIFY( !map.contains( "LC_TIME" ) );
+        QCOMPARE( map.value( "LC_TIME" ).toString(), QString() );  // removed
+        QCOMPARE( map.value( "LC_CURRENCY" ).toString(), QString( "peso" ) );
+    }
 }
 
 

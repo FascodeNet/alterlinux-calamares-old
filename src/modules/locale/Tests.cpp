@@ -1,19 +1,10 @@
-/* === This file is part of Calamares - <http://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2019-2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019-2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Config.h"
@@ -42,6 +33,7 @@ private Q_SLOTS:
     void testSplitLocaleConfiguration();
 
     // Check the TZ images for consistency
+    void testTZSanity();
     void testTZImages();  // No overlaps in images
     void testTZLocations();  // No overlaps in locations
     void testSpecificLocations();
@@ -105,6 +97,18 @@ LocaleTests::testSplitLocaleConfiguration()
     QCOMPARE( lc3.toBcp47(), QStringLiteral( "da" ) );
     QCOMPARE( lc3.lc_numeric, QStringLiteral( "de_DE.UTF-8" ) );
 }
+
+void
+LocaleTests::testTZSanity()
+{
+    // Data source for all TZ info
+    QVERIFY( QFile( "/usr/share/zoneinfo/zone.tab" ).exists() );
+
+    // Contains a sensible number of total zones
+    const CalamaresUtils::Locale::ZonesModel zones;
+    QVERIFY( zones.rowCount( QModelIndex() ) > 100 );
+}
+
 
 void
 LocaleTests::testTZImages()

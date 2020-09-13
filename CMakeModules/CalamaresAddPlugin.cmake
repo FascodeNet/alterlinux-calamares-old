@@ -1,20 +1,11 @@
-# === This file is part of Calamares - <https://github.com/calamares> ===
+# === This file is part of Calamares - <https://calamares.io> ===
 #
-#   Calamares is free software: you can redistribute it and/or modify
-#   it under the terms of the GNU General Public License as published by
-#   the Free Software Foundation, either version 3 of the License, or
-#   (at your option) any later version.
+#   SPDX-FileCopyrightText: 2014 Teo Mrnjavac <teo@kde.org>
+#   SPDX-FileCopyrightText: 2019 Adriaan de Groot <groot@kde.org>
+#   SPDX-License-Identifier: BSD-2-Clause
 #
-#   Calamares is distributed in the hope that it will be useful,
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-#   GNU General Public License for more details.
+#   Calamares is Free Software: see the License-Identifier above.
 #
-#   You should have received a copy of the GNU General Public License
-#   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
-#
-#   SPDX-License-Identifier: GPL-3.0-or-later
-#   License-Filename: LICENSE
 #
 ###
 #
@@ -41,6 +32,7 @@
 #   [NO_CONFIG]
 #   [SHARED_LIB]
 #   [EMERGENCY]
+#   [WEIGHT w]
 # )
 #
 # Function parameters:
@@ -63,6 +55,9 @@
 #  - EMERGENCY
 #       If this is set, the module is marked as an *emergency* module in the
 #       descriptor. See *Emergency Modules* in the module documentation.
+#  - WEIGHT
+#       If this is set, writes an explicit weight into the module.desc;
+#       module weights are used in progress reporting.
 #
 
 include( CMakeParseArguments )
@@ -73,7 +68,7 @@ function( calamares_add_plugin )
     # parse arguments ( name needs to be saved before passing ARGN into the macro )
     set( NAME ${ARGV0} )
     set( options NO_CONFIG NO_INSTALL SHARED_LIB EMERGENCY )
-    set( oneValueArgs NAME TYPE EXPORT_MACRO RESOURCES )
+    set( oneValueArgs NAME TYPE EXPORT_MACRO RESOURCES WEIGHT )
     set( multiValueArgs SOURCES UI LINK_LIBRARIES LINK_PRIVATE_LIBRARIES COMPILE_DEFINITIONS REQUIRES )
     cmake_parse_arguments( PLUGIN "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
     set( PLUGIN_NAME ${NAME} )
@@ -180,6 +175,9 @@ function( calamares_add_plugin )
         endif()
         if ( PLUGIN_NO_CONFIG )
             file( APPEND ${_file} "noconfig: true\n" )
+        endif()
+        if ( PLUGIN_WEIGHT )
+            file( APPEND ${_file} "weight: ${PLUGIN_WEIGHT}\n" )
         endif()
     endif()
 

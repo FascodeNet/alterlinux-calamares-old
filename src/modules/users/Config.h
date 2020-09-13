@@ -1,21 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
  *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef USERS_CONFIG_H
@@ -23,6 +12,7 @@
 
 #include "CheckPWQuality.h"
 
+#include "Job.h"
 #include "utils/NamedEnum.h"
 
 #include <QObject>
@@ -62,9 +52,14 @@ class Config : public QObject
     Q_PROPERTY( QString userPassword READ userPassword WRITE setUserPassword NOTIFY userPasswordChanged )
     Q_PROPERTY( QString userPasswordSecondary READ userPasswordSecondary WRITE setUserPasswordSecondary NOTIFY
                     userPasswordSecondaryChanged )
+    Q_PROPERTY( int userPasswordValidity READ userPasswordValidity NOTIFY userPasswordStatusChanged STORED false )
+    Q_PROPERTY( QString userPasswordMessage READ userPasswordMessage NOTIFY userPasswordStatusChanged STORED false )
+
     Q_PROPERTY( QString rootPassword READ rootPassword WRITE setRootPassword NOTIFY rootPasswordChanged )
     Q_PROPERTY( QString rootPasswordSecondary READ rootPasswordSecondary WRITE setRootPasswordSecondary NOTIFY
                     rootPasswordSecondaryChanged )
+    Q_PROPERTY( int rootPasswordValidity READ rootPasswordValidity NOTIFY rootPasswordStatusChanged STORED false )
+    Q_PROPERTY( QString rootPasswordMessage READ rootPasswordMessage NOTIFY rootPasswordStatusChanged STORED false )
 
     Q_PROPERTY( bool writeRootPassword READ writeRootPassword CONSTANT )
     Q_PROPERTY( bool reuseUserPasswordForRoot READ reuseUserPasswordForRoot WRITE setReuseUserPasswordForRoot NOTIFY
@@ -74,11 +69,57 @@ class Config : public QObject
     Q_PROPERTY( bool requireStrongPasswords READ requireStrongPasswords WRITE setRequireStrongPasswords NOTIFY
                     requireStrongPasswordsChanged )
 
+    Q_PROPERTY( bool ready READ isReady NOTIFY readyChanged STORED false )
+
 public:
+    /** @brief Validity (status) of a password
+     *
+     * Valid passwords are:
+     *  - primary and secondary are equal **and**
+     *  - all the password-strength checks pass
+     * Weak passwords:
+     *  - primary and secondary are equal **and**
+     *  - not all the checks pass **and**
+     *  - permitWeakPasswords is @c true **and**
+     *  - requireStrongPasswords is @c false
+     * Invalid passwords (all other cases):
+     *  - the primary and secondary values are not equal **or**
+     *  - not all the checks pass and weak passwords are not permitted
+     */
+    enum PasswordValidity
+    {
+        Valid = 0,
+        Weak = 1,
+        Invalid = 2
+    };
+
+    /** @brief Full password status
+     *
+     * A password's status is in two parts:
+     *  - a validity (valid, weak or invalid)
+     *  - a message describing that validity
+     * The message is empty when the password is valid, but
+     * weak and invalid passwords have an explanatory message.
+     */
+    using PasswordStatus = QPair< PasswordValidity, QString >;
+
     Config( QObject* parent = nullptr );
     ~Config();
 
     void setConfigurationMap( const QVariantMap& );
+
+    /** @brief Fill Global Storage with some settings
+     *
+     * This should be called when moving on from the view step,
+     * and copies some things to GS that otherwise would not.
+     */
+    void finalizeGlobalStorage() const;
+
+    /** @brief Jobs for creating user, setting passwords
+     *
+     * If the Config object isn't ready yet, returns an empty list.
+     */
+    Calamares::JobList createJobs() const;
 
     /** @brief Full path to the user's shell executable
      *
@@ -119,25 +160,23 @@ public:
 
     const QStringList& defaultGroups() const { return m_defaultGroups; }
 
-    /** @brief Checks if the password is acceptable.
-     *
-     * If all is well, sets @p message to empty and returns @c true.
-     * If there are warnings, but acceptable, sets @p message to something
-     *   non-empty and returns @c true. This happens if requireStrongPasswords
-     *   is turned off (by config or user).
-     * If the password is not acceptable, sets @p message to something
-     *   non-empty and returns @c false.
-     */
-    bool isPasswordAcceptable( const QString& password, QString& message );
-
     // The user enters a password (and again in a separate UI element)
     QString userPassword() const { return m_userPassword; }
     QString userPasswordSecondary() const { return m_userPasswordSecondary; }
+    int userPasswordValidity() const;
+    QString userPasswordMessage() const;
+    PasswordStatus userPasswordStatus() const;
+
     // The root password **may** be entered in the UI, or may be suppressed
     //   entirely when writeRootPassword is off, or may be equal to
     //   the user password when reuseUserPasswordForRoot is on.
     QString rootPassword() const;
     QString rootPasswordSecondary() const;
+    int rootPasswordValidity() const;
+    QString rootPasswordMessage() const;
+    PasswordStatus rootPasswordStatus() const;
+
+    bool isReady() const;
 
     static const QStringList& forbiddenLoginNames();
     static const QStringList& forbiddenHostNames();
@@ -193,11 +232,16 @@ signals:
     void requireStrongPasswordsChanged( bool );
     void userPasswordChanged( const QString& );
     void userPasswordSecondaryChanged( const QString& );
+    void userPasswordStatusChanged( int, const QString& );
     void rootPasswordChanged( const QString& );
     void rootPasswordSecondaryChanged( const QString& );
-
+    void rootPasswordStatusChanged( int, const QString& );
+    void readyChanged( bool ) const;
 
 private:
+    PasswordStatus passwordStatus( const QString&, const QString& ) const;
+    void checkReady();
+
     QStringList m_defaultGroups;
     QString m_userShell;
     QString m_autologinGroup;
@@ -221,6 +265,8 @@ private:
 
     bool m_customLoginName = false;
     bool m_customHostName = false;
+
+    bool m_isReady = false;  ///< Used to reduce readyChanged signals
 
     HostNameActions m_hostNameActions;
     PasswordCheckList m_passwordChecks;

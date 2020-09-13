@@ -1,24 +1,17 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
  *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
  *   SPDX-License-Identifier: GPL-3.0-or-later
- *   License-Filename: LICENSE
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Config.h"
+
+#include "CreateUserJob.h"
+#include "SetHostNameJob.h"
+#include "SetPasswordJob.h"
 
 #include "GlobalStorage.h"
 #include "JobQueue.h"
@@ -36,6 +29,30 @@ static constexpr const int USERNAME_MAX_LENGTH = 31;
 static const QRegExp HOSTNAME_RX( "^[a-zA-Z0-9][-a-zA-Z0-9_]*$" );
 static constexpr const int HOSTNAME_MIN_LENGTH = 2;
 static constexpr const int HOSTNAME_MAX_LENGTH = 63;
+
+static void
+updateGSAutoLogin( bool doAutoLogin, const QString& login )
+{
+    Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
+
+    if ( doAutoLogin && !login.isEmpty() )
+    {
+        gs->insert( "autologinUser", login );
+    }
+    else
+    {
+        gs->remove( "autologinUser" );
+    }
+
+    if ( login.isEmpty() )
+    {
+        gs->remove( "username" );
+    }
+    else
+    {
+        gs->insert( "username", login );
+    }
+}
 
 const NamedEnumTable< HostNameAction >&
 hostNameActionNames()
@@ -56,6 +73,16 @@ hostNameActionNames()
 Config::Config( QObject* parent )
     : QObject( parent )
 {
+    emit readyChanged( m_isReady );  // false
+
+    // Gang together all the changes of status to one readyChanged() signal
+    connect( this, &Config::hostNameStatusChanged, this, &Config::checkReady );
+    connect( this, &Config::loginNameStatusChanged, this, &Config::checkReady );
+    connect( this, &Config::fullNameChanged, this, &Config::checkReady );
+    connect( this, &Config::userPasswordStatusChanged, this, &Config::checkReady );
+    connect( this, &Config::rootPasswordStatusChanged, this, &Config::checkReady );
+    connect( this, &Config::reuseUserPasswordForRootChanged, this, &Config::checkReady );
+    connect( this, &Config::requireStrongPasswordsChanged, this, &Config::checkReady );
 }
 
 Config::~Config() {}
@@ -69,7 +96,11 @@ Config::setUserShell( const QString& shell )
         return;
     }
     // The shell is put into GS because the CreateUser job expects it there
-    Calamares::JobQueue::instance()->globalStorage()->insert( "userShell", shell );
+    auto* gs = Calamares::JobQueue::instance()->globalStorage();
+    if ( gs )
+    {
+        gs->insert( "userShell", shell );
+    }
 }
 
 static inline void
@@ -103,15 +134,7 @@ Config::setLoginName( const QString& login )
 {
     if ( login != m_loginName )
     {
-        Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
-        if ( login.isEmpty() )
-        {
-            gs->remove( "username" );
-        }
-        else
-        {
-            gs->insert( "username", login );
-        }
+        updateGSAutoLogin( doAutoLogin(), login );
 
         m_customLoginName = !login.isEmpty();
         m_loginName = login;
@@ -323,9 +346,9 @@ Config::setFullName( const QString& name )
             QString login = makeLoginNameSuggestion( cleanParts );
             if ( !login.isEmpty() && login != m_loginName )
             {
-                m_loginName = login;
-                emit loginNameChanged( login );
-                emit loginNameStatusChanged( loginNameStatus() );
+                setLoginName( login );
+                // It's **still** not custom, though setLoginName() sets that
+                m_customLoginName = false;
             }
         }
         if ( !m_customHostName )
@@ -333,9 +356,9 @@ Config::setFullName( const QString& name )
             QString hostname = makeHostnameSuggestion( cleanParts );
             if ( !hostname.isEmpty() && hostname != m_hostName )
             {
-                m_hostName = hostname;
-                emit hostNameChanged( hostname );
-                emit hostNameStatusChanged( hostNameStatus() );
+                setHostName( hostname );
+                // Still not custom
+                m_customHostName = false;
             }
         }
     }
@@ -346,15 +369,7 @@ Config::setAutoLogin( bool b )
 {
     if ( b != m_doAutoLogin )
     {
-        Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
-        if ( b )
-        {
-            gs->insert( "autologinUser", loginName() );
-        }
-        else
-        {
-            gs->remove( "autologinUser" );
-        }
+        updateGSAutoLogin( b, loginName() );
         m_doAutoLogin = b;
         emit autoLoginChanged( b );
     }
@@ -367,6 +382,10 @@ Config::setReuseUserPasswordForRoot( bool reuse )
     {
         m_reuseUserPasswordForRoot = reuse;
         emit reuseUserPasswordForRootChanged( reuse );
+        {
+            auto rp = rootPasswordStatus();
+            emit rootPasswordStatusChanged( rp.first, rp.second );
+        }
     }
 }
 
@@ -377,51 +396,100 @@ Config::setRequireStrongPasswords( bool strong )
     {
         m_requireStrongPasswords = strong;
         emit requireStrongPasswordsChanged( strong );
-    }
-}
-
-bool
-Config::isPasswordAcceptable( const QString& password, QString& message )
-{
-    bool failureIsFatal = requireStrongPasswords();
-
-    for ( auto pc : m_passwordChecks )
-    {
-        QString s = pc.filter( password );
-
-        if ( !s.isEmpty() )
         {
-            message = s;
-            return !failureIsFatal;
+            auto rp = rootPasswordStatus();
+            emit rootPasswordStatusChanged( rp.first, rp.second );
+        }
+        {
+            auto up = userPasswordStatus();
+            emit userPasswordStatusChanged( up.first, up.second );
         }
     }
-
-    return true;
 }
 
 void
 Config::setUserPassword( const QString& s )
 {
-    m_userPassword = s;
-    // TODO: check new password status
-    emit userPasswordChanged( s );
+    if ( s != m_userPassword )
+    {
+        m_userPassword = s;
+        const auto p = passwordStatus( m_userPassword, m_userPasswordSecondary );
+        emit userPasswordStatusChanged( p.first, p.second );
+        emit userPasswordChanged( s );
+    }
 }
 
 void
 Config::setUserPasswordSecondary( const QString& s )
 {
-    m_userPasswordSecondary = s;
-    // TODO: check new password status
-    emit userPasswordSecondaryChanged( s );
+    if ( s != m_userPasswordSecondary )
+    {
+        m_userPasswordSecondary = s;
+        const auto p = passwordStatus( m_userPassword, m_userPasswordSecondary );
+        emit userPasswordStatusChanged( p.first, p.second );
+        emit userPasswordSecondaryChanged( s );
+    }
 }
+
+/** @brief Checks two copies of the password for validity
+ *
+ * Given two copies of the password -- generally the password and
+ * the secondary fields -- checks them for validity and returns
+ * a pair of <validity, message>.
+ *
+ */
+Config::PasswordStatus
+Config::passwordStatus( const QString& pw1, const QString& pw2 ) const
+{
+    if ( pw1 != pw2 )
+    {
+        return qMakePair( PasswordValidity::Invalid, tr( "Your passwords do not match!" ) );
+    }
+
+    bool failureIsFatal = requireStrongPasswords();
+    for ( const auto& pc : m_passwordChecks )
+    {
+        QString message = pc.filter( pw1 );
+
+        if ( !message.isEmpty() )
+        {
+            return qMakePair( failureIsFatal ? PasswordValidity::Invalid : PasswordValidity::Weak, message );
+        }
+    }
+
+    return qMakePair( PasswordValidity::Valid, QString() );
+}
+
+
+Config::PasswordStatus
+Config::userPasswordStatus() const
+{
+    return passwordStatus( m_userPassword, m_userPasswordSecondary );
+}
+
+int
+Config::userPasswordValidity() const
+{
+    auto p = userPasswordStatus();
+    return p.first;
+}
+
+QString
+Config::userPasswordMessage() const
+{
+    auto p = userPasswordStatus();
+    return p.second;
+}
+
 
 void
 Config::setRootPassword( const QString& s )
 {
-    if ( writeRootPassword() )
+    if ( writeRootPassword() && s != m_rootPassword )
     {
         m_rootPassword = s;
-        // TODO: check new password status
+        const auto p = passwordStatus( m_rootPassword, m_rootPasswordSecondary );
+        emit rootPasswordStatusChanged( p.first, p.second );
         emit rootPasswordChanged( s );
     }
 }
@@ -429,34 +497,95 @@ Config::setRootPassword( const QString& s )
 void
 Config::setRootPasswordSecondary( const QString& s )
 {
-    if ( writeRootPassword() )
+    if ( writeRootPassword() && s != m_rootPasswordSecondary )
     {
         m_rootPasswordSecondary = s;
-        // TODO: check new password status
+        const auto p = passwordStatus( m_rootPassword, m_rootPasswordSecondary );
+        emit rootPasswordStatusChanged( p.first, p.second );
         emit rootPasswordSecondaryChanged( s );
     }
 }
 
-QString Config::rootPassword() const
+QString
+Config::rootPassword() const
 {
     if ( writeRootPassword() )
     {
         if ( reuseUserPasswordForRoot() )
+        {
             return userPassword();
+        }
         return m_rootPassword;
     }
     return QString();
 }
 
-QString Config::rootPasswordSecondary() const
+QString
+Config::rootPasswordSecondary() const
 {
     if ( writeRootPassword() )
     {
         if ( reuseUserPasswordForRoot() )
+        {
             return userPasswordSecondary();
+        }
         return m_rootPasswordSecondary;
     }
     return QString();
+}
+
+Config::PasswordStatus
+Config::rootPasswordStatus() const
+{
+    if ( writeRootPassword() && !reuseUserPasswordForRoot() )
+    {
+        return passwordStatus( m_rootPassword, m_rootPasswordSecondary );
+    }
+    else
+    {
+        return userPasswordStatus();
+    }
+}
+
+int
+Config::rootPasswordValidity() const
+{
+    auto p = rootPasswordStatus();
+    return p.first;
+}
+
+QString
+Config::rootPasswordMessage() const
+{
+    auto p = rootPasswordStatus();
+    return p.second;
+}
+
+bool
+Config::isReady() const
+{
+    bool readyFullName = !fullName().isEmpty();  // Needs some text
+    bool readyHostname = hostNameStatus().isEmpty();  // .. no warning message
+    bool readyUsername = loginNameStatus().isEmpty();  // .. no warning message
+    bool readyUserPassword = userPasswordValidity() != Config::PasswordValidity::Invalid;
+    bool readyRootPassword = rootPasswordValidity() != Config::PasswordValidity::Invalid;
+    return readyFullName && readyHostname && readyUsername && readyUserPassword && readyRootPassword;
+}
+
+/** @brief Update ready status and emit signal
+ *
+ * This is a "concentrator" private slot for all the status-changed
+ * signals, so that readyChanged() is emitted only when needed.
+ */
+void
+Config::checkReady()
+{
+    bool b = isReady();
+    if ( b != m_isReady )
+    {
+        m_isReady = b;
+        emit readyChanged( b );
+    }
 }
 
 
@@ -578,4 +707,48 @@ Config::setConfigurationMap( const QVariantMap& configurationMap )
         addPasswordCheck( i.key(), i.value(), m_passwordChecks );
     }
     std::sort( m_passwordChecks.begin(), m_passwordChecks.end() );
+
+    updateGSAutoLogin( doAutoLogin(), loginName() );
+    checkReady();
+}
+
+void
+Config::finalizeGlobalStorage() const
+{
+    updateGSAutoLogin( doAutoLogin(), loginName() );
+
+    Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
+    if ( writeRootPassword() )
+    {
+        gs->insert( "reuseRootPassword", reuseUserPasswordForRoot() );
+    }
+    gs->insert( "password", CalamaresUtils::obscure( userPassword() ) );
+}
+
+Calamares::JobList
+Config::createJobs() const
+{
+    Calamares::JobList jobs;
+
+    if ( !isReady() )
+    {
+        return jobs;
+    }
+
+    Calamares::Job* j;
+
+    j = new CreateUserJob(
+        loginName(), fullName().isEmpty() ? loginName() : fullName(), doAutoLogin(), defaultGroups() );
+    jobs.append( Calamares::job_ptr( j ) );
+
+    j = new SetPasswordJob( loginName(), userPassword() );
+    jobs.append( Calamares::job_ptr( j ) );
+
+    j = new SetPasswordJob( "root", rootPassword() );
+    jobs.append( Calamares::job_ptr( j ) );
+
+    j = new SetHostNameJob( hostName(), hostNameActions() );
+    jobs.append( Calamares::job_ptr( j ) );
+
+    return jobs;
 }
