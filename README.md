@@ -29,9 +29,9 @@ Main:
 Modules:
 * Individual modules may have their own requirements;
   these are listed in CMake output. Particular requirements (not complete):
-* *fsresizer* KPMCore >= 3.3
-* *partition* KPMCore >= 3.3
-* *users* LibPWQuality (optional)
+* *fsresizer* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3 (>= 4.1 recommended)
+* *partition* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3 (>= 4.1 recommended)
+* *users* [LibPWQuality](https://www.archlinux.org/packages/extra/x86_64/libpwquality/) (optional)
 
 ### Building (Vanilla)
 
