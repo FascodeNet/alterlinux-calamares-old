@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+cd $(readlink -f "${0%/*}")
+lrelease src/branding/alter/lang/calamares-alter_ja.ts
+qmlscene -I src/qml/ -geometry 600x400 -translation src/branding/alter/lang/calamares-alter_ja.qm src/branding/alter/show.qml
