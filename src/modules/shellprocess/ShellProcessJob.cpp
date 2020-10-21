@@ -34,6 +34,10 @@ ShellProcessJob::~ShellProcessJob() {}
 QString
 ShellProcessJob::prettyName() const
 {
+    if ( m_name )
+    {
+        return m_name->get();
+    }
     return tr( "Shell Processes Job" );
 }
 
@@ -56,10 +60,10 @@ void
 ShellProcessJob::setConfigurationMap( const QVariantMap& configurationMap )
 {
     bool dontChroot = CalamaresUtils::getBool( configurationMap, "dontChroot", false );
-    qint64 timeout = CalamaresUtils::getInteger( configurationMap, "timeout", 10 );
+    qint64 timeout = CalamaresUtils::getInteger( configurationMap, "timeout", 30 );
     if ( timeout < 1 )
     {
-        timeout = 10;
+        timeout = 30;
     }
 
     if ( configurationMap.contains( "script" ) )
@@ -74,6 +78,16 @@ ShellProcessJob::setConfigurationMap( const QVariantMap& configurationMap )
     else
     {
         cWarning() << "No script given for ShellProcessJob" << moduleInstanceKey();
+    }
+
+    bool labels_ok = false;
+    auto labels = CalamaresUtils::getSubMap( configurationMap, "i18n", labels_ok );
+    if ( labels_ok )
+    {
+        if ( labels.contains( "name" ) )
+        {
+            m_name = std::make_unique< CalamaresUtils::Locale::TranslatedString >( labels, "name" );
+        }
     }
 }
 

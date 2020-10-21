@@ -84,8 +84,12 @@ ReplaceWidget::applyChanges()
         {
             Device* dev = model->device();
 
-            PartitionActions::doReplacePartition(
-                m_core, dev, partition, { gs->value( "defaultFileSystemType" ).toString(), QString() } );
+            PartitionActions::doReplacePartition( m_core,
+                                                  dev,
+                                                  partition,
+                                                  { gs->value( "defaultPartitionTableType" ).toString(),
+                                                    gs->value( "defaultFileSystemType" ).toString(),
+                                                    QString() } );
 
             if ( m_isEfi )
             {
@@ -177,7 +181,7 @@ ReplaceWidget::onPartitionSelected()
 
         QString fsNameForUser = userVisibleFS( partition->fileSystem() );
         QString prettyName = tr( "Data partition (%1)" ).arg( fsNameForUser );
-        for ( const QString& line : osproberLines )
+        for ( const auto& line : osproberLines )
         {
             QStringList lineColumns = line.split( ':' );
 

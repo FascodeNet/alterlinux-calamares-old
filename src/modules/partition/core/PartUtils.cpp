@@ -11,8 +11,6 @@
 
 #include "PartUtils.h"
 
-#include "PartitionCoreModule.h"
-
 #include "core/DeviceModel.h"
 #include "core/KPMHelpers.h"
 #include "core/PartitionInfo.h"
@@ -198,13 +196,12 @@ canBeResized( Partition* candidate )
 
 
 bool
-canBeResized( PartitionCoreModule* core, const QString& partitionPath )
+canBeResized( DeviceModel* dm, const QString& partitionPath )
 {
     cDebug() << "Checking if" << partitionPath << "can be resized.";
     QString partitionWithOs = partitionPath;
     if ( partitionWithOs.startsWith( "/dev/" ) )
     {
-        DeviceModel* dm = core->deviceModel();
         for ( int i = 0; i < dm->rowCount(); ++i )
         {
             Device* dev = dm->deviceForIndex( dm->index( i ) );
@@ -358,7 +355,7 @@ findPartitionPathForMountPoint( const FstabEntryList& fstab, const QString& moun
 
 
 OsproberEntryList
-runOsprober( PartitionCoreModule* core )
+runOsprober( DeviceModel* dm )
 {
     QString osproberOutput;
     QProcess osprober;
@@ -396,17 +393,25 @@ runOsprober( PartitionCoreModule* core )
                 prettyName = lineColumns.value( 2 ).simplified();
             }
 
-            QString path = lineColumns.value( 0 ).simplified();
+            QString file, path = lineColumns.value( 0 ).simplified();
             if ( !path.startsWith( "/dev/" ) )  //basic sanity check
             {
                 continue;
+            }
+
+            // strip extra file after device: /dev/name@/path/to/file
+            int index = path.indexOf( '@' );
+            if ( index != -1 )
+            {
+                file = path.right( path.length() - index - 1 );
+                path = path.left( index );
             }
 
             FstabEntryList fstabEntries = lookForFstabEntries( path );
             QString homePath = findPartitionPathForMountPoint( fstabEntries, "/home" );
 
             osproberEntries.append(
-                { prettyName, path, QString(), canBeResized( core, path ), lineColumns, fstabEntries, homePath } );
+                { prettyName, path, file, QString(), canBeResized( dm, path ), lineColumns, fstabEntries, homePath } );
             osproberCleanLines.append( line );
         }
     }

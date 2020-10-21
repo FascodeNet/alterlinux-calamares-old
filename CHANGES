@@ -7,6 +7,76 @@ contributors are listed. Note that Calamares does not have a historical
 changelog -- this log starts with version 3.2.0. The release notes on the
 website will have to do for older versions.
 
+# 3.2.32.1 (2020-10-17) #
+
+This is a release to address source-incompatible changes in KPMcore 4.2.0,
+which was released just before Calamares 3.2.32 and had not yet been
+compile-tested. There is also one changed message in the translations,
+reported by Yuri Chornoivan.
+
+
+# 3.2.32 (2020-10-16) #
+
+This release contains contributions from (alphabetically by first name):
+ - Fabian Tomat
+ - Gaël PORTAY
+
+## Core ##
+ - When doing GeoIP lookups, Calamares pretends to be Firefox.
+   This resolves an issue where the GeoIP provider was refusing
+   QNAM connections with the default User-Agent.
+ - New translation available, Friulian. Welcome!
+
+## Modules ##
+ - The *netinstall* module has some tricky configuration files;
+   it now complains about more cases of bad syntax or poor structure.
+ - The *partition* module can now be constrained to work only with
+   a particular kind of partition table. (thanks Gaël)
+ - The *partition* module is a little more resilient to variations
+   in btrfs notation from os-prober.
+ - The *shellprocess* module now supports having a different progress
+   message (other than "Shell Processes Job") through the config file.
+
+
+ # 3.2.31 (2020-10-06) #
+
+This release contains contributions from (alphabetically by first name):
+ - Corentin Noël
+ - kadler15 (new contributor! hi!)
+
+## Core ##
+ - At the start of the *exec* phase, an overview is given of the
+   various job weights, which allows you to tweak the overall
+   progress reporting during the installation.
+ - Problems with running Calamares on a 1-core single CPU have been resolved.
+
+## Modules ##
+ - The *keyboard* module now recognizes Turkish "F" layout and
+   will set the vconsole keyboard layout correctly even if xkb
+   keymaps are not found.
+ - The *machineid* module, which generates UUIDs for systemd and dbus
+   and can generate entropy files (filled from `/dev/urandom` in the host
+   system) now supports more than one entropy file; generate them as needed
+   (or copy a fixed value to all, depending on *entropy-copy*). Deprecate
+   *entropy* (which generates a specific output file) as too inflexible.
+ - In the *partition* module, swap can now be chosen as *file*, which is
+   **not** create a swap partition, but write a `/swapfile` in the root
+   directory, 512MiB large, and set that as swap. There is as yet no
+   "smarts" about the size of the swap file.
+ - Multiple problems in the *partition* module around partition
+   sizing have been resolved by Corentin Noël.
+ - The *preservefiles* module documentation did not match the functionality,
+   and when used, didn't work right. #1521 (thanks kadler15)
+ - Progress reporting from the *unpackfs* module has been revamped:
+   it reports more often now, so that it is more obvious that files
+   are being transferred even when the percentage progress does not
+   change.
+ - The *unpackfs* module now supports a *weight* setting for each
+   of the unpack entries. For a single entry this does not matter,
+   but if there are multiple entries it allows tweaking the relative
+   progress between each entry.
+
+
 # 3.2.30 (2020-09-03) #
 
 This release contains contributions from (alphabetically by first name):
