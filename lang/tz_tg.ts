@@ -1762,7 +1762,7 @@
         <location filename="../src/libcalamares/locale/ZoneData_p.cxxtr" line="332"/>
         <source>New York</source>
         <comment>tz_names</comment>
-        <translation>Штати Ню-Йорк</translation>
+        <translation>Ню-Йорк</translation>
     </message>
     <message>
         <location filename="../src/libcalamares/locale/ZoneData_p.cxxtr" line="333"/>
@@ -2344,7 +2344,7 @@
         <location filename="../src/libcalamares/locale/ZoneData_p.cxxtr" line="429"/>
         <source>Tashkent</source>
         <comment>tz_names</comment>
-        <translation>Тошкент</translation>
+        <translation>Тошканд</translation>
     </message>
     <message>
         <location filename="../src/libcalamares/locale/ZoneData_p.cxxtr" line="430"/>

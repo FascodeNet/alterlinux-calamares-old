@@ -21,16 +21,16 @@
 #include <QVariantMap>
 
 #ifdef WEBVIEW_WITH_WEBKIT
-#  define C_QWEBVIEW QWebView
+#define C_QWEBVIEW QWebView
 #endif
 #ifdef WEBVIEW_WITH_WEBENGINE
-#  ifdef C_QWEBVIEW
-#    error Both WEBENGINE and WEBKIT enabled
-#  endif
-#  define C_QWEBVIEW QWebEngineView
+#ifdef C_QWEBVIEW
+#error Both WEBENGINE and WEBKIT enabled
+#endif
+#define C_QWEBVIEW QWebEngineView
 #endif
 #ifndef C_QWEBVIEW
-#  error Neither WEBENGINE nor WEBKIT enabled
+#error Neither WEBENGINE nor WEBKIT enabled
 #endif
 
 class C_QWEBVIEW;
@@ -41,7 +41,7 @@ class PLUGINDLLEXPORT WebViewStep : public Calamares::ViewStep
 
 public:
     explicit WebViewStep( QObject* parent = nullptr );
-    virtual ~WebViewStep() override;
+    ~WebViewStep() override;
 
     QString prettyName() const override;
 
