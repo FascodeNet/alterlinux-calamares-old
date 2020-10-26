@@ -1,4 +1,8 @@
-### Calamares: Distribution-Independent Installer Framework
+<!-- SPDX-FileCopyrightText: no
+     SPDX-License-Identifier: CC0-1.0
+-->
+
+# Calamares: Distribution-Independent Installer Framework
 ---------
 
 [![GitHub release](https://img.shields.io/github/v/release/sereneteam/alterlinux-calamares?color=%234169e1&include_prereleases&style=flat-square)](https://github.com/sereneteam/alterlinux-calamares/releases)
@@ -25,13 +29,37 @@ Main:
 Modules:
 * Individual modules may have their own requirements;
   these are listed in CMake output. Particular requirements (not complete):
-* *fsresizer* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3
-* *partition* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3
-* *users* [LibPWQuality](https://www.archlinux.org/packages/extra/x86_64/libpwquality/)
+* *fsresizer* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3 (>= 4.1 recommended)
+* *partition* [KPMCore](https://www.archlinux.org/packages/community/x86_64/kpmcore/) >= 3.3 (>= 4.1 recommended)
+* *users* [LibPWQuality](https://www.archlinux.org/packages/extra/x86_64/libpwquality/) (optional)
 
 ### Building (Vanilla)
 
-See [wiki](https://github.com/calamares/calamares/wiki) for up to date
-[building](https://github.com/calamares/calamares/wiki/Develop-Guide)
-and [deployment](https://github.com/calamares/calamares/wiki/Deploy-Guide)
-instructions.
+Clone Calamares from GitHub. The default branch is called *calamares*.
+
+```
+git clone https://github.com/calamares/calamares.git
+```
+
+Calamares is a KDE-Frameworks and Qt-based, C++14, CMake-built application.
+The dependencies are explainged in [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Contributing to Calamares
+
+Calamares welcomes PRs. New issues are welcome, too.
+There are both the Calamares **core** repository (this one),
+and an *extensions** repository ([Calamares extensions](https://github.com/calamares/calamares-extensions).
+
+Contributions to code, modules, documentation, the wiki and the website are all welcome.
+There is more information in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+
+## Join the Conversation
+
+GitHub Issues are **one** place for discussing Calamares if there are concrete
+problems or a new feature to discuss.
+
+Regular Calamares development chit-chat happens on old-school IRC
+(no registration required). Responsiveness is best during the day
+in Europe, but feel free to idle.
+
+[![Visit our IRC channel](https://kiwiirc.com/buttons/webchat.freenode.net/calamares.png)](https://webchat.freenode.net/?channel=#calamares?nick=guest|)

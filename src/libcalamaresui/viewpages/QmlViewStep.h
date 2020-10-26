@@ -1,19 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef QMLVIEWSTEP_H
@@ -35,6 +26,15 @@ namespace Calamares
  * This is generally a **base** class for other view steps, but
  * it can be used stand-alone for viewsteps that don't really have
  * any functionality.
+ *
+ * Most subclasses will override the following methods:
+ * - prettyName() to provide a meaningful human-readable name
+ * - jobs() if there is real work to be done during installation
+ * - getConfig() to return a meaningful configuration object
+ *
+ * For details on the interaction between the config object and
+ * the QML in the module, see the module documentation:
+ *      src/modules/README.md
  */
 class QmlViewStep : public Calamares::ViewStep
 {
@@ -50,11 +50,12 @@ public:
      * @see Qml.h for available Calamares internals.
      */
     QmlViewStep( QObject* parent = nullptr );
-    virtual ~QmlViewStep() override;
+    ~QmlViewStep() override;
 
     virtual QString prettyName() const override;
 
     virtual QWidget* widget() override;
+    virtual QSize widgetMargins( Qt::Orientations panelSides ) override;
 
     virtual bool isNextEnabled() const override;
     virtual bool isBackEnabled() const override;

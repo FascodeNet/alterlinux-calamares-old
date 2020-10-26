@@ -1,21 +1,12 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2015, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2018, Adriaan de Groot <groot@kde.org>
- *   Copyright 2019, Kevin Kofler <kevin.kofler@chello.at>
+ *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019 Kevin Kofler <kevin.kofler@chello.at>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "ClearMountsJob.h"
@@ -25,6 +16,7 @@
 #include "partition/PartitionIterator.h"
 #include "partition/Sync.h"
 #include "utils/Logger.h"
+#include "utils/String.h"
 
 // KPMcore
 #include <kpmcore/core/device.h>
@@ -73,7 +65,7 @@ getPartitionsForDevice( const QString& deviceName )
         {
             // The fourth column (index from 0, so index 3) is the name of the device;
             // keep it if it is followed by something.
-            QStringList columns = in.readLine().split( ' ', QString::SkipEmptyParts );
+            QStringList columns = in.readLine().split( ' ', SplitSkipEmptyParts );
             if ( ( columns.count() >= 4 ) && ( columns[ 3 ].startsWith( deviceName ) )
                  && ( columns[ 3 ] != deviceName ) )
             {

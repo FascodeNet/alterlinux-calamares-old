@@ -1,20 +1,11 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2019-2020, Adriaan de Groot <groot@kde.org>
- *   Copyright 2020, Camilo Higuita <milo.h@aol.com> *
+ *   SPDX-FileCopyrightText: 2019-2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2020 Camilo Higuita <milo.h@aol.com> *
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Config.h"
@@ -26,6 +17,7 @@
 #include "JobQueue.h"
 #include "utils/Logger.h"
 #include "utils/Retranslator.h"
+#include "utils/String.h"
 
 #include <QApplication>
 #include <QProcess>
@@ -287,7 +279,7 @@ Config::init()
 
     if ( process.waitForFinished() )
     {
-        const QStringList list = QString( process.readAll() ).split( "\n", QString::SkipEmptyParts );
+        const QStringList list = QString( process.readAll() ).split( "\n", SplitSkipEmptyParts );
 
         for ( QString line : list )
         {
@@ -300,7 +292,7 @@ Config::init()
             line = line.remove( "}" ).remove( "{" ).remove( ";" );
             line = line.mid( line.indexOf( "\"" ) + 1 );
 
-            QStringList split = line.split( "+", QString::SkipEmptyParts );
+            QStringList split = line.split( "+", SplitSkipEmptyParts );
             if ( split.size() >= 2 )
             {
                 currentLayout = split.at( 1 );
@@ -456,7 +448,7 @@ Config::onActivate()
         { "ar_YE", arabic },
         { "ca_ES", "cat_ES" }, /* Catalan */
         { "as_ES", "ast_ES" }, /* Asturian */
-        { "en_CA", "eng_CA" }, /* Canadian English */
+        { "en_CA", "us" }, /* Canadian English */
         { "el_CY", "gr" }, /* Greek in Cyprus */
         { "el_GR", "gr" }, /* Greek in Greeze */
         { "ig_NG", "igbo_NG" }, /* Igbo in Nigeria */
@@ -496,7 +488,7 @@ Config::onActivate()
     }
     if ( !lang.isEmpty() )
     {
-        const auto langParts = lang.split( '_', QString::SkipEmptyParts );
+        const auto langParts = lang.split( '_', SplitSkipEmptyParts );
 
         // Note that this his string is not fit for display purposes!
         // It doesn't come from QLocale::nativeCountryName.

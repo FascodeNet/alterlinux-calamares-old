@@ -1,21 +1,12 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2017, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2019, Adriaan de Groot <groot@kde.org>
- *   Copyright 2019, Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-FileCopyrightText: 2014-2017 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2019 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019 Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PartitionActions.h"
@@ -44,9 +35,9 @@ using CalamaresUtils::operator""_GiB;
 using CalamaresUtils::operator""_MiB;
 
 qint64
-swapSuggestion( const qint64 availableSpaceB, Choices::SwapChoice swap )
+swapSuggestion( const qint64 availableSpaceB, Config::SwapChoice swap )
 {
-    if ( ( swap != Choices::SmallSwap ) && ( swap != Choices::FullSwap ) )
+    if ( ( swap != Config::SwapChoice::SmallSwap ) && ( swap != Config::SwapChoice::FullSwap ) )
     {
         return 0;
     }
@@ -57,7 +48,7 @@ swapSuggestion( const qint64 availableSpaceB, Choices::SwapChoice swap )
     qint64 availableRamB = memory.first;
     qreal overestimationFactor = memory.second;
 
-    bool ensureSuspendToDisk = swap == Choices::FullSwap;
+    bool ensureSuspendToDisk = swap == Config::SwapChoice::FullSwap;
 
     // Ramp up quickly to 8GiB, then follow memory size
     if ( availableRamB <= 4_GiB )
@@ -98,11 +89,6 @@ void
 doAutopartition( PartitionCoreModule* core, Device* dev, Choices::AutoPartitionOptions o )
 {
     Calamares::GlobalStorage* gs = Calamares::JobQueue::instance()->globalStorage();
-    QString defaultFsType = o.defaultFsType;
-    if ( FileSystem::typeForName( defaultFsType ) == FileSystem::Unknown )
-    {
-        defaultFsType = "ext4";
-    }
 
     bool isEfi = PartUtils::isEfiSystem();
 
@@ -132,6 +118,14 @@ doAutopartition( PartitionCoreModule* core, Device* dev, Choices::AutoPartitionO
     // before that one, numbered 0..2047).
     qint64 firstFreeSector = CalamaresUtils::bytesToSectors( empty_space_sizeB, dev->logicalSize() );
 
+    PartitionTable::TableType partType = PartitionTable::nameToTableType( o.defaultPartitionTableType );
+    if ( partType == PartitionTable::unknownTableType )
+    {
+        partType = isEfi ? PartitionTable::gpt : PartitionTable::msdos;
+    }
+
+    core->createPartitionTable( dev, partType );
+
     if ( isEfi )
     {
         qint64 efiSectorCount = CalamaresUtils::bytesToSectors( uefisys_part_sizeB, dev->logicalSize() );
@@ -141,7 +135,6 @@ doAutopartition( PartitionCoreModule* core, Device* dev, Choices::AutoPartitionO
         // at firstFreeSector, we need efiSectorCount sectors, numbered
         // firstFreeSector..firstFreeSector+efiSectorCount-1.
         qint64 lastSector = firstFreeSector + efiSectorCount - 1;
-        core->createPartitionTable( dev, PartitionTable::gpt );
         Partition* efiPartition = KPMHelpers::createNewPartition( dev->partitionTable(),
                                                                   *dev,
                                                                   PartitionRole( PartitionRole::Primary ),
@@ -158,12 +151,9 @@ doAutopartition( PartitionCoreModule* core, Device* dev, Choices::AutoPartitionO
         core->createPartition( dev, efiPartition, KPM_PARTITION_FLAG_ESP );
         firstFreeSector = lastSector + 1;
     }
-    else
-    {
-        core->createPartitionTable( dev, PartitionTable::msdos );
-    }
 
-    const bool mayCreateSwap = ( o.swap == Choices::SmallSwap ) || ( o.swap == Choices::FullSwap );
+    const bool mayCreateSwap
+        = ( o.swap == Config::SwapChoice::SmallSwap ) || ( o.swap == Config::SwapChoice::FullSwap );
     bool shouldCreateSwap = false;
     qint64 suggestedSwapSizeB = 0;
 
@@ -227,12 +217,6 @@ doReplacePartition( PartitionCoreModule* core, Device* dev, Partition* partition
 
     cDebug() << "doReplacePartition for device" << partition->partitionPath();
 
-    QString defaultFsType = o.defaultFsType;
-    if ( FileSystem::typeForName( defaultFsType ) == FileSystem::Unknown )
-    {
-        defaultFsType = "ext4";
-    }
-
     PartitionRole newRoles( partition->roles() );
     if ( partition->roles().has( PartitionRole::Extended ) )
     {
@@ -265,34 +249,5 @@ doReplacePartition( PartitionCoreModule* core, Device* dev, Partition* partition
 
     core->dumpQueue();
 }
-
-namespace Choices
-{
-static const NamedEnumTable< SwapChoice >&
-nameTable()
-{
-    static const NamedEnumTable< SwapChoice > names { { QStringLiteral( "none" ), SwapChoice::NoSwap },
-                                                      { QStringLiteral( "small" ), SwapChoice::SmallSwap },
-                                                      { QStringLiteral( "suspend" ), SwapChoice::FullSwap },
-                                                      { QStringLiteral( "reuse" ), SwapChoice::ReuseSwap },
-                                                      { QStringLiteral( "file" ), SwapChoice::SwapFile } };
-
-    return names;
-}
-
-SwapChoice
-nameToChoice( QString name, bool& ok )
-{
-    return nameTable().find( name, ok );
-}
-
-QString
-choiceToName( SwapChoice c )
-{
-    bool ok = false;
-    return nameTable().find( c, ok );
-}
-
-}  // namespace Choices
 
 }  // namespace PartitionActions

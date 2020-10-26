@@ -1,19 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "QmlViewStep.h"
@@ -58,7 +49,7 @@ changeQMLState( QMLAction action, QQuickItem* item )
     static const char propertyName[] = "activatedInCalamares";
 
     bool activate = action == QMLAction::Start;
-    CalamaresUtils::callQMLFunction( item, activate ? "onActivate" : "onLeave" );
+    CalamaresUtils::callQmlFunction( item, activate ? "onActivate" : "onLeave" );
 
     auto property = item->property( propertyName );
     if ( property.isValid() && ( property.type() == QVariant::Bool ) && ( property.toBool() != activate ) )
@@ -76,7 +67,7 @@ QmlViewStep::QmlViewStep( QObject* parent )
     , m_spinner( new WaitingWidget( tr( "Loading ..." ) ) )
     , m_qmlWidget( new QQuickWidget )
 {
-    CalamaresUtils::registerCalamaresModels();
+    CalamaresUtils::registerQmlModels();
 
     QVBoxLayout* layout = new QVBoxLayout( m_widget );
     layout->addWidget( m_spinner );
@@ -88,7 +79,7 @@ QmlViewStep::QmlViewStep( QObject* parent )
     // QML Loading starts when the configuration for the module is set.
 }
 
-QmlViewStep::~QmlViewStep() { }
+QmlViewStep::~QmlViewStep() {}
 
 QString
 QmlViewStep::prettyName() const
@@ -149,6 +140,22 @@ QWidget*
 QmlViewStep::widget()
 {
     return m_widget;
+}
+
+QSize
+QmlViewStep::widgetMargins( Qt::Orientations panelSides )
+{
+    // If any panels around it, use the standard, but if all the
+    // panels are hidden, like on full-screen with subsumed navigation,
+    // then no margins.
+    if ( panelSides )
+    {
+        return ViewStep::widgetMargins( panelSides );
+    }
+    else
+    {
+        return QSize( 0, 0 );
+    }
 }
 
 void

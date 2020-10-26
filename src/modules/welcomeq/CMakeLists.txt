@@ -1,5 +1,16 @@
+# === This file is part of Calamares - <https://calamares.io> ===
+#
+#   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
+#   SPDX-License-Identifier: BSD-2-Clause
+#
+
 # This is a re-write of the welcome module using QML view steps
 # instead of widgets.
+
+if( NOT WITH_QML )
+    calamares_skip_module( "welcomeq (QML is not supported in this build)" )
+    return()
+endif()
 
 set( _welcome ${CMAKE_CURRENT_SOURCE_DIR}/../welcome )
 

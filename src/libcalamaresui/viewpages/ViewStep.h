@@ -1,20 +1,11 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2015, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017, 2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef VIEWSTEP_H
@@ -50,28 +41,62 @@ class UIDLLEXPORT ViewStep : public QObject
     Q_OBJECT
 public:
     explicit ViewStep( QObject* parent = nullptr );
-    virtual ~ViewStep() override;
+    ~ViewStep() override;
 
+    /** @brief Human-readable name of the step
+     *
+     * This (translated) string is shown in the sidebar (progress)
+     * and during installation. There is no default.
+     */
     virtual QString prettyName() const = 0;
 
-    /**
+    /** @brief Describe what this step will do during install
+     *
      * Optional. May return a non-empty string describing what this
      * step is going to do (should be translated). This is also used
      * in the summary page to describe what is going to be done.
      * Return an empty string to provide no description.
+     *
+     * The default implementation returns an empty string, so nothing
+     * will be displayed for this step when a summary is shown.
      */
     virtual QString prettyStatus() const;
 
-    /**
+    /** @brief Return a long description what this step will do during install
+     *
      * Optional. May return a widget which will be inserted in the summary
      * page. The caller takes ownership of the widget. Return nullptr to
      * provide no widget. In general, this is only used for complicated
      * steps where prettyStatus() is not sufficient.
+     *
+     * The default implementation returns nullptr, so nothing
+     * will be displayed for this step when a summary is shown.
      */
     virtual QWidget* createSummaryWidget() const;
 
-    //TODO: we might want to make this a QSharedPointer
+    /** @brief Get (or create) the widget for this view step
+     *
+     * While a view step **may** create the widget when it is loaded,
+     * it is recommended to wait with widget creation until the
+     * widget is actually asked for: a view step **may** be used
+     * without a UI.
+     */
     virtual QWidget* widget() = 0;
+
+    /** @brief Get margins for this widget
+     *
+     * This is called by the layout manager to find the desired
+     * margins (width is used for left and right margin, height is
+     * used for top and bottom margins) for the widget. The
+     * @p panelSides indicates where there are panels in the overall
+     * layout: horizontally and / or vertically adjacent (or none!)
+     * to the view step's widget.
+     *
+     * Should return a size based also on QStyle metrics for layout.
+     * The default implementation just returns the default layout metrics
+     * (often 11 pixels on a side).
+     */
+    virtual QSize widgetMargins( Qt::Orientations panelSides );
 
     /**
      * @brief Multi-page support, go next

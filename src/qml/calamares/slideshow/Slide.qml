@@ -1,7 +1,7 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   SPDX-License-Identifier: LGPL-2.1
- *   License-Filename: LICENSES/LGPLv2.1-Presentation
+ *   SPDX-FileCopyrightText: 2012 Digia Plc and/or its subsidiary(-ies).
+ *   SPDX-License-Identifier: LGPL-2.1-only
  */
 
 /****************************************************************************

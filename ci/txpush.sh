@@ -1,11 +1,11 @@
 #!/bin/sh
 
 ### LICENSE
-# === This file is part of Calamares - <https://github.com/calamares> ===
+# === This file is part of Calamares - <https://calamares.io> ===
 #
-#   SPDX-License-Identifier: BSD-2-Clause
-#   SPDX-FileCopyrightText: 2017-2020 Adriaan de Groot <groot@kde.org>
 #   SPDX-FileCopyrightText: 2015-2016 Teo Mrnjavac <teo@kde.org>
+#   SPDX-FileCopyrightText: 2017-2020 Adriaan de Groot <groot@kde.org>
+#   SPDX-License-Identifier: BSD-2-Clause
 #
 #   This file is Free Software: you can redistribute it and/or modify
 #   it under the terms of the 2-clause BSD License.
@@ -29,20 +29,15 @@
 #
 ### END USAGE
 
-### INITIAL SETUP
+### SANITY CHECKING
 #
-# This stuff needs to be done once; in a real CI environment where it
-# runs regularly in a container, the setup needs to be done when
-# creating the container.
+# The script needs a .tx/config to talk to the Transifex server;
+# it also checks that it is run from the top-level of a Calamares
+# checkout. In order to use the system overall, you'll also need:
+#  - ~/.gitconfig (For the git commits this does)
+#  - ~/.transifexrc (Password token for Transifex)
+#  - ~/.ssh (For git commits)
 #
-#
-# cp ~/jenkins-master/.transifexrc ~  # Transifex user settings
-# cp ~/jenkins-master/.gitconfig ~    # Git config, user settings
-# cp -R ~/jenkins-master/.ssh ~       # SSH, presumably for github
-#
-# cd "$WORKSPACE"
-# git config --global http.sslVerify false
-
 test -f "CMakeLists.txt" || { echo "! Not at Calamares top-level" ; exit 1 ; }
 test -f ".tx/config" || { echo "! Not at Calamares top-level" ; exit 1 ; }
 test -f "calamares.desktop" || { echo "! Not at Calamares top-level" ; exit 1 ; }
@@ -106,7 +101,7 @@ if test -n "$XMLLINT" ; then
 	$XMLLINT --c14n11 "$TS_FILE" | { echo "<!DOCTYPE TS>" ; cat - ; } | $XMLLINT --format --encode utf-8 -o "$TS_FILE".new - && mv "$TS_FILE".new "$TS_FILE"
 fi
 
-tx push --source --no-interactive -r calamares.calamares-master
+tx push --source --no-interactive -r calamares.calamares
 tx push --source --no-interactive -r calamares.fdo
 
 

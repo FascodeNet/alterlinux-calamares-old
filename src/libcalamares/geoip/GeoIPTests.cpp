@@ -1,23 +1,15 @@
-/* === This file is part of Calamares - <http://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2018, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GeoIPTests.h"
 
+#include "GeoIPFixed.h"
 #include "GeoIPJSON.h"
 #ifdef QT_XML_LIB
 #include "GeoIPXML.h"
@@ -239,4 +231,36 @@ GeoIPTests::testGet()
     CHECK_GET( XML, QString(), "http://geoip.ubuntu.com/lookup" )  // Ubiquity's XML format
     CHECK_GET( XML, QString(), "https://geoip.kde.org/v1/ubiquity" )  // Temporary KDE service
 #endif
+}
+
+void
+GeoIPTests::testFixed()
+{
+    {
+        GeoIPFixed f;
+        auto tz = f.processReply( QByteArray() );
+        QCOMPARE( tz.first, QStringLiteral( "Europe" ) );
+        QCOMPARE( tz.second, QStringLiteral( "Amsterdam" ) );
+
+        QCOMPARE( f.processReply( xml_data_ubiquity ), tz );
+        QCOMPARE( f.processReply( QByteArray( "derp" ) ), tz );
+    }
+    {
+        GeoIPFixed f( QStringLiteral( "America/Vancouver" ) );
+        auto tz = f.processReply( QByteArray() );
+        QCOMPARE( tz.first, QStringLiteral( "America" ) );
+        QCOMPARE( tz.second, QStringLiteral( "Vancouver" ) );
+
+        QCOMPARE( f.processReply( xml_data_ubiquity ), tz );
+        QCOMPARE( f.processReply( QByteArray( "derp" ) ), tz );
+    }
+    {
+        GeoIPFixed f( QStringLiteral( "America/North Dakota/Beulah" ) );
+        auto tz = f.processReply( QByteArray() );
+        QCOMPARE( tz.first, QStringLiteral( "America" ) );
+        QCOMPARE( tz.second, QStringLiteral( "North_Dakota/Beulah" ) );
+
+        QCOMPARE( f.processReply( xml_data_ubiquity ), tz );
+        QCOMPARE( f.processReply( QByteArray( "derp" ) ), tz );
+    }
 }

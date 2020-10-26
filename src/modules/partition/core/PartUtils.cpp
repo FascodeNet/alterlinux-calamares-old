@@ -1,26 +1,15 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2015-2016, Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2015-2016 Teo Mrnjavac <teo@kde.org>
  *   Copyright 2018-2019 Adriaan de Groot <groot@kde.org>
- *   Copyright 2019, Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-FileCopyrightText: 2019 Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "PartUtils.h"
-
-#include "PartitionCoreModule.h"
 
 #include "core/DeviceModel.h"
 #include "core/KPMHelpers.h"
@@ -207,13 +196,12 @@ canBeResized( Partition* candidate )
 
 
 bool
-canBeResized( PartitionCoreModule* core, const QString& partitionPath )
+canBeResized( DeviceModel* dm, const QString& partitionPath )
 {
     cDebug() << "Checking if" << partitionPath << "can be resized.";
     QString partitionWithOs = partitionPath;
     if ( partitionWithOs.startsWith( "/dev/" ) )
     {
-        DeviceModel* dm = core->deviceModel();
         for ( int i = 0; i < dm->rowCount(); ++i )
         {
             Device* dev = dm->deviceForIndex( dm->index( i ) );
@@ -367,7 +355,7 @@ findPartitionPathForMountPoint( const FstabEntryList& fstab, const QString& moun
 
 
 OsproberEntryList
-runOsprober( PartitionCoreModule* core )
+runOsprober( DeviceModel* dm )
 {
     QString osproberOutput;
     QProcess osprober;
@@ -405,17 +393,25 @@ runOsprober( PartitionCoreModule* core )
                 prettyName = lineColumns.value( 2 ).simplified();
             }
 
-            QString path = lineColumns.value( 0 ).simplified();
+            QString file, path = lineColumns.value( 0 ).simplified();
             if ( !path.startsWith( "/dev/" ) )  //basic sanity check
             {
                 continue;
+            }
+
+            // strip extra file after device: /dev/name@/path/to/file
+            int index = path.indexOf( '@' );
+            if ( index != -1 )
+            {
+                file = path.right( path.length() - index - 1 );
+                path = path.left( index );
             }
 
             FstabEntryList fstabEntries = lookForFstabEntries( path );
             QString homePath = findPartitionPathForMountPoint( fstabEntries, "/home" );
 
             osproberEntries.append(
-                { prettyName, path, QString(), canBeResized( core, path ), lineColumns, fstabEntries, homePath } );
+                { prettyName, path, file, QString(), canBeResized( dm, path ), lineColumns, fstabEntries, homePath } );
             osproberCleanLines.append( line );
         }
     }
@@ -459,7 +455,7 @@ isEfiBootable( const Partition* candidate )
     while ( root && !root->isRoot() )
     {
         root = root->parent();
-        cDebug() << Logger::SubEntry << "moved towards root" << (void*)root;
+        cDebug() << Logger::SubEntry << "moved towards root" << Logger::Pointer( root );
     }
 
     // Strange case: no root found, no partition table node?
@@ -469,7 +465,7 @@ isEfiBootable( const Partition* candidate )
     }
 
     const PartitionTable* table = dynamic_cast< const PartitionTable* >( root );
-    cDebug() << Logger::SubEntry << "partition table" << (void*)table << "type"
+    cDebug() << Logger::SubEntry << "partition table" << Logger::Pointer( table ) << "type"
              << ( table ? table->type() : PartitionTable::TableType::unknownTableType );
     return table && ( table->type() == PartitionTable::TableType::gpt ) && flags.testFlag( KPM_PARTITION_FLAG( Boot ) );
 }

@@ -1,28 +1,21 @@
-/* === This file is part of Calamares - <http://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2019, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Handler.h"
 
+#include "GeoIPFixed.h"
 #include "GeoIPJSON.h"
 #if defined( QT_XML_LIB )
 #include "GeoIPXML.h"
 #endif
 
+#include "Settings.h"
 #include "network/Manager.h"
 #include "utils/Logger.h"
 #include "utils/NamedEnum.h"
@@ -40,7 +33,8 @@ handlerTypes()
     static const NamedEnumTable<Type> names{
         { QStringLiteral( "none" ), Type::None },
         { QStringLiteral( "json" ), Type::JSON },
-        { QStringLiteral( "xml" ), Type::XML }
+        { QStringLiteral( "xml" ), Type::XML },
+        { QStringLiteral( "fixed" ), Type::Fixed }
     };
     // *INDENT-ON*
     // clang-format on
@@ -73,6 +67,11 @@ Handler::Handler( const QString& implementation, const QString& url, const QStri
     {
         cWarning() << "GeoIP style *none* does not do anything.";
     }
+    else if ( m_type == Type::Fixed && Calamares::Settings::instance()
+              && !Calamares::Settings::instance()->debugMode() )
+    {
+        cWarning() << "GeoIP style *fixed* is not recommended for production.";
+    }
 #if !defined( QT_XML_LIB )
     else if ( m_type == Type::XML )
     {
@@ -99,6 +98,8 @@ create_interface( Handler::Type t, const QString& selector )
 #else
         return nullptr;
 #endif
+    case Handler::Type::Fixed:
+        return std::make_unique< GeoIPFixed >( selector );
     }
     NOTREACHED return nullptr;
 }
@@ -112,7 +113,9 @@ do_query( Handler::Type type, const QString& url, const QString& selector )
         return RegionZonePair();
     }
 
-    return interface->processReply( CalamaresUtils::Network::Manager::instance().synchronousGet( url ) );
+    using namespace CalamaresUtils::Network;
+    return interface->processReply(
+        CalamaresUtils::Network::Manager::instance().synchronousGet( url, { RequestOptions::FakeUserAgent } ) );
 }
 
 static QString
@@ -124,7 +127,9 @@ do_raw_query( Handler::Type type, const QString& url, const QString& selector )
         return QString();
     }
 
-    return interface->rawReply( CalamaresUtils::Network::Manager::instance().synchronousGet( url ) );
+    using namespace CalamaresUtils::Network;
+    return interface->rawReply(
+        CalamaresUtils::Network::Manager::instance().synchronousGet( url, { RequestOptions::FakeUserAgent } ) );
 }
 
 RegionZonePair

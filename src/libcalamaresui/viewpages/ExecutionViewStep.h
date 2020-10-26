@@ -1,38 +1,29 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014, Aurélien Gâteau <agateau@kde.org>
- *   Copyright 2014-2015, Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2014 Aurélien Gâteau <agateau@kde.org>
+ *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef EXECUTIONVIEWSTEP_H
 #define EXECUTIONVIEWSTEP_H
 
 #include "ViewStep.h"
+#include "modulesystem/InstanceKey.h"
 
 #include <QStringList>
 
 class QLabel;
 class QObject;
 class QProgressBar;
-class QQmlComponent;
-class QQuickItem;
-class QQuickWidget;
 
 namespace Calamares
 {
+
+class Slideshow;
 
 class ExecutionViewStep : public ViewStep
 {
@@ -58,22 +49,16 @@ public:
 
     JobList jobs() const override;
 
-    void appendJobModuleInstanceKey( const QString& instanceKey );
-
-public slots:
-    void loadQmlV2Complete();
+    void appendJobModuleInstanceKey( const ModuleSystem::InstanceKey& instanceKey );
 
 private:
     QWidget* m_widget;
     QProgressBar* m_progressBar;
     QLabel* m_label;
-    QQuickWidget* m_qmlShow;
-    QQmlComponent* m_qmlComponent;
-    QQuickItem* m_qmlObject;  ///< The actual show
+    Slideshow* m_slideshow;
 
-    QStringList m_jobInstanceKeys;
+    QList< ModuleSystem::InstanceKey > m_jobInstanceKeys;
 
-    void loadQmlV2();  ///< Loads the slideshow QML (from branding) for API version 2
     void updateFromJobQueue( qreal percent, const QString& message );
 };
 

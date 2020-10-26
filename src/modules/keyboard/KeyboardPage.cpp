@@ -1,24 +1,16 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2016, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2018, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2007 Free Software Foundation, Inc.
+ *   SPDX-FileCopyrightText: 2014-2016 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
  *   Portions from the Manjaro Installation Framework
  *   by Roland Singer <roland@manjaro.org>
  *   Copyright (C) 2007 Free Software Foundation, Inc.
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "KeyboardPage.h"
@@ -32,6 +24,7 @@
 #include "JobQueue.h"
 #include "utils/Logger.h"
 #include "utils/Retranslator.h"
+#include "utils/String.h"
 
 #include <QComboBox>
 #include <QProcess>
@@ -42,7 +35,7 @@ class LayoutItem : public QListWidgetItem
 public:
     QString data;
 
-    virtual ~LayoutItem();
+    ~LayoutItem() override;
 };
 
 LayoutItem::~LayoutItem() {}
@@ -83,14 +76,12 @@ KeyboardPage::KeyboardPage( QWidget* parent )
     connect(
         ui->buttonRestore, &QPushButton::clicked, [this] { ui->comboBoxModel->setCurrentIndex( m_defaultIndex ); } );
 
-    connect( ui->comboBoxModel,
-             static_cast< void ( QComboBox::* )( const QString& ) >( &QComboBox::currentIndexChanged ),
-             [this]( const QString& text ) {
-                 QString model = m_models.value( text, "pc105" );
+    connect( ui->comboBoxModel, &QComboBox::currentTextChanged, [this]( const QString& text ) {
+        QString model = m_models.value( text, "pc105" );
 
-                 // Set Xorg keyboard model
-                 QProcess::execute( "setxkbmap", QStringList { "-model", model } );
-             } );
+        // Set Xorg keyboard model
+        QProcess::execute( "setxkbmap", QStringList { "-model", model } );
+    } );
 
     CALAMARES_RETRANSLATE( ui->retranslateUi( this ); )
 }
@@ -113,7 +104,7 @@ KeyboardPage::init()
 
     if ( process.waitForFinished() )
     {
-        const QStringList list = QString( process.readAll() ).split( "\n", QString::SkipEmptyParts );
+        const QStringList list = QString( process.readAll() ).split( "\n", SplitSkipEmptyParts );
 
         for ( QString line : list )
         {
@@ -126,7 +117,7 @@ KeyboardPage::init()
             line = line.remove( "}" ).remove( "{" ).remove( ";" );
             line = line.mid( line.indexOf( "\"" ) + 1 );
 
-            QStringList split = line.split( "+", QString::SkipEmptyParts );
+            QStringList split = line.split( "+", SplitSkipEmptyParts );
             if ( split.size() >= 2 )
             {
                 currentLayout = split.at( 1 );
@@ -324,7 +315,7 @@ KeyboardPage::onActivate()
         { "ar_YE", arabic },
         { "ca_ES", "cat_ES" }, /* Catalan */
         { "as_ES", "ast_ES" }, /* Asturian */
-        { "en_CA", "eng_CA" }, /* Canadian English */
+        { "en_CA", "us" }, /* Canadian English */
         { "el_CY", "gr" }, /* Greek in Cyprus */
         { "el_GR", "gr" }, /* Greek in Greeze */
         { "ig_NG", "igbo_NG" }, /* Igbo in Nigeria */
@@ -366,7 +357,7 @@ KeyboardPage::onActivate()
     }
     if ( !lang.isEmpty() )
     {
-        const auto langParts = lang.split( '_', QString::SkipEmptyParts );
+        const auto langParts = lang.split( '_', SplitSkipEmptyParts );
 
         // Note that this his string is not fit for display purposes!
         // It doesn't come from QLocale::nativeCountryName.

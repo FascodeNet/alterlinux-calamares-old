@@ -1,25 +1,17 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2013-2016, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2018, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2013-2016 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
  *   Originally from Tomahawk, portions:
- *   Copyright 2010-2011, Christian Muehlhaeuser <muesli@tomahawk-player.org>
- *   Copyright 2010-2011, Leo Franchi <lfranchi@kde.org>
- *   Copyright 2010-2012, Jeff Mitchell <jeff@tomahawk-player.org>
+ *   SPDX-FileCopyrightText: 2010-2011 Christian Muehlhaeuser <muesli@tomahawk-player.org>
+ *   SPDX-FileCopyrightText: 2010-2011 Leo Franchi <lfranchi@kde.org>
+ *   SPDX-FileCopyrightText: 2010-2012 Jeff Mitchell <jeff@tomahawk-player.org>
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "Dirs.h"
@@ -42,7 +34,6 @@ namespace CalamaresUtils
 {
 
 static QDir s_appDataDir( CMAKE_INSTALL_FULL_DATADIR );
-static QDir s_qmlModulesDir( QString( CMAKE_INSTALL_FULL_DATADIR ) + "/qml" );
 static bool s_isAppDataDirOverridden = false;
 
 static bool s_haveExtraDirs = false;
@@ -76,13 +67,6 @@ isWritableDir( const QDir& dir )
         return false;
     }
     return true;
-}
-
-
-QDir
-qmlModulesDir()
-{
-    return s_qmlModulesDir;
 }
 
 
@@ -198,13 +182,6 @@ appLogDir()
 
     cerr << "warning: Found no writable location for log dir, falling back to the temp dir\n";
     return QDir::temp();
-}
-
-
-void
-setQmlModulesDir( const QDir& dir )
-{
-    s_qmlModulesDir = dir;
 }
 
 }  // namespace CalamaresUtils

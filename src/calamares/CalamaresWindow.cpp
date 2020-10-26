@@ -1,27 +1,19 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2015, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2018, Adriaan de Groot <groot@kde.org>
- *   Copyright 2018, Raul Rodrigo Segura (raurodse)
- *   Copyright 2019, Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2018 Raul Rodrigo Segura (raurodse)
+ *   SPDX-FileCopyrightText: 2019 Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "CalamaresWindow.h"
 
 #include "Branding.h"
+#include "CalamaresConfig.h"
 #include "DebugWindow.h"
 #include "Settings.h"
 #include "ViewManager.h"
@@ -38,8 +30,10 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QLabel>
+#ifdef WITH_QML
 #include <QQuickItem>
 #include <QQuickWidget>
+#endif
 #include <QTreeView>
 
 static inline int
@@ -108,12 +102,12 @@ CalamaresWindow::getWidgetSidebar( QWidget* parent, int desiredWidth )
         sideLayout->addWidget( debugWindowBtn );
         debugWindowBtn->setFlat( true );
         debugWindowBtn->setCheckable( true );
-        connect( debugWindowBtn, &QPushButton::clicked, this, [ = ]( bool checked ) {
+        connect( debugWindowBtn, &QPushButton::clicked, this, [=]( bool checked ) {
             if ( checked )
             {
                 m_debugWindow = new Calamares::DebugWindow();
                 m_debugWindow->show();
-                connect( m_debugWindow.data(), &Calamares::DebugWindow::closed, this, [ = ]() {
+                connect( m_debugWindow.data(), &Calamares::DebugWindow::closed, this, [=]() {
                     m_debugWindow->deleteLater();
                     debugWindowBtn->setChecked( false );
                 } );
@@ -130,18 +124,6 @@ CalamaresWindow::getWidgetSidebar( QWidget* parent, int desiredWidth )
 
     CalamaresUtils::unmarginLayout( sideLayout );
     return sideBox;
-}
-
-QWidget*
-CalamaresWindow::getQmlSidebar( QWidget* parent, int )
-{
-    CalamaresUtils::registerCalamaresModels();
-    QQuickWidget* w = new QQuickWidget( parent );
-    w->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-    w->setResizeMode( QQuickWidget::SizeRootObjectToView );
-    w->setSource( QUrl(
-        CalamaresUtils::searchQmlFile( CalamaresUtils::QmlSearch::Both, QStringLiteral( "calamares-sidebar" ) ) ) );
-    return w;
 }
 
 /** @brief Get a button-sized icon. */
@@ -176,7 +158,7 @@ CalamaresWindow::getWidgetNavigation( QWidget* parent )
         connect( back, &QPushButton::clicked, m_viewManager, &Calamares::ViewManager::back );
         connect( m_viewManager, &Calamares::ViewManager::backEnabledChanged, back, &QPushButton::setEnabled );
         connect( m_viewManager, &Calamares::ViewManager::backLabelChanged, back, &QPushButton::setText );
-        connect( m_viewManager, &Calamares::ViewManager::backIconChanged, this, [ = ]( QString n ) {
+        connect( m_viewManager, &Calamares::ViewManager::backIconChanged, this, [=]( QString n ) {
             setButtonIcon( back, n );
         } );
         bottomLayout->addWidget( back );
@@ -188,7 +170,7 @@ CalamaresWindow::getWidgetNavigation( QWidget* parent )
         connect( next, &QPushButton::clicked, m_viewManager, &Calamares::ViewManager::next );
         connect( m_viewManager, &Calamares::ViewManager::nextEnabledChanged, next, &QPushButton::setEnabled );
         connect( m_viewManager, &Calamares::ViewManager::nextLabelChanged, next, &QPushButton::setText );
-        connect( m_viewManager, &Calamares::ViewManager::nextIconChanged, this, [ = ]( QString n ) {
+        connect( m_viewManager, &Calamares::ViewManager::nextIconChanged, this, [=]( QString n ) {
             setButtonIcon( next, n );
         } );
         bottomLayout->addWidget( next );
@@ -200,7 +182,7 @@ CalamaresWindow::getWidgetNavigation( QWidget* parent )
         connect( quit, &QPushButton::clicked, m_viewManager, &Calamares::ViewManager::quit );
         connect( m_viewManager, &Calamares::ViewManager::quitEnabledChanged, quit, &QPushButton::setEnabled );
         connect( m_viewManager, &Calamares::ViewManager::quitLabelChanged, quit, &QPushButton::setText );
-        connect( m_viewManager, &Calamares::ViewManager::quitIconChanged, this, [ = ]( QString n ) {
+        connect( m_viewManager, &Calamares::ViewManager::quitIconChanged, this, [=]( QString n ) {
             setButtonIcon( quit, n );
         } );
         connect( m_viewManager, &Calamares::ViewManager::quitTooltipChanged, quit, &QPushButton::setToolTip );
@@ -213,10 +195,23 @@ CalamaresWindow::getWidgetNavigation( QWidget* parent )
     return navigation;
 }
 
+#ifdef WITH_QML
+QWidget*
+CalamaresWindow::getQmlSidebar( QWidget* parent, int )
+{
+    CalamaresUtils::registerQmlModels();
+    QQuickWidget* w = new QQuickWidget( parent );
+    w->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+    w->setResizeMode( QQuickWidget::SizeRootObjectToView );
+    w->setSource( QUrl(
+        CalamaresUtils::searchQmlFile( CalamaresUtils::QmlSearch::Both, QStringLiteral( "calamares-sidebar" ) ) ) );
+    return w;
+}
+
 QWidget*
 CalamaresWindow::getQmlNavigation( QWidget* parent )
 {
-    CalamaresUtils::registerCalamaresModels();
+    CalamaresUtils::registerQmlModels();
     QQuickWidget* w = new QQuickWidget( parent );
     w->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     w->setResizeMode( QQuickWidget::SizeRootObjectToView );
@@ -231,6 +226,21 @@ CalamaresWindow::getQmlNavigation( QWidget* parent )
 
     return w;
 }
+#else
+// Bogus to keep the linker happy
+QWidget*
+CalamaresWindow::getQmlSidebar( QWidget*, int )
+{
+    return nullptr;
+}
+QWidget*
+CalamaresWindow::getQmlNavigation( QWidget* )
+{
+    return nullptr;
+}
+
+
+#endif
 
 /**@brief Picks one of two methods to call
  *
@@ -243,16 +253,21 @@ flavoredWidget( Calamares::Branding::PanelFlavor flavor,
                 CalamaresWindow* w,
                 QWidget* parent,
                 widgetMaker widget,
-                widgetMaker qml,
+                widgetMaker qml,  // Only if WITH_QML is on
                 args... a )
 {
+#ifndef WITH_QML
+    Q_UNUSED( qml )
+#endif
     // Member-function calling syntax is (object.*member)(args)
     switch ( flavor )
     {
     case Calamares::Branding::PanelFlavor::Widget:
         return ( w->*widget )( parent, a... );
+#ifdef WITH_QML
     case Calamares::Branding::PanelFlavor::Qml:
         return ( w->*qml )( parent, a... );
+#endif
     case Calamares::Branding::PanelFlavor::None:
         return nullptr;
     }
@@ -378,6 +393,14 @@ CalamaresWindow::CalamaresWindow( QWidget* parent )
     mainLayout->addLayout( contentsLayout );
     insertIf( mainLayout, PanelSide::Right, navigation, branding->navigationSide() );
     insertIf( mainLayout, PanelSide::Right, sideBox, branding->sidebarSide() );
+
+    // layout->count() returns number of things in it; above we have put
+    // at **least** the central widget, which comes from the view manager,
+    // both vertically and horizontally -- so if there's a panel along
+    // either axis, the count in that axis will be > 1.
+    m_viewManager->setPanelSides(
+        ( contentsLayout->count() > 1 ? Qt::Orientations( Qt::Horizontal ) : Qt::Orientations() )
+        | ( mainLayout->count() > 1 ? Qt::Orientations( Qt::Vertical ) : Qt::Orientations() ) );
 
     CalamaresUtils::unmarginLayout( mainLayout );
     CalamaresUtils::unmarginLayout( contentsLayout );

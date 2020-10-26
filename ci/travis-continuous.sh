@@ -1,5 +1,8 @@
 #! /bin/sh
 #
+#   SPDX-FileCopyrightText: 2017 Adriaan de Groot <groot@kde.org>
+#   SPDX-License-Identifier: BSD-2-Clause
+#
 # Travis CI script for use on every-commit:
 #  - build and install Calamares
 #
@@ -24,7 +27,7 @@ section "cmake $CMAKE_ARGS $SRCDIR"
 cmake $CMAKE_ARGS $SRCDIR || { echo "! CMake failed" ; exit 1 ; }
 
 section "ninja"
-ninja -j2 || { echo "! ninja recheck" ; pwd -P ; df -h ; ninja -v -j1 ; echo "! Nija failed" ; exit 1 ; }
+ninja -j2 VERBOSE=1 || { echo "! Ninja recheck" ; pwd -P ; df -h ; ninja -j1 VERBOSE=1 ; echo "! Ninja failed" ; exit 1 ; }
 
 section "ninja install"
 

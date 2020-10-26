@@ -1,5 +1,10 @@
 # Calamares modules
 
+<!-- SPDX-FileCopyrightText: 2014 Teo Mrnjavac <teo@kde.org>
+     SPDX-FileCopyrightText: 2017 Adriaan de Groot <groot@kde.org>
+     SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 Calamares modules are plugins that provide features like installer pages,
 batch jobs, etc. An installer page (visible to the user) is called a "view",
 while other modules are "jobs".
@@ -9,20 +14,16 @@ Each Calamares module lives in its own directory.
 All modules are installed in `$DESTDIR/lib/calamares/modules`.
 
 There are two **types** of Calamares module:
-* viewmodule, for user-visible modules. These may be in C++, or PythonQt.
+* viewmodule, for user-visible modules. These use C++ and QWidgets or QML
 * jobmodule, for not-user-visible modules. These may be done in C++,
   Python, or as external processes.
 
-A viewmodule exposes a UI to the user. The PythonQt-based modules
-are considered experimental (and as of march 2019 may be on the
-way out again as never-used-much and PythonQt is not packaged
-on Debian anymore).
+A viewmodule exposes a UI to the user.
 
-There are three (four) **interfaces** for Calamares modules:
+There are three **interfaces** for Calamares modules:
 * qtplugin (viewmodules, jobmodules),
 * python (jobmodules only),
-* pythonqt (viewmodules, jobmodules, optional),
-* process (jobmodules only).
+* process (jobmodules only, not recommended).
 
 ## Module directory
 
@@ -50,8 +51,18 @@ Module descriptors **must** have the following keys:
 - *interface* (see below for the different interfaces; generally we
   refer to the kinds of modules by their interface)
 
-Module descriptors for Python and PythonQt modules **must** have the following key:
+Module descriptors for C++ modules **may** have the following key:
+- *load* (the name of the shared library to load; if empty, uses a
+  standard library name derived from the module name)
+
+Module descriptors for Python modules **must** have the following key:
 - *script* (the name of the Python script to load, nearly always `main.py`)
+
+Module descriptors for process modules **must** have the following key:
+- *command* (the command to run)
+Module descriptors for process modules **may** have the following keys:
+- *timeout* (how long, in seconds, to wait for the command to run)
+- *chroot* (if true, run the command in the target system rather than the host)
 
 Module descriptors **may** have the following keys:
 - *emergency* (a boolean value, set to true to mark the module
@@ -60,6 +71,8 @@ Module descriptors **may** have the following keys:
   has no configuration file; defaults to false)
 - *requiredModules* (a list of modules which are required for this module
   to operate properly)
+- *weight* (a relative module weight, used to scale progress reporting)
+
 
 ### Required Modules
 
@@ -116,6 +129,40 @@ All sample module configuration files are installed in
 files with the same name placed manually (or by the packager)
 in `/etc/calamares/modules`.
 
+### Module Weights
+
+During the *exec* phase of an installation, where jobs are run and
+things happen to the target system, there is a running progress bar.
+It goes from 0% to 100% while all of the jobs for that exec phase
+are run. Generally, one module creates on job, but this varies a little
+(e.g. the partition module can spawn a whole bunch of jobs to
+deal with each disk, and the users module has separate jobs for
+the regular user and the root user).
+
+By default, modules all "weigh" the same, and each job is equal.
+A typical installation has about 30 modules in the exec phase,
+so there may be 40 jobs or so: each job represents 2.5% of the
+overall progress of the installation.
+
+The consequence is that the *unpackfs* module, which needs to write
+a few hundred MB to disk, gets 2.5% of the progress, and the *machineid*
+module, which is essentially instantaneous, also gets 2.5% of the progress.
+This makes progress reporting seem weird and uneven, and suggests to users
+that Calamares may be "hanging" during the unpackfs stage.
+
+A module may be assigned a different "weight" in the `module.desc`
+file (or via the CMake macros for adding plugins). This gives the
+module more space in the overall progress: for instance, the *unpackfs*
+module now has a weight of 12, so (assuming there are 38 modules
+in the exec phase with a weight of 1, and *unpackfs* with a weight of 12)
+regular modules get 2% (1 in 50 total weight) of the overall progress
+bar, and the *unpackfs* module gets 24% (12 in 50). While this doesn't
+speed anything up, it does make the progress in the unpackfs module more
+visible.
+
+It is also possible to set a weight on a specific module **instance**,
+which can be done in `settings.conf`. This overrides any weight
+set in the module descriptor.
 
 
 ## C++ modules
@@ -133,15 +180,67 @@ a `CMakeLists.txt` with a `calamares_add_plugin` call. It will be picked
 up automatically by our CMake magic. The `module.desc` file is not recommended:
 nearly all cases can be described in CMake.
 
+### C++ Jobmodule
+
+**TODO:** this needs documentation
+
+### C++ Widgets Viewmodule
+
+**TODO:** this needs documentation
+
+### C++ QML Viewmodule
+
+A QML Viewmodule (or view step) puts much of the UI work in one or more
+QML files; the files may be loaded from the branding directory or compiled
+into the module. Which QML is used depends on the deployment and the
+configuration files for Calamares.
+
+#### Explicit properties
+
+The QML can access data from the C++ framework though properties
+exposed to QML. There are two libraries that need to be imported
+explicitly:
+
+```
+import io.calamares.core 1.0
+import io.calamares.ui 1.0
+```
+
+The *ui* library contains the *Branding* object, which corresponds to
+the branding information set through `branding.desc`. The Branding
+class (in `src/libcalamaresui/Branding.h` offers a QObject-property
+based API, where the most important functions are `string()` and the
+convenience functions `versionedName()` and similar.
+
+The *core* library contains both *ViewManager*, which handles overall
+progress through the application, and *Global*, which holds global
+storage information. Both objects have an extensive API. The *ViewManager*
+can behave as a model for list views and the like.
+
+These explicit properties from libraries are shared across all the
+QML modules (for global storage that goes without saying: it is
+the mechanism to share information with other modules).
+
+#### Implicit properties
+
+Each module also has an implicit context property available to it.
+No import is needed. The context property *config* (note lower case)
+holds the Config object for the module.
+
+The Config object is the bridge between C++ and QML.
+
+A Config object must inherit QObject and should expose, as `Q_PROPERTY`,
+all of the relevant configuration information for the module instance.
+The general description how to do that is available
+in the [Qt documentation](https://doc.qt.io/qt-5/qtqml-cppintegration-topic.html).
 
 
 ## Python modules
 
 Modules may use one of the python interfaces, which may be present
 in a Calamares installation (but also may not be). These modules must have
-a `module.desc` file. The Python script must implement one or more of the
-Python interfaces for Calamares -- either the python jobmodule interface,
-or the experimental pythonqt job- and viewmodule interfaces.
+a `module.desc` file. The Python script must implement the
+Python jobmodule interface.
 
 To add a Python or process jobmodule, put it in a subdirectory and make sure
 it has a `module.desc`. It will be picked up automatically by our CMake magic.
@@ -178,31 +277,19 @@ description if something went wrong.
 
 
 
-## PythonQt modules
+## PythonQt modules (deprecated)
 
 > Type: viewmodule, jobmodule
 > Interface: pythonqt
 
-The PythonQt modules are considered experimental and may be removed again
-due to low uptake. Their documentation is also almost completely lacking.
-
-### PythonQt Jobmodule
-
-A PythonQt jobmodule implements the experimental Job interface by defining
-a subclass of something.
-
-### PythonQt Viewmodule
-
-A PythonQt viewmodule implements the experimental View interface by defining
-a subclass of something.
-
-### Python API
-
-**TODO:** this needs documentation
+The PythonQt modules are deprecated and will be removed in Calamares 3.3.
+Their documentation is also almost completely lacking.
 
 
 
-## Process jobmodules
+## Process modules
+
+Use of this kind of module is **not** recommended.
 
 > Type: jobmodule
 > Interface: process

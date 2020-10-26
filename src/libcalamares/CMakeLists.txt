@@ -1,17 +1,24 @@
-# libcalamares is the non-GUI part of Calamares, which includes handling
-# translations, configurations, logging, utilities, global storage, and (non-GUI) jobs.
+# === This file is part of Calamares - <https://calamares.io> ===
+#
+#   SPDX-FileCopyrightText: 2020 Adriaan de Groot <groot@kde.org>
+#   SPDX-License-Identifier: BSD-2-Clause
+#
 
-add_definitions(
-    ${QT_DEFINITIONS}
-    -DQT_SHARED
-    -DQT_SHAREDPOINTER_TRACK_POINTERS
-    -DDLLEXPORT_PRO
-)
+#
+# libcalamares is the non-GUI part of Calamares, which includes handling
+# translations, configurations, logging, utilities, global storage, and
+# (non-GUI) jobs.
+#
+
+add_definitions( -DDLLEXPORT_PRO )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} )
 
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/CalamaresConfig.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/CalamaresConfig.h )
-configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/../calamares/CalamaresVersion.h.in
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/CalamaresVersion.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/CalamaresVersion.h )
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/CalamaresVersionX.h.in
+                ${CMAKE_CURRENT_BINARY_DIR}/CalamaresVersionX.h )
 
 set( OPTIONAL_PRIVATE_LIBRARIES "" )
 set( OPTIONAL_PUBLIC_LIBRARIES "" )
@@ -27,20 +34,23 @@ set( libSources
 
     # GeoIP services
     geoip/Interface.cpp
+    geoip/GeoIPFixed.cpp
     geoip/GeoIPJSON.cpp
     geoip/Handler.cpp
 
     # Locale-data service
+    locale/Global.cpp
     locale/Label.cpp
     locale/LabelModel.cpp
     locale/Lookup.cpp
     locale/TimeZone.cpp
     locale/TranslatableConfiguration.cpp
+    locale/TranslatableString.cpp
 
     # Modules
+    modulesystem/Descriptor.cpp
     modulesystem/InstanceKey.cpp
     modulesystem/Module.cpp
-    modulesystem/Requirement.cpp
     modulesystem/RequirementsChecker.cpp
     modulesystem/RequirementsModel.cpp
 
@@ -58,28 +68,13 @@ set( libSources
     utils/Dirs.cpp
     utils/Entropy.cpp
     utils/Logger.cpp
+    utils/Permissions.cpp
     utils/PluginFactory.cpp
     utils/Retranslator.cpp
     utils/String.cpp
     utils/UMask.cpp
     utils/Variant.cpp
     utils/Yaml.cpp
-)
-set( _kdsagSources
-    kdsingleapplicationguard/kdsingleapplicationguard.cpp
-    kdsingleapplicationguard/kdsharedmemorylocker.cpp
-    kdsingleapplicationguard/kdtoolsglobal.cpp
-    kdsingleapplicationguard/kdlockedsharedmemorypointer.cpp
-)
-set( kdsagSources "" )
-foreach( _s ${_kdsagSources} )
-    list( APPEND kdsagSources ${CMAKE_SOURCE_DIR}/3rdparty/${_s} )
-endforeach()
-mark_thirdparty_code( ${kdsagSources} )
-
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 ### OPTIONAL Python support
@@ -119,30 +114,15 @@ endif()
 ### OPTIONAL KPMcore support
 #
 #
-find_package( KPMcore 3.3 )
-set_package_properties(
-    KPMcore PROPERTIES
-    URL "https://invent.kde.org/kde/kpmcore"
-    DESCRIPTION "KDE Partitioning library"
-    TYPE RECOMMENDED
-    PURPOSE "For partitioning service"
-)
+include( KPMcoreHelper )
 
 if ( KPMcore_FOUND )
     find_package( Qt5 REQUIRED DBus )  # Needed for KPMCore
     find_package( KF5 REQUIRED I18n WidgetsAddons )  # Needed for KPMCore
 
-    if( KPMcore_VERSION VERSION_GREATER_EQUAL "4.2" )
-        add_definitions(
-            -DWITH_KPMCORE42API
-            -DWITH_KPMCORE4API
-        ) # kpmcore 4.2 with new API
-    elseif( KPMcore_VERSION VERSION_GREATER_EQUAL "4.0" )
-        add_definitions( -DWITH_KPMCORE4API ) # kpmcore 4 with new API
-    elseif( KPMcore_VERSION VERSION_GREATER "3.3.70" )
-        message( FATAL_ERROR "KPMCore beta versions ${KPMcore_VERSION} not supported" )
-    endif()
-
+    foreach ( d ${KPMcore_API_DEFINITIONS} )
+        add_definitions( -D${d} )
+    endforeach()
     include_directories( ${KPMCORE_INCLUDE_DIR} )
     list( APPEND libSources
         partition/FileSystem.cpp
@@ -156,26 +136,30 @@ endif()
 ### LIBRARY
 #
 #
-add_library( calamares SHARED ${libSources} ${kdsagSources} )
+add_library( calamares SHARED ${libSources} )
 set_target_properties( calamares
     PROPERTIES
         VERSION ${CALAMARES_VERSION_SHORT}
         SOVERSION ${CALAMARES_VERSION_SHORT}
+        INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_INSTALL_FULL_INCLUDEDIR}/libcalamares
 )
 calamares_automoc( calamares )
 
 target_link_libraries( calamares
     LINK_PRIVATE
         ${OPTIONAL_PRIVATE_LIBRARIES}
-    LINK_PUBLIC
         yamlcpp
+    LINK_PUBLIC
         Qt5::Core
         KF5::CoreAddons
         ${OPTIONAL_PUBLIC_LIBRARIES}
 )
 
+### Installation
+#
+#
 install( TARGETS calamares
-    EXPORT CalamaresLibraryDepends
+    EXPORT Calamares
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -190,13 +174,18 @@ install( CODE "
 
 # Install header files
 file( GLOB rootHeaders "*.h" )
-file( GLOB kdsingleapplicationguardHeaders "kdsingleapplicationguard/*.h" )
-file( GLOB utilsHeaders "utils/*.h" )
+install(
+    FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/CalamaresConfig.h
+        ${rootHeaders}
+    DESTINATION include/libcalamares
+)
+# Install each subdir-worth of header files
+foreach( subdir geoip locale modulesystem network partition utils )
+    file( GLOB subdir_headers "${subdir}/*.h" )
+    install( FILES ${subdir_headers} DESTINATION include/libcalamares/${subdir} )
+endforeach()
 
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/CalamaresConfig.h DESTINATION include/libcalamares )
-install( FILES ${rootHeaders}                       DESTINATION include/libcalamares )
-install( FILES ${kdsingleapplicationguardHeaders}   DESTINATION include/libcalamares/kdsingleapplicationguard )
-install( FILES ${utilsHeaders}                      DESTINATION include/libcalamares/utils )
 
 ### TESTING
 #
@@ -204,20 +193,32 @@ install( FILES ${utilsHeaders}                      DESTINATION include/libcalam
 calamares_add_test(
     libcalamarestest
     SOURCES
-        utils/Tests.cpp
+        Tests.cpp
 )
 
 calamares_add_test(
-    libcalamarestestpaths
-    SOURCES
-        utils/TestPaths.cpp
-)
-
-calamares_add_test(
-    geoiptest
+    libcalamaresgeoiptest
     SOURCES
         geoip/GeoIPTests.cpp
         ${geoip_src}
+)
+
+calamares_add_test(
+    libcalamareslocaletest
+    SOURCES
+        locale/Tests.cpp
+)
+
+calamares_add_test(
+    libcalamaresmodulesystemtest
+    SOURCES
+        modulesystem/Tests.cpp
+)
+
+calamares_add_test(
+    libcalamaresnetworktest
+    SOURCES
+        network/Tests.cpp
 )
 
 calamares_add_test(
@@ -237,22 +238,17 @@ if( KPMcore_FOUND )
 endif()
 
 calamares_add_test(
-    libcalamareslocaletest
+    libcalamaresutilstest
     SOURCES
-        locale/Tests.cpp
+        utils/Tests.cpp
 )
 
 calamares_add_test(
-    libcalamaresnetworktest
+    libcalamaresutilspathstest
     SOURCES
-        network/Tests.cpp
+        utils/TestPaths.cpp
 )
 
-calamares_add_test(
-    libcalamaresmodulesystemtest
-    SOURCES
-        modulesystem/Tests.cpp
-)
 
 # This is not an actual test, it's a test / demo application
 # for experimenting with GeoIP.

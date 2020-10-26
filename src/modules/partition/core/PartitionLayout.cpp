@@ -1,21 +1,12 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2017, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2018, Adriaan de Groot <groot@kde.org>
- *   Copyright 2018-2019, Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-FileCopyrightText: 2014-2017 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2018-2019 Collabora Ltd <arnaud.ferraris@collabora.com>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "GlobalStorage.h"
@@ -85,10 +76,16 @@ PartitionLayout::addEntry( PartitionLayout::PartitionEntry entry )
     return true;
 }
 
+PartitionLayout::PartitionEntry::PartitionEntry()
+    : partAttributes( 0 )
+{
+}
+
 PartitionLayout::PartitionEntry::PartitionEntry( const QString& size, const QString& min, const QString& max )
     : partSize( size )
     , partMinSize( min )
     , partMaxSize( max )
+    , partAttributes( 0 )
 {
 }
 
@@ -118,7 +115,9 @@ PartitionLayout::addEntry( const QString& mountPoint, const QString& size, const
 
 bool
 PartitionLayout::addEntry( const QString& label,
+                           const QString& uuid,
                            const QString& type,
+                           quint64 attributes,
                            const QString& mountPoint,
                            const QString& fs,
                            const QVariantMap& features,
@@ -140,7 +139,9 @@ PartitionLayout::addEntry( const QString& label,
     }
 
     entry.partLabel = label;
+    entry.partUUID = uuid;
     entry.partType = type;
+    entry.partAttributes = attributes;
     entry.partMountPoint = mountPoint;
     PartUtils::findFS( fs, &entry.partFileSystem );
     if ( entry.partFileSystem == FileSystem::Unknown )
@@ -163,22 +164,35 @@ PartitionLayout::execute( Device* dev,
                           const PartitionRole& role )
 {
     QList< Partition* > partList;
-    qint64 minSize, maxSize, end;
+    // Map each partition entry to its requested size (0 when calculated later)
+    QMap< const PartitionLayout::PartitionEntry*, qint64 > partSizeMap;
     qint64 totalSize = lastSector - firstSector + 1;
     qint64 availableSize = totalSize;
 
-    // TODO: Refine partition sizes to make sure there is room for every partition
-    // Use a default (200-500M ?) minimum size for partition without minSize
-
-    foreach ( const PartitionLayout::PartitionEntry& part, m_partLayout )
+    // Let's check if we have enough space for each partSize
+    for ( const auto& part : qAsConst( m_partLayout ) )
     {
-        Partition* currentPartition = nullptr;
-
-        qint64 size = -1;
+        qint64 size;
         // Calculate partition size
+
         if ( part.partSize.isValid() )
         {
-            size = part.partSize.toSectors( totalSize, dev->logicalSize() );
+            // We need to ignore the percent-defined
+            if ( part.partSize.unit() != CalamaresUtils::Partition::SizeUnit::Percent )
+            {
+                size = part.partSize.toSectors( totalSize, dev->logicalSize() );
+            }
+            else
+            {
+                if ( part.partMinSize.isValid() )
+                {
+                    size = part.partMinSize.toSectors( totalSize, dev->logicalSize() );
+                }
+                else
+                {
+                    size = 0;
+                }
+            }
         }
         else
         {
@@ -186,46 +200,90 @@ PartitionLayout::execute( Device* dev,
             continue;
         }
 
-        if ( part.partMinSize.isValid() )
-        {
-            minSize = part.partMinSize.toSectors( totalSize, dev->logicalSize() );
-        }
-        else
-        {
-            minSize = 0;
-        }
+        partSizeMap.insert( &part, size );
+        availableSize -= size;
+    }
 
-        if ( part.partMaxSize.isValid() )
+    // Use partMinSize and see if we can do better afterward.
+    if ( availableSize < 0 )
+    {
+        availableSize = totalSize;
+        for ( const auto& part : qAsConst( m_partLayout ) )
         {
-            maxSize = part.partMaxSize.toSectors( totalSize, dev->logicalSize() );
-        }
-        else
-        {
-            maxSize = availableSize;
-        }
+            qint64 size;
 
-        // Make sure we never go under minSize once converted to sectors
-        if ( maxSize < minSize )
-        {
-            cWarning() << "Partition" << part.partMountPoint << "max size (" << maxSize << "sectors) is < min size ("
-                       << minSize << "sectors), using min size";
-            maxSize = minSize;
-        }
+            if ( part.partMinSize.isValid() )
+            {
+                size = part.partMinSize.toSectors( totalSize, dev->logicalSize() );
+            }
+            else if ( part.partSize.isValid() )
+            {
+                if ( part.partSize.unit() != CalamaresUtils::Partition::SizeUnit::Percent )
+                {
+                    size = part.partSize.toSectors( totalSize, dev->logicalSize() );
+                }
+                else
+                {
+                    size = 0;
+                }
+            }
+            else
+            {
+                size = 0;
+            }
 
-        // Adjust partition size based on user-defined boundaries and available space
-        if ( size < minSize )
-        {
-            size = minSize;
+            partSizeMap.insert( &part, size );
+            availableSize -= size;
         }
-        if ( size > maxSize )
+    }
+
+    // Assign size for percentage-defined partitions
+    for ( const auto& part : qAsConst( m_partLayout ) )
+    {
+        if ( part.partSize.unit() == CalamaresUtils::Partition::SizeUnit::Percent )
         {
-            size = maxSize;
+            qint64 size = partSizeMap.value( &part );
+            size = part.partSize.toSectors( availableSize + size, dev->logicalSize() );
+            if ( part.partMinSize.isValid() )
+            {
+                qint64 minSize = part.partMinSize.toSectors( totalSize, dev->logicalSize() );
+                if ( minSize > size )
+                {
+                    size = minSize;
+                }
+            }
+            if ( part.partMaxSize.isValid() )
+            {
+                qint64 maxSize = part.partMaxSize.toSectors( totalSize, dev->logicalSize() );
+                if ( maxSize < size )
+                {
+                    size = maxSize;
+                }
+            }
+
+            partSizeMap.insert( &part, size );
         }
+    }
+
+    availableSize = totalSize;
+
+    // TODO: Refine partition sizes to make sure there is room for every partition
+    // Use a default (200-500M ?) minimum size for partition without minSize
+
+    for ( const auto& part : qAsConst( m_partLayout ) )
+    {
+        qint64 size, end;
+        Partition* currentPartition = nullptr;
+
+        size = partSizeMap.value( &part );
+
+        // Adjust partition size based on available space
         if ( size > availableSize )
         {
             size = availableSize;
         }
-        end = firstSector + size - 1;
+
+        end = firstSector + std::max( size - 1, Q_INT64_C( 0 ) );
 
         if ( luksPassphrase.isEmpty() )
         {
@@ -244,12 +302,24 @@ PartitionLayout::execute( Device* dev,
             currentPartition->setLabel( part.partLabel );
             currentPartition->fileSystem().setLabel( part.partLabel );
         }
+        if ( !part.partUUID.isEmpty() )
+        {
+            currentPartition->setUUID( part.partUUID );
+        }
         if ( !part.partType.isEmpty() )
         {
 #if defined( WITH_KPMCORE42API )
             currentPartition->setType( part.partType );
 #else
             cWarning() << "Ignoring type; requires KPMcore >= 4.2.0.";
+#endif
+        }
+        if ( part.partAttributes )
+        {
+#if defined( WITH_KPMCORE42API )
+            currentPartition->setAttributes( part.partAttributes );
+#else
+            cWarning() << "Ignoring attributes; requires KPMcore >= 4.2.0.";
 #endif
         }
         if ( !part.partFeatures.isEmpty() )

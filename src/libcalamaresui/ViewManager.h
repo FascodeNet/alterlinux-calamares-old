@@ -1,20 +1,11 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2014-2015, Teo Mrnjavac <teo@kde.org>
- *   Copyright 2017-2018, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2014-2015 Teo Mrnjavac <teo@kde.org>
+ *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef VIEWMANAGER_H
@@ -53,6 +44,9 @@ class UIDLLEXPORT ViewManager : public QAbstractListModel
     Q_PROPERTY( QString quitTooltip READ quitTooltip NOTIFY quitTooltipChanged FINAL )
 
     Q_PROPERTY( bool quitVisible READ quitVisible NOTIFY quitVisibleChanged FINAL )
+
+    ///@brief Sides on which the ViewManager has side-panels
+    Q_PROPERTY( Qt::Orientations panelSides READ panelSides WRITE setPanelSides MEMBER m_panelSides )
 
 public:
     /**
@@ -100,12 +94,16 @@ public:
     int currentStepIndex() const;
 
     /**
-     * @ brief Called when "Cancel" is clicked; asks for confirmation.
+     * @brief Called when "Cancel" is clicked; asks for confirmation.
      * Other means of closing Calamares also call this method, e.g. alt-F4.
-     * At the end of installation, no confirmation is asked. Returns true
-     * if the user confirms closing the window.
+     * At the end of installation, no confirmation is asked.
+     *
+     * @return @c true if the user confirms closing the window.
      */
     bool confirmCancelInstallation();
+
+    Qt::Orientations panelSides() const { return m_panelSides; }
+    void setPanelSides( Qt::Orientations panelSides ) { m_panelSides = panelSides; }
 
 public Q_SLOTS:
     /**
@@ -214,7 +212,7 @@ signals:
 
 private:
     explicit ViewManager( QObject* parent = nullptr );
-    virtual ~ViewManager() override;
+    ~ViewManager() override;
 
     void insertViewStep( int before, ViewStep* step );
     void updateButtonLabels();
@@ -243,6 +241,8 @@ private:
     QString m_quitIcon;
     QString m_quitTooltip;
     bool m_quitVisible = true;
+
+    Qt::Orientations m_panelSides;
 
 public:
     /** @section Model

@@ -1,19 +1,14 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2018, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2018 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Contains strings from libpwquality under the terms of the
+ *   GPL-3.0-or-later (libpwquality is BSD-3-clause or GPL-2.0-or-later,
+ *   so we pick GPL-3.0-or-later).
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "CheckPWQuality.h"
@@ -22,7 +17,6 @@
 
 #include <QCoreApplication>
 #include <QString>
-#include <QWidget>
 
 #ifdef HAVE_LIBPWQUALITY
 #include <pwquality.h>
@@ -55,7 +49,7 @@ DEFINE_CHECK_FUNC( minLength )
     {
         cDebug() << Logger::SubEntry << "minLength set to" << minLength;
         checks.push_back( PasswordCheck( []() { return QCoreApplication::translate( "PWQ", "Password is too short" ); },
-                                         [ minLength ]( const QString& s ) { return s.length() >= minLength; },
+                                         [minLength]( const QString& s ) { return s.length() >= minLength; },
                                          PasswordCheck::Weight( 10 ) ) );
     }
 }
@@ -71,7 +65,7 @@ DEFINE_CHECK_FUNC( maxLength )
     {
         cDebug() << Logger::SubEntry << "maxLength set to" << maxLength;
         checks.push_back( PasswordCheck( []() { return QCoreApplication::translate( "PWQ", "Password is too long" ); },
-                                         [ maxLength ]( const QString& s ) { return s.length() <= maxLength; },
+                                         [maxLength]( const QString& s ) { return s.length() <= maxLength; },
                                          PasswordCheck::Weight( 10 ) ) );
     }
 }
@@ -349,8 +343,8 @@ DEFINE_CHECK_FUNC( libpwquality )
     /* Something actually added? */
     if ( requirement_count )
     {
-        checks.push_back( PasswordCheck( [ settings ]() { return settings->explanation(); },
-                                         [ settings ]( const QString& s ) {
+        checks.push_back( PasswordCheck( [settings]() { return settings->explanation(); },
+                                         [settings]( const QString& s ) {
                                              int r = settings->check( s );
                                              if ( r < 0 )
                                              {

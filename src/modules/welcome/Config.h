@@ -1,19 +1,10 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2019-2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019-2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef WELCOME_CONFIG_H
@@ -23,13 +14,37 @@
 #include "modulesystem/RequirementsModel.h"
 
 #include <QObject>
+#include <QSortFilterProxyModel>
 #include <QUrl>
+
+#include <memory>
 
 class Config : public QObject
 {
     Q_OBJECT
+    /** @brief The languages available in Calamares.
+     *
+     * This is a list-model, with names and descriptions for the translations
+     * available to Calamares.
+     */
     Q_PROPERTY( CalamaresUtils::Locale::LabelModel* languagesModel READ languagesModel CONSTANT FINAL )
+    /** @brief The requirements (from modules) and their checked-status
+     *
+     * The model grows rows over time as each module is checked and its
+     * requirements are taken into account. The model **as a whole**
+     * has properties *satisfiedRequirements* and *satisfiedMandatory*
+     * to say if all of the requirements held in the model have been
+     * satisfied. See the model documentation for details.
+     */
     Q_PROPERTY( Calamares::RequirementsModel* requirementsModel READ requirementsModel CONSTANT FINAL )
+    /** @brief The requirements (from modules) that are **unsatisfied**
+     *
+     * This is the same as requirementsModel(), except filtered so
+     * that only those requirements that are not satisfied are exposed.
+     * Note that the type is different, so you should still use the
+     * requirementsModel() for overall status like *satisfiedMandatory*.
+     */
+    Q_PROPERTY( QAbstractItemModel* unsatisfiedRequirements READ unsatisfiedRequirements CONSTANT FINAL )
 
     Q_PROPERTY( QString languageIcon READ languageIcon CONSTANT FINAL )
 
@@ -83,6 +98,8 @@ public slots:
     ///@brief The **global** requirements model, from ModuleManager
     Calamares::RequirementsModel* requirementsModel() const;
 
+    QAbstractItemModel* unsatisfiedRequirements() const;
+
 signals:
     void countryCodeChanged( QString countryCode );
     void localeIndexChanged( int localeIndex );
@@ -99,7 +116,8 @@ signals:
 private:
     void initLanguages();
 
-    CalamaresUtils::Locale::LabelModel* m_languages;
+    CalamaresUtils::Locale::LabelModel* m_languages = nullptr;
+    std::unique_ptr< QSortFilterProxyModel > m_filtermodel;
 
     QString m_languageIcon;
     QString m_countryCode;

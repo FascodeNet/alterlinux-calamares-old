@@ -1,19 +1,11 @@
-/* === This file is part of Calamares - <https://github.com/calamares> ===
+/* === This file is part of Calamares - <https://calamares.io> ===
  *
- *   Copyright 2019-2020, Adriaan de Groot <groot@kde.org>
+ *   SPDX-FileCopyrightText: 2019-2020 Adriaan de Groot <groot@kde.org>
+ *   SPDX-License-Identifier: GPL-3.0-or-later
  *
- *   Calamares is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
+ *   Calamares is Free Software: see the License-Identifier above.
  *
- *   Calamares is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *   GNU General Public License for more details.
  *
- *   You should have received a copy of the GNU General Public License
- *   along with Calamares. If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "RequirementsModel.h"
@@ -92,17 +84,26 @@ RequirementsModel::roleNames() const
 void
 RequirementsModel::describe() const
 {
+    cDebug() << "Requirements model has" << m_requirements.count() << "items";
     bool acceptable = true;
     int count = 0;
     for ( const auto& r : m_requirements )
     {
+        cDebug() << Logger::SubEntry << "requirement" << count << r.name << "satisfied?" << r.satisfied << "mandatory?"
+                 << r.mandatory;
         if ( r.mandatory && !r.satisfied )
         {
-            cDebug() << Logger::SubEntry << "requirement" << count << r.name << "is not satisfied.";
             acceptable = false;
         }
         ++count;
     }
+}
+
+void
+RequirementsModel::setProgressMessage( const QString& m )
+{
+    m_progressMessage = m;
+    emit progressMessageChanged( m_progressMessage );
 }
 
 }  // namespace Calamares
