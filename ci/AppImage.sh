@@ -64,7 +64,7 @@
 ### END USAGE
 
 TOOLS_DIR="."
-CMAKE_ARGS=""
+CMAKE_ARGS="-GNinja"
 DO_REBUILD="true"
 DO_CONDA="false"
 CONFIG_DIR=""
@@ -182,17 +182,17 @@ if $DO_REBUILD ; then
         cd "$BUILD_DIR/build" &&
         cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib $CMAKE_ARGS
     ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run CMake"; exit 1; }
-    echo "# Running make ..."
+    echo "# Running ninja ..."
     (
         cd "$BUILD_DIR/build" &&
-        make -j4
-    ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run make"; exit 1; }
+        ninja -j4
+    ) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run ninja"; exit 1; }
 fi
-echo "# Running make install ..."
+echo "# Running ninja install ..."
 (
     cd "$BUILD_DIR/build" &&
-    make install DESTDIR=../AppDir
-) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run make install"; exit 1; }
+     DESTDIR=../AppDir ninja install
+) >> "$LOG_FILE" 2>&1 || { tail -10 "$LOG_FILE" ; echo "! Could not run ninja install"; exit 1; }
 
 ### Modify installation
 #

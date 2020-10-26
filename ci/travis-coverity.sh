@@ -25,7 +25,7 @@ export PATH="$BUILDDIR/coveritytool/bin:$PATH"
 
 echo "# cmake -DCMAKE_BUILD_TYPE=Debug $CMAKE_ARGS $SRCDIR"
 cmake -DCMAKE_BUILD_TYPE=Debug $CMAKE_ARGS $SRCDIR || exit 1
-cov-build --dir cov-int make -j2
+cov-build --dir cov-int ninja -j2
 
 tar caf calamares-ci.tar.xz cov-int
 
