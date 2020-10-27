@@ -36,9 +36,11 @@ WaitingWidget::WaitingWidget( const QString& text, QWidget* parent )
 
     int spnrSize = m_waitingLabel->fontMetrics().height() * 4;
     spnr->setFixedSize( spnrSize, spnrSize );
-    spnr->setInnerRadius( spnrSize / 2 );
+    spnr->setInnerRadius( spnrSize );
+    spnr->setRoundness( 0 );
     spnr->setLineLength( spnrSize / 2 );
-    spnr->setLineWidth( spnrSize / 8 );
+    spnr->setLineWidth( spnrSize / 10 );
+    spnr->setColor(QColor("#009aff"));
     spnr->start();
 
     m_waitingLabel->setAlignment( Qt::AlignCenter );
