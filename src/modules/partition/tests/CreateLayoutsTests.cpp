@@ -15,10 +15,6 @@
 #include "partition/KPMManager.h"
 #include "utils/Logger.h"
 
-#include <core/lvmdevice.h>
-#include <core/partition.h>
-#include <fs/filesystemfactory.h>
-
 #include <memory>
 
 #include <QtTest/QtTest>
@@ -28,7 +24,8 @@ class SmartStatus;
 
 QTEST_GUILESS_MAIN( CreateLayoutsTests )
 
-CalamaresUtils::Partition::KPMManager* kpmcore = nullptr;
+static CalamaresUtils::Partition::KPMManager* kpmcore = nullptr;
+static Calamares::JobQueue* jobqueue = nullptr;
 
 using CalamaresUtils::operator""_MiB;
 using CalamaresUtils::operator""_GiB;
@@ -43,7 +40,7 @@ CreateLayoutsTests::CreateLayoutsTests()
 void
 CreateLayoutsTests::init()
 {
-    std::unique_ptr< Calamares::JobQueue > jobqueue_p( new Calamares::JobQueue( nullptr ) );
+    jobqueue = new Calamares::JobQueue( nullptr );
     kpmcore = new CalamaresUtils::Partition::KPMManager();
 }
 
@@ -51,6 +48,7 @@ void
 CreateLayoutsTests::cleanup()
 {
     delete kpmcore;
+    delete jobqueue;
 }
 
 void
@@ -61,12 +59,13 @@ CreateLayoutsTests::testFixedSizePartition()
     PartitionRole role( PartitionRole::Role::Any );
     QList< Partition* > partitions;
 
-    if ( !layout.addEntry( QString( "/" ), QString( "5MiB" ) ) )
+    if ( !layout.addEntry( { FileSystem::Type::Ext4, QString( "/" ), QString( "5MiB" ) } ) )
     {
         QFAIL( qPrintable( "Unable to create / partition" ) );
     }
 
-    partitions = layout.execute( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
+    partitions
+        = layout.createPartitions( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
 
     QCOMPARE( partitions.count(), 1 );
 
@@ -81,12 +80,13 @@ CreateLayoutsTests::testPercentSizePartition()
     PartitionRole role( PartitionRole::Role::Any );
     QList< Partition* > partitions;
 
-    if ( !layout.addEntry( QString( "/" ), QString( "50%" ) ) )
+    if ( !layout.addEntry( { FileSystem::Type::Ext4, QString( "/" ), QString( "50%" ) } ) )
     {
         QFAIL( qPrintable( "Unable to create / partition" ) );
     }
 
-    partitions = layout.execute( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
+    partitions
+        = layout.createPartitions( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
 
     QCOMPARE( partitions.count(), 1 );
 
@@ -101,22 +101,23 @@ CreateLayoutsTests::testMixedSizePartition()
     PartitionRole role( PartitionRole::Role::Any );
     QList< Partition* > partitions;
 
-    if ( !layout.addEntry( QString( "/" ), QString( "5MiB" ) ) )
+    if ( !layout.addEntry( { FileSystem::Type::Ext4, QString( "/" ), QString( "5MiB" ) } ) )
     {
         QFAIL( qPrintable( "Unable to create / partition" ) );
     }
 
-    if ( !layout.addEntry( QString( "/home" ), QString( "50%" ) ) )
+    if ( !layout.addEntry( { FileSystem::Type::Ext4, QString( "/home" ), QString( "50%" ) } ) )
     {
         QFAIL( qPrintable( "Unable to create /home partition" ) );
     }
 
-    if ( !layout.addEntry( QString( "/bkup" ), QString( "50%" ) ) )
+    if ( !layout.addEntry( { FileSystem::Type::Ext4, QString( "/bkup" ), QString( "50%" ) } ) )
     {
         QFAIL( qPrintable( "Unable to create /bkup partition" ) );
     }
 
-    partitions = layout.execute( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
+    partitions
+        = layout.createPartitions( static_cast< Device* >( &dev ), 0, dev.totalLogical(), nullptr, nullptr, role );
 
     QCOMPARE( partitions.count(), 3 );
 
@@ -126,7 +127,7 @@ CreateLayoutsTests::testMixedSizePartition()
 }
 
 #ifdef WITH_KPMCORE4API
-// TODO: Get a clean way to instanciate a test Device from KPMCore
+// TODO: Get a clean way to instantiate a test Device from KPMCore
 class DevicePrivate
 {
 public:
@@ -156,3 +157,5 @@ TestDevice::TestDevice( const QString& name, const qint64 logicalSectorSize, con
 {
 }
 #endif
+
+TestDevice::~TestDevice() {}

@@ -54,7 +54,7 @@ class ChoicePage : public QWidget, private Ui::ChoicePage
     Q_OBJECT
 public:
     explicit ChoicePage( Config* config, QWidget* parent = nullptr );
-    virtual ~ChoicePage();
+    ~ChoicePage() override;
 
     /**
      * @brief init runs when the PartitionViewStep and the PartitionCoreModule are
@@ -155,7 +155,6 @@ private:
     int m_lastSelectedActionIndex = -1;
 
     QStringList m_requiredPartitionTableType;
-    QString m_defaultFsType;
     bool m_enableEncryptionWidget;
 
     QMutex m_coreMutex;

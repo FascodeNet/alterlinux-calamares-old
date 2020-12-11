@@ -147,15 +147,17 @@ def modify_mkinitcpio_conf(partitions, root_mount_point):
         if partition["mountPoint"] == "/" and "luksMapperName" in partition:
             encrypt_hook = True
 
-        if (partition["mountPoint"] == "/boot"
-                and "luksMapperName" not in partition):
+        if (partition["mountPoint"] == "/boot" and "luksMapperName" not in partition):
             unencrypted_separate_boot = True
 
         if partition["mountPoint"] == "/usr":
             hooks.append("usr")
 
     if encrypt_hook:
-        hooks.append("encrypt")
+        if detect_plymouth() and unencrypted_separate_boot:
+            hooks.append("plymouth-encrypt")
+        else:
+            hooks.append("encrypt")
         if not unencrypted_separate_boot and \
            os.path.isfile(
                os.path.join(root_mount_point, "crypto_keyfile.bin")

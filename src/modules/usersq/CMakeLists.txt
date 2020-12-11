@@ -13,9 +13,8 @@ find_package( Crypt REQUIRED )
 
 # Add optional libraries here
 set( USER_EXTRA_LIB )
-set( _users ${CMAKE_CURRENT_SOURCE_DIR}/../users )
 
-include_directories( ${PROJECT_BINARY_DIR}/src/libcalamaresui ${CMAKE_CURRENT_SOURCE_DIR}/../../libcalamares ${_users} )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../users )
 
 find_package( LibPWQuality )
 set_package_properties(
@@ -29,19 +28,28 @@ if( LibPWQuality_FOUND )
     add_definitions( -DCHECK_PWQUALITY -DHAVE_LIBPWQUALITY )
 endif()
 
+#needed for ${_users}/Config.cpp
+find_package( ICU COMPONENTS uc i18n )
+set_package_properties(
+    ICU PROPERTIES
+    PURPOSE "Transliteration support for full name to username conversion"
+)
+
+if( ICU_FOUND )
+    list( APPEND USER_EXTRA_LIB ICU::uc ICU::i18n )
+    include_directories( ${ICU_INCLUDE_DIRS} )
+    add_definitions( -DHAVE_ICU )
+endif()
+
 calamares_add_plugin( usersq
     TYPE viewmodule
     EXPORT_MACRO PLUGINDLLEXPORT_PRO
     SOURCES
-		${_users}/Config.cpp
-		${_users}/CreateUserJob.cpp
-        ${_users}/SetPasswordJob.cpp
         UsersQmlViewStep.cpp
-        ${_users}/SetHostNameJob.cpp
-        ${_users}/CheckPWQuality.cpp
     RESOURCES
         usersq.qrc
     LINK_PRIVATE_LIBRARIES
+        users_internal
         calamaresui
         ${CRYPT_LIBRARIES}
         ${USER_EXTRA_LIB}

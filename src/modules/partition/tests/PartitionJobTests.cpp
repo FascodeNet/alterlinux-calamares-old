@@ -15,13 +15,11 @@
 #include "jobs/CreatePartitionTableJob.h"
 #include "jobs/ResizePartitionJob.h"
 
+#include "partition/KPMHelper.h"
 #include "partition/KPMManager.h"
 #include "partition/PartitionQuery.h"
 #include "utils/Logger.h"
 #include "utils/Units.h"
-
-#include <backend/corebackend.h>
-#include <fs/filesystemfactory.h>
 
 #include <QEventLoop>
 #include <QProcess>
@@ -156,7 +154,7 @@ QueueRunner::onFailed( const QString& message, const QString& details )
     QFAIL( qPrintable( msg ) );
 }
 
-CalamaresUtils::Partition::KPMManager* kpmcore = nullptr;
+static CalamaresUtils::Partition::KPMManager* kpmcore = nullptr;
 
 //- PartitionJobTests ------------------------------------------------------------------
 PartitionJobTests::PartitionJobTests()

@@ -85,7 +85,7 @@ public:
     };
 
     PartitionCoreModule( QObject* parent = nullptr );
-    ~PartitionCoreModule();
+    ~PartitionCoreModule() override;
 
     /**
      * @brief init performs a devices scan and initializes all KPMcore data
@@ -156,8 +156,11 @@ public:
     /// @brief Set the path where the bootloader will be installed
     void setBootLoaderInstallPath( const QString& path );
 
-    void initLayout();
-    void initLayout( const QVariantList& config );
+    /** @brief Initialize the default layout that will be applied
+     *
+     * See PartitionLayout::init()
+     */
+    void initLayout( FileSystem::Type defaultFsType, const QVariantList& config = QVariantList() );
 
     void layoutApply( Device* dev, qint64 firstSector, qint64 lastSector, QString luksPassphrase );
     void layoutApply( Device* dev,
@@ -256,7 +259,7 @@ private:
     bool m_hasRootMountPoint = false;
     bool m_isDirty = false;
     QString m_bootLoaderInstallPath;
-    PartitionLayout* m_partLayout;
+    PartitionLayout m_partLayout;
 
     OsproberEntryList m_osproberLines;
 
