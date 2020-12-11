@@ -4,17 +4,17 @@
   <context>
     <name>BootInfoWidget</name>
     <message>
-      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="61"/>
+      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="62"/>
       <source>The &lt;strong&gt;boot environment&lt;/strong&gt; of this system.&lt;br&gt;&lt;br&gt;Older x86 systems only support &lt;strong&gt;BIOS&lt;/strong&gt;.&lt;br&gt;Modern systems usually use &lt;strong&gt;EFI&lt;/strong&gt;, but may also show up as BIOS if started in compatibility mode.</source>
       <translation>&lt;strong&gt;Асяроддзе загрузкі&lt;/strong&gt; дадзенай сістэмы.&lt;br&gt;&lt;br&gt;Старыя сістэмы x86 падтрымліваюць толькі &lt;strong&gt;BIOS&lt;/strong&gt;. &lt;br&gt;Сучасныя сістэмы звычайна падтрымліваюць толькі &lt;strong&gt;EFI&lt;/strong&gt;, але таксама могуць імітаваць BIOS, калі асяроддзе загрузкі запушчана ў рэжыме сумяшчальнасці.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="71"/>
+      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="72"/>
       <source>This system was started with an &lt;strong&gt;EFI&lt;/strong&gt; boot environment.&lt;br&gt;&lt;br&gt;To configure startup from an EFI environment, this installer must deploy a boot loader application, like &lt;strong&gt;GRUB&lt;/strong&gt; or &lt;strong&gt;systemd-boot&lt;/strong&gt; on an &lt;strong&gt;EFI System Partition&lt;/strong&gt;. This is automatic, unless you choose manual partitioning, in which case you must choose it or create it on your own.</source>
       <translation>Гэтая сістэма выкарыстоўвае асяроддзе загрузкі &lt;strong&gt;EFI&lt;/strong&gt;.&lt;br&gt;&lt;br&gt;Каб наладзіць запуск з EFI, усталёўшчык выкарыстоўвае праграму &lt;strong&gt;GRUB&lt;/strong&gt; альбо &lt;strong&gt;systemd-boot&lt;/strong&gt; на &lt;strong&gt;Сістэмным раздзеле EFI&lt;/strong&gt;. Працэс аўтаматызаваны, але вы можаце абраць ручны рэжым, у якім зможаце абраць ці стварыць раздзел.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="83"/>
+      <location filename="../src/modules/partition/gui/BootInfoWidget.cpp" line="84"/>
       <source>This system was started with a &lt;strong&gt;BIOS&lt;/strong&gt; boot environment.&lt;br&gt;&lt;br&gt;To configure startup from a BIOS environment, this installer must install a boot loader, like &lt;strong&gt;GRUB&lt;/strong&gt;, either at the beginning of a partition or on the &lt;strong&gt;Master Boot Record&lt;/strong&gt; near the beginning of the partition table (preferred). This is automatic, unless you choose manual partitioning, in which case you must set it up on your own.</source>
       <translation>Сістэма запушчаная ў працоўным асяроддзі &lt;strong&gt;BIOS&lt;/strong&gt;.&lt;br&gt;&lt;br&gt;Каб наладзіць запуск з BIOS, усталёўшчыку неабходна ўсталяваць загрузчык &lt;strong&gt;GRUB&lt;/strong&gt;, альбо ў пачатку раздзела, альбо ў &lt;strong&gt;Галоўны загрузачны запіс. (MBR)&lt;/strong&gt;, які прадвызначана знаходзіцца ў пачатку табліцы раздзелаў. Працэс аўтаматычны, але вы можаце перайсці ў ручны рэжым, дзе зможаце наладзіць гэта ўласнаручна.</translation>
     </message>
@@ -512,149 +512,149 @@ The installer will quit and all changes will be lost.</source>
       <translation>Форма</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="126"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="120"/>
       <source>Select storage de&amp;vice:</source>
       <translation>Абраць &amp;прыладу захоўвання:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="127"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="963"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1008"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1098"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="121"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="957"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1002"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1092"/>
       <source>Current:</source>
       <translation>Бягучы:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="128"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="122"/>
       <source>After:</source>
       <translation>Пасля:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="305"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="299"/>
       <source>&lt;strong&gt;Manual partitioning&lt;/strong&gt;&lt;br/&gt;You can create or resize partitions yourself.</source>
-      <translation type="unfinished"/>
+      <translation>&lt;strong&gt;Уласнаручная разметка&lt;/strong&gt;&lt;br/&gt;Вы можаце самастойна ствараць раздзелы або змяняць іх памеры.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="831"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="822"/>
       <source>Reuse %1 as home partition for %2.</source>
       <translation>Выкарыстаць %1 як хатні раздзел для %2.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="964"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="958"/>
       <source>&lt;strong&gt;Select a partition to shrink, then drag the bottom bar to resize&lt;/strong&gt;</source>
       <translation>&lt;strong&gt;Абярыце раздзел для памяншэння і цягніце паўзунок, каб змяніць памер&lt;/strong&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="981"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="975"/>
       <source>%1 will be shrunk to %2MiB and a new %3MiB partition will be created for %4.</source>
       <translation>%1 будзе паменшаны да %2MiB і новы раздзел %3MiB будзе створаны для %4.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1037"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1031"/>
       <source>Boot loader location:</source>
       <translation>Размяшчэнне загрузчыка:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1089"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1083"/>
       <source>&lt;strong&gt;Select a partition to install on&lt;/strong&gt;</source>
       <translation>&lt;strong&gt;Абярыце раздзел для ўсталёўкі &lt;/strong&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1146"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1142"/>
       <source>An EFI system partition cannot be found anywhere on this system. Please go back and use manual partitioning to set up %1.</source>
       <translation>Не выяўлена сістэмнага раздзела EFI. Калі ласка, вярніцеся назад і зрабіце разметку %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1154"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1150"/>
       <source>The EFI system partition at %1 will be used for starting %2.</source>
       <translation>Сістэмны раздзел EFI на %1 будзе выкарыстаны для запуску %2.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1162"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1158"/>
       <source>EFI system partition:</source>
       <translation>Сістэмны раздзел EFI:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1296"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1291"/>
       <source>This storage device does not seem to have an operating system on it. What would you like to do?&lt;br/&gt;You will be able to review and confirm your choices before any change is made to the storage device.</source>
       <translation>Здаецца, на гэтай прыладзе няма аперацыйнай сістэмы. Што будзеце рабіць?&lt;br/&gt;Вы зможаце змяніць альбо пацвердзіць свой выбар да таго як на прыладзе ўжывуцца змены.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1301"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1338"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1360"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1385"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1296"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1333"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1355"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1380"/>
       <source>&lt;strong&gt;Erase disk&lt;/strong&gt;&lt;br/&gt;This will &lt;font color="red"&gt;delete&lt;/font&gt; all data currently present on the selected storage device.</source>
       <translation>&lt;strong&gt;Сцерці дыск&lt;/strong&gt;&lt;br/&gt;Гэта &lt;font color="red"&gt;выдаліць&lt;/font&gt; усе даныя на абранай прыладзе.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1305"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1334"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1356"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1381"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1300"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1329"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1351"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1376"/>
       <source>&lt;strong&gt;Install alongside&lt;/strong&gt;&lt;br/&gt;The installer will shrink a partition to make room for %1.</source>
       <translation>&lt;strong&gt;Усталяваць побач&lt;/strong&gt;&lt;br/&gt;Праграма ўсталёўкі паменшыць раздзел, каб вызваліць месца для %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1309"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1343"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1364"/>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1389"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1304"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1338"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1359"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1384"/>
       <source>&lt;strong&gt;Replace a partition&lt;/strong&gt;&lt;br/&gt;Replaces a partition with %1.</source>
       <translation>&lt;strong&gt;Замяніць раздзел &lt;/strong&gt;&lt;br/&gt;Заменіць раздзел на %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1328"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1323"/>
       <source>This storage device has %1 on it. What would you like to do?&lt;br/&gt;You will be able to review and confirm your choices before any change is made to the storage device.</source>
       <translation>На гэтай прыладзе ёсць %1. Што будзеце рабіць?&lt;br/&gt;Вы зможаце змяніць альбо пацвердзіць свой выбар да таго як на прыладзе ўжывуцца змены.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1351"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1346"/>
       <source>This storage device already has an operating system on it. What would you like to do?&lt;br/&gt;You will be able to review and confirm your choices before any change is made to the storage device.</source>
       <translation>На гэтай прыладзе ўжо ёсць аперацыйная сістэма. Што будзеце рабіць?&lt;br/&gt;Вы зможаце змяніць альбо пацвердзіць свой выбар да таго як на прыладзе ўжывуцца змены.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1376"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1371"/>
       <source>This storage device has multiple operating systems on it. What would you like to do?&lt;br/&gt;You will be able to review and confirm your choices before any change is made to the storage device.</source>
       <translation>На гэтай прыладзе ўжо ёсць некалькі аперацыйных сістэм. Што будзеце рабіць?&lt;br/&gt;Вы зможаце змяніць альбо пацвердзіць свой выбар да таго як на прыладзе ўжывуцца змены.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1448"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1443"/>
       <source>This storage device already has an operating system on it, but the partition table &lt;strong&gt;%1&lt;/strong&gt; is different from the needed &lt;strong&gt;%2&lt;/strong&gt;.&lt;br/&gt;</source>
-      <translation type="unfinished"/>
+      <translation>На гэтай прыладзе ўжо ўсталяваная аперацыйная сістэма, але табліца раздзелаў &lt;strong&gt;%1&lt;/strong&gt; не такая, як патрэбна &lt;strong&gt;%2&lt;/strong&gt;.&lt;br/&gt;</translation>
+    </message>
+    <message>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1466"/>
+      <source>This storage device has one of its partitions &lt;strong&gt;mounted&lt;/strong&gt;.</source>
+      <translation>Адзін з раздзелаў гэтай назапашвальнай прылады&lt;strong&gt;прымантаваны&lt;/strong&gt;.</translation>
     </message>
     <message>
       <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1471"/>
-      <source>This storage device has one of its partitions &lt;strong&gt;mounted&lt;/strong&gt;.</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1476"/>
       <source>This storage device is a part of an &lt;strong&gt;inactive RAID&lt;/strong&gt; device.</source>
-      <translation type="unfinished"/>
+      <translation>Гэтая назапашвальная прылада ёсць часткай&lt;strong&gt;неактыўнага RAID&lt;/strong&gt;.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1603"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1598"/>
       <source>No Swap</source>
       <translation>Без раздзела падпампоўкі</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1611"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1606"/>
       <source>Reuse Swap</source>
       <translation>Выкарыстаць існы раздзел падпампоўкі</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1614"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1609"/>
       <source>Swap (no Hibernate)</source>
       <translation>Раздзел падпампоўкі (без усыплення)</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1617"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1612"/>
       <source>Swap (with Hibernate)</source>
       <translation>Раздзел падпампоўкі (з усыпленнем)</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1620"/>
+      <location filename="../src/modules/partition/gui/ChoicePage.cpp" line="1615"/>
       <source>Swap to file</source>
       <translation>Раздзел падпампоўкі ў файле</translation>
     </message>
@@ -722,19 +722,19 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>Config</name>
     <message>
-      <location filename="../src/modules/keyboard/Config.cpp" line="340"/>
+      <location filename="../src/modules/keyboard/Config.cpp" line="326"/>
       <source>Set keyboard model to %1.&lt;br/&gt;</source>
       <translation>Вызначыць мадэль клавіятуры %1.&lt;br/&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/Config.cpp" line="347"/>
+      <location filename="../src/modules/keyboard/Config.cpp" line="333"/>
       <source>Set keyboard layout to %1/%2.</source>
       <translation>Вызначыць раскладку клавіятуры %1/%2.</translation>
     </message>
     <message>
       <location filename="../src/modules/locale/Config.cpp" line="334"/>
       <source>Set timezone to %1/%2.</source>
-      <translation type="unfinished"/>
+      <translation>Вызначыць часавы пояс %1/%2.</translation>
     </message>
     <message>
       <location filename="../src/modules/locale/Config.cpp" line="372"/>
@@ -794,65 +794,65 @@ The installer will quit and all changes will be lost.</source>
     <message>
       <location filename="../src/modules/welcome/Config.cpp" line="244"/>
       <source>&lt;h1&gt;Welcome to the Calamares setup program for %1&lt;/h1&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Вітаем у праграме ўсталёўкі Calamares для %1&lt;/h1&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcome/Config.cpp" line="245"/>
       <source>&lt;h1&gt;Welcome to %1 setup&lt;/h1&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Вітаем у праграме ўсталёўкі %1&lt;/h1&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcome/Config.cpp" line="250"/>
       <source>&lt;h1&gt;Welcome to the Calamares installer for %1&lt;/h1&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Вітаем у праграме ўсталёўкі Calamares для %1&lt;/h1&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcome/Config.cpp" line="251"/>
       <source>&lt;h1&gt;Welcome to the %1 installer&lt;/h1&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Вітаем у праграме ўсталёўкі %1&lt;/h1&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="164"/>
+      <location filename="../src/modules/users/Config.cpp" line="212"/>
       <source>Your username is too long.</source>
       <translation>Імя карыстальніка занадта доўгае.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="170"/>
+      <location filename="../src/modules/users/Config.cpp" line="218"/>
       <source>'%1' is not allowed as username.</source>
-      <translation type="unfinished"/>
+      <translation>'%1' немагчыма выкарыстаць як імя карыстальніка.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="177"/>
+      <location filename="../src/modules/users/Config.cpp" line="225"/>
       <source>Your username must start with a lowercase letter or underscore.</source>
       <translation>Імя карыстальніка павінна пачынацца з малой літары альбо сімвала падкрэслівання.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="181"/>
+      <location filename="../src/modules/users/Config.cpp" line="229"/>
       <source>Only lowercase letters, numbers, underscore and hyphen are allowed.</source>
       <translation>Дазваляюцца толькі літары, лічбы, знакі падкрэслівання, працяжнікі.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="227"/>
+      <location filename="../src/modules/users/Config.cpp" line="274"/>
       <source>Your hostname is too short.</source>
       <translation>Назва вашага камп’ютара занадта кароткая.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="231"/>
+      <location filename="../src/modules/users/Config.cpp" line="278"/>
       <source>Your hostname is too long.</source>
       <translation>Назва вашага камп’ютара занадта доўгая.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="237"/>
+      <location filename="../src/modules/users/Config.cpp" line="284"/>
       <source>'%1' is not allowed as hostname.</source>
-      <translation type="unfinished"/>
+      <translation>'%1' немагчыма выкарыстаць як назву хоста.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="243"/>
+      <location filename="../src/modules/users/Config.cpp" line="290"/>
       <source>Only letters, numbers, underscore and hyphen are allowed.</source>
       <translation>Толькі літары, лічбы, знакі падкрэслівання, працяжнікі.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="446"/>
+      <location filename="../src/modules/users/Config.cpp" line="527"/>
       <source>Your passwords do not match!</source>
       <translation>Вашыя паролі не супадаюць!</translation>
     </message>
@@ -1020,29 +1020,35 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>CreateUserJob</name>
     <message>
-      <location filename="../src/modules/users/CreateUserJob.cpp" line="40"/>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="36"/>
       <source>Create user %1</source>
       <translation>Стварыць карыстальніка %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CreateUserJob.cpp" line="47"/>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="43"/>
       <source>Create user &lt;strong&gt;%1&lt;/strong&gt;.</source>
       <translation>Стварыць карыстальніка &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CreateUserJob.cpp" line="54"/>
-      <source>Creating user %1.</source>
-      <translation>Стварэнне карыстальніка %1.</translation>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="126"/>
+      <source>Preserving home directory</source>
+      <translation type="unfinished"/>
     </message>
     <message>
-      <location filename="../src/modules/users/CreateUserJob.cpp" line="186"/>
-      <source>Cannot create sudoers file for writing.</source>
-      <translation>Не атрымалася запісаць файл sudoers.</translation>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="50"/>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="143"/>
+      <source>Creating user %1</source>
+      <translation type="unfinished"/>
     </message>
     <message>
-      <location filename="../src/modules/users/CreateUserJob.cpp" line="181"/>
-      <source>Cannot chmod sudoers file.</source>
-      <translation>Не атрымалася ўжыць chmod да файла sudoers.</translation>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="151"/>
+      <source>Configuring user %1</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <location filename="../src/modules/users/CreateUserJob.cpp" line="159"/>
+      <source>Setting file permissions</source>
+      <translation type="unfinished"/>
     </message>
   </context>
   <context>
@@ -1169,17 +1175,17 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>DracutLuksCfgJob</name>
     <message>
-      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="127"/>
+      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="117"/>
       <source>Write LUKS configuration for Dracut to %1</source>
       <translation>Запісаць канфігурацыю LUKS для Dracut у %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="131"/>
+      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="121"/>
       <source>Skip writing LUKS configuration for Dracut: "/" partition is not encrypted</source>
       <translation>Прамінуць запіс канфігурацыі LUKS для Dracut: "/" раздзел не зашыфраваны</translation>
     </message>
     <message>
-      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="148"/>
+      <location filename="../src/modules/dracutlukscfg/DracutLuksCfgJob.cpp" line="138"/>
       <source>Failed to open %1</source>
       <translation>Не атрымалася адкрыць %1</translation>
     </message>
@@ -1245,7 +1251,7 @@ The installer will quit and all changes will be lost.</source>
       <translation>Сцягі:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/EditExistingPartitionDialog.cpp" line="272"/>
+      <location filename="../src/modules/partition/gui/EditExistingPartitionDialog.cpp" line="275"/>
       <source>Mountpoint already in use. Please select another one.</source>
       <translation>Пункт мантавання ўжо выкарыстоўваецца. Калі ласка, абярыце іншы.</translation>
     </message>
@@ -1561,22 +1567,9 @@ The installer will quit and all changes will be lost.</source>
     </message>
   </context>
   <context>
-    <name>KeyboardPage</name>
-    <message>
-      <location filename="../src/modules/keyboard/KeyboardPage.cpp" line="204"/>
-      <source>Set keyboard model to %1.&lt;br/&gt;</source>
-      <translation>Прызначыць мадэль клавіятуры %1.&lt;br/&gt;</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/keyboard/KeyboardPage.cpp" line="208"/>
-      <source>Set keyboard layout to %1/%2.</source>
-      <translation>Прызначыць раскладку клавіятуры %1/%2.</translation>
-    </message>
-  </context>
-  <context>
     <name>KeyboardQmlViewStep</name>
     <message>
-      <location filename="../src/modules/keyboardq/KeyboardQmlViewStep.cpp" line="33"/>
+      <location filename="../src/modules/keyboardq/KeyboardQmlViewStep.cpp" line="32"/>
       <source>Keyboard</source>
       <translation>Клавіятура</translation>
     </message>
@@ -1584,7 +1577,7 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>KeyboardViewStep</name>
     <message>
-      <location filename="../src/modules/keyboard/KeyboardViewStep.cpp" line="45"/>
+      <location filename="../src/modules/keyboard/KeyboardViewStep.cpp" line="42"/>
       <source>Keyboard</source>
       <translation>Клавіятура</translation>
     </message>
@@ -1666,59 +1659,59 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>LicenseWidget</name>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="87"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="88"/>
       <source>URL: %1</source>
       <translation>URL: %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="108"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="109"/>
       <source>&lt;strong&gt;%1 driver&lt;/strong&gt;&lt;br/&gt;by %2</source>
       <extracomment>%1 is an untranslatable product name, example: Creative Audigy driver</extracomment>
       <translation>&lt;strong&gt;%1 драйвер&lt;/strong&gt;&lt;br/&gt;ад %2</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="115"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="116"/>
       <source>&lt;strong&gt;%1 graphics driver&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</source>
       <extracomment>%1 is usually a vendor name, example: Nvidia graphics driver</extracomment>
       <translation>&lt;strong&gt;відэадрайвер %1 &lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="121"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="122"/>
       <source>&lt;strong&gt;%1 browser plugin&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</source>
       <translation>&lt;strong&gt;убудова браўзера %1&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="127"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="128"/>
       <source>&lt;strong&gt;%1 codec&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</source>
       <translation>&lt;strong&gt;кодэк %1 &lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="133"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="134"/>
       <source>&lt;strong&gt;%1 package&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</source>
       <translation>&lt;strong&gt;пакунак %1 &lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="139"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="140"/>
       <source>&lt;strong&gt;%1&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;by %2&lt;/font&gt;</source>
       <translation>&lt;strong&gt;%1&lt;/strong&gt;&lt;br/&gt;&lt;font color="Grey"&gt;ад %2&lt;/font&gt;</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="162"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="163"/>
       <source>File: %1</source>
       <translation>Файл: %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="185"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="186"/>
       <source>Hide license text</source>
       <translation>Схаваць тэкст ліцэнзіі</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="185"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="186"/>
       <source>Show the license text</source>
       <translation>Паказаць тэкст ліцэнзіі</translation>
     </message>
     <message>
-      <location filename="../src/modules/license/LicenseWidget.cpp" line="189"/>
+      <location filename="../src/modules/license/LicenseWidget.cpp" line="190"/>
       <source>Open license agreement in browser.</source>
       <translation>Адкрыць ліцэнзійнае пагадненне ў браўзеры.</translation>
     </message>
@@ -1726,18 +1719,18 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>LocalePage</name>
     <message>
-      <location filename="../src/modules/locale/LocalePage.cpp" line="124"/>
+      <location filename="../src/modules/locale/LocalePage.cpp" line="130"/>
       <source>Region:</source>
       <translation>Рэгіён:</translation>
     </message>
     <message>
-      <location filename="../src/modules/locale/LocalePage.cpp" line="125"/>
+      <location filename="../src/modules/locale/LocalePage.cpp" line="131"/>
       <source>Zone:</source>
       <translation>Зона:</translation>
     </message>
     <message>
-      <location filename="../src/modules/locale/LocalePage.cpp" line="126"/>
-      <location filename="../src/modules/locale/LocalePage.cpp" line="127"/>
+      <location filename="../src/modules/locale/LocalePage.cpp" line="132"/>
+      <location filename="../src/modules/locale/LocalePage.cpp" line="133"/>
       <source>&amp;Change...</source>
       <translation>&amp;Змяніць...</translation>
     </message>
@@ -1766,30 +1759,30 @@ The installer will quit and all changes will be lost.</source>
       <translation>Наладка файла ключа LUKS.</translation>
     </message>
     <message>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="145"/>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="153"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="168"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="176"/>
       <source>No partitions are defined.</source>
       <translation>Раздзелаў не вызначана.</translation>
     </message>
     <message>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="181"/>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="188"/>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="196"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="211"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="218"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="226"/>
       <source>Encrypted rootfs setup error</source>
       <translation>Не атрымалася зашыфраваць rootfs</translation>
     </message>
     <message>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="182"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="212"/>
       <source>Root partition %1 is LUKS but no passphrase has been set.</source>
       <translation>Каранёвы раздзел %1 зашыфраваны як LUKS, але парольная фраза не была вызначаная.</translation>
     </message>
     <message>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="189"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="219"/>
       <source>Could not create LUKS key file for root partition %1.</source>
       <translation>Не атрымалася стварыць файл ключа LUKS для каранёвага раздзела %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="197"/>
+      <location filename="../src/modules/luksbootkeyfile/LuksBootKeyFileJob.cpp" line="227"/>
       <source>Could not configure LUKS key file on partition %1.</source>
       <translation>Не атрымалася наладзіць файл ключа LUKS на каранёвым раздзеле %1.</translation>
     </message>
@@ -1817,14 +1810,16 @@ The installer will quit and all changes will be lost.</source>
     <message>
       <location filename="../src/modules/localeq/Map.qml" line="243"/>
       <source>Timezone: %1</source>
-      <translation type="unfinished"/>
+      <translation>Часавы пояс: %1</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/Map.qml" line="264"/>
       <source>Please select your preferred location on the map so the installer can suggest the locale
             and timezone settings for you. You can fine-tune the suggested settings below. Search the map by dragging
             to move and using the +/- buttons to zoom in/out or use mouse scrolling for zooming.</source>
-      <translation type="unfinished"/>
+      <translation>Калі ласка, абярыце неабходнае месца на мапе, каб праграма прапанавала мову
+             і налады часавога пояса.  Вы можаце дакладна наладзіць прапанаваныя параметры ніжэй. Месца на мапе можна абраць перацягваючы
+             яе пры дапамозе мышы. Для павелічэння і памяншэння выкарыстоўвайце кнопкі +/- і кола мышы.</translation>
     </message>
   </context>
   <context>
@@ -1944,7 +1939,7 @@ The installer will quit and all changes will be lost.</source>
     <message>
       <location filename="../src/modules/oemid/OEMPage.ui" line="42"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enter a batch-identifier here. This will be stored in the target system.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Увядзіце сюды масавы ідэнтыфікатар. Ён захавецца ў мэтавай сістэме.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Увядзіце сюды масавы ідэнтыфікатар. Ён захаваецца ў мэтавай сістэме.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/oemid/OEMPage.ui" line="52"/>
@@ -1970,29 +1965,29 @@ The installer will quit and all changes will be lost.</source>
     <message>
       <location filename="../src/modules/localeq/Offline.qml" line="37"/>
       <source>Select your preferred Region, or use the default one based on your current location.</source>
-      <translation type="unfinished"/>
+      <translation>Абярыце пераважны рэгіён альбо выкарыстоўвайце прадвызначаны ў залежнасці ад вашага бягучага месцазнаходжання.</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/Offline.qml" line="94"/>
       <location filename="../src/modules/localeq/Offline.qml" line="169"/>
       <location filename="../src/modules/localeq/Offline.qml" line="213"/>
       <source>Timezone: %1</source>
-      <translation type="unfinished"/>
+      <translation>Часавы пояс: %1</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/Offline.qml" line="111"/>
       <source>Select your preferred Zone within your Region.</source>
-      <translation type="unfinished"/>
+      <translation>Абярыце часавы пояс для вашага рэгіёна.</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/Offline.qml" line="182"/>
       <source>Zones</source>
-      <translation type="unfinished"/>
+      <translation>Часавыя паясы</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/Offline.qml" line="229"/>
       <source>You can fine-tune Language and Locale settings below.</source>
-      <translation type="unfinished"/>
+      <translation>Ніжэй вы можаце наладзіць мову і мясцовасць.</translation>
     </message>
   </context>
   <context>
@@ -2008,237 +2003,282 @@ The installer will quit and all changes will be lost.</source>
       <translation>Пароль занадта доўгі</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="143"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="188"/>
       <source>Password is too weak</source>
       <translation>Пароль занадта ненадзейны</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="151"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="196"/>
       <source>Memory allocation error when setting '%1'</source>
       <translation>Не атрымалася адвесці памяць падчас усталёўкі '%1'</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="156"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="199"/>
       <source>Memory allocation error</source>
       <translation>Не атрымалася адвесці памяць</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="158"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="201"/>
       <source>The password is the same as the old one</source>
       <translation>Пароль не адрозніваецца ад старога</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="160"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="203"/>
       <source>The password is a palindrome</source>
       <translation>Пароль з’яўляецца паліндромам</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="162"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="205"/>
       <source>The password differs with case changes only</source>
       <translation>Пароль адрозніваецца толькі рэгістрам знакаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="164"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="207"/>
       <source>The password is too similar to the old one</source>
       <translation>Пароль вельмі падобны да старога</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="166"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="209"/>
       <source>The password contains the user name in some form</source>
       <translation>Пароль змяшчае імя карыстальніка</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="168"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="211"/>
       <source>The password contains words from the real name of the user in some form</source>
       <translation>Пароль змяшчае часткі сапраўднага імя карыстальніка</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="171"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="214"/>
       <source>The password contains forbidden words in some form</source>
       <translation>Пароль змяшчае забароненыя сімвалы</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="175"/>
-      <source>The password contains less than %1 digits</source>
-      <translation>Пароль змяшчае менш за %1 лічбаў</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="178"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="221"/>
       <source>The password contains too few digits</source>
       <translation>У паролі занадта мала лічбаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="182"/>
-      <source>The password contains less than %1 uppercase letters</source>
-      <translation>У паролі менш за %1 вялікіх літар</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="185"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="228"/>
       <source>The password contains too few uppercase letters</source>
       <translation>У паролі занадта мала вялікіх літар</translation>
     </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="189"/>
-      <source>The password contains less than %1 lowercase letters</source>
-      <translation>У паролі менш за %1 малых літар</translation>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="232"/>
+      <source>The password contains fewer than %n lowercase letters</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="192"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="235"/>
       <source>The password contains too few lowercase letters</source>
       <translation>У паролі занадта мала малых літар</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="196"/>
-      <source>The password contains less than %1 non-alphanumeric characters</source>
-      <translation>У паролі менш за %1 адмысловых знакаў</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="200"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="242"/>
       <source>The password contains too few non-alphanumeric characters</source>
       <translation>У паролі занадта мала адмысловых знакаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="204"/>
-      <source>The password is shorter than %1 characters</source>
-      <translation>Пароль карацейшы за %1 знакаў</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="207"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="249"/>
       <source>The password is too short</source>
       <translation>Пароль занадта кароткі</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="209"/>
-      <source>The password is just rotated old one</source>
-      <translation>Новы пароль - стары пароль наадварот</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="213"/>
-      <source>The password contains less than %1 character classes</source>
-      <translation>Пароль змяшчае менш за %1 класаў сімвалаў</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="216"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="258"/>
       <source>The password does not contain enough character classes</source>
       <translation>Пароль змяшчае недастаткова класаў сімвалаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="220"/>
-      <source>The password contains more than %1 same characters consecutively</source>
-      <translation>Пароль змяшчае больш за %1 аднолькавых паслядоўных знакаў</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="224"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="265"/>
       <source>The password contains too many same characters consecutively</source>
       <translation>Пароль змяшчае занадта шмат аднолькавых паслядоўных знакаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="228"/>
-      <source>The password contains more than %1 characters of the same class consecutively</source>
-      <translation>Пароль змяшчае больш за %1 паслядоўных знакаў таго ж класа</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="232"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="275"/>
       <source>The password contains too many characters of the same class consecutively</source>
       <translation>Пароль змяшчае занадта шмат паслядоўных знакаў аднаго класа</translation>
     </message>
-    <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="237"/>
-      <source>The password contains monotonic sequence longer than %1 characters</source>
-      <translation>Пароль змяшчае аднастайную паслядоўнасць даўжэйшую за %1 знакаў</translation>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="218"/>
+      <source>The password contains fewer than %n digits</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="225"/>
+      <source>The password contains fewer than %n uppercase letters</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="239"/>
+      <source>The password contains fewer than %n non-alphanumeric characters</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="246"/>
+      <source>The password is shorter than %n characters</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="241"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="251"/>
+      <source>The password is a rotated version of the previous one</source>
+      <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="255"/>
+      <source>The password contains fewer than %n character classes</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="262"/>
+      <source>The password contains more than %n same characters consecutively</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="269"/>
+      <source>The password contains more than %n characters of the same class consecutively</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message numerus="yes">
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="280"/>
+      <source>The password contains monotonic sequence longer than %n characters</source>
+      <translation type="unfinished">
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+        <numerusform/>
+      </translation>
+    </message>
+    <message>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="286"/>
       <source>The password contains too long of a monotonic character sequence</source>
       <translation>Пароль змяшчае занадта доўгую аднастайную паслядоўнасць знакаў</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="244"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="289"/>
       <source>No password supplied</source>
       <translation>Пароль не прызначаны</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="246"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="291"/>
       <source>Cannot obtain random numbers from the RNG device</source>
       <translation>Не ўдалося атрымаць выпадковыя лікі з прылады RNG</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="248"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="293"/>
       <source>Password generation failed - required entropy too low for settings</source>
       <translation>Не атрымалася згенераваць пароль - занадта нізкая энтрапія для налад</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="254"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="298"/>
       <source>The password fails the dictionary check - %1</source>
       <translation>Пароль не прайшоў праверку слоўнікам - %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="257"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="301"/>
       <source>The password fails the dictionary check</source>
       <translation>Пароль не прайшоў праверку слоўнікам</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="261"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="305"/>
       <source>Unknown setting - %1</source>
       <translation>Невядомы параметр - %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="265"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="307"/>
       <source>Unknown setting</source>
       <translation>Невядомы параметр</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="269"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="311"/>
       <source>Bad integer value of setting - %1</source>
       <translation>Хібнае цэлае значэнне параметра - %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="274"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="313"/>
       <source>Bad integer value</source>
       <translation>Хібнае цэлае значэнне</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="278"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="317"/>
       <source>Setting %1 is not of integer type</source>
       <translation>Параметр %1 не з’яўляецца цэлым лікам</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="283"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="319"/>
       <source>Setting is not of integer type</source>
       <translation>Параметр не з’яўляецца цэлым лікам</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="287"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="323"/>
       <source>Setting %1 is not of string type</source>
       <translation>Параметр %1 не з’яўляецца радком</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="292"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="325"/>
       <source>Setting is not of string type</source>
       <translation>Параметр не з’яўляецца радком</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="294"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="327"/>
       <source>Opening the configuration file failed</source>
       <translation>Не атрымалася адкрыць файл канфігурацыі</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="296"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="329"/>
       <source>The configuration file is malformed</source>
       <translation>Файл канфігурацыі пашкоджаны</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="298"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="331"/>
       <source>Fatal failure</source>
       <translation>Фатальны збой</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/CheckPWQuality.cpp" line="300"/>
+      <location filename="../src/modules/users/CheckPWQuality.cpp" line="333"/>
       <source>Unknown error</source>
       <translation>Невядомая памылка</translation>
     </message>
     <message>
-      <location filename="../src/modules/users/Config.cpp" line="651"/>
+      <location filename="../src/modules/users/Config.cpp" line="775"/>
       <source>Password is empty</source>
       <translation>Пароль пусты</translation>
     </message>
@@ -2572,117 +2612,117 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>PartitionViewStep</name>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="69"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="70"/>
       <source>Gathering system information...</source>
       <translation>Збор інфармацыі пра сістэму...</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="124"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="125"/>
       <source>Partitions</source>
       <translation>Раздзелы</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="162"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="163"/>
       <source>Install %1 &lt;strong&gt;alongside&lt;/strong&gt; another operating system.</source>
       <translation>Усталяваць %1 &lt;strong&gt;побач&lt;/strong&gt; з іншай аперацыйнай сістэмай.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="166"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="167"/>
       <source>&lt;strong&gt;Erase&lt;/strong&gt; disk and install %1.</source>
       <translation>&lt;strong&gt;Ачысціць&lt;/strong&gt; дыск і ўсталяваць %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="169"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="170"/>
       <source>&lt;strong&gt;Replace&lt;/strong&gt; a partition with %1.</source>
       <translation>&lt;strong&gt;Замяніць&lt;/strong&gt; раздзел на %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="173"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="174"/>
       <source>&lt;strong&gt;Manual&lt;/strong&gt; partitioning.</source>
       <translation>&lt;strong&gt;Уласнаручная&lt;/strong&gt; разметка.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="186"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="187"/>
       <source>Install %1 &lt;strong&gt;alongside&lt;/strong&gt; another operating system on disk &lt;strong&gt;%2&lt;/strong&gt; (%3).</source>
       <translation>Усталяваць %1 &lt;strong&gt;побач&lt;/strong&gt; з іншай аперацыйнай сістэмай на дыск&lt;strong&gt;%2&lt;/strong&gt; (%3).</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="193"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="194"/>
       <source>&lt;strong&gt;Erase&lt;/strong&gt; disk &lt;strong&gt;%2&lt;/strong&gt; (%3) and install %1.</source>
       <translation>&lt;strong&gt;Ачысціць&lt;/strong&gt; дыск &lt;strong&gt;%2&lt;/strong&gt; (%3) і ўсталяваць %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="199"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="200"/>
       <source>&lt;strong&gt;Replace&lt;/strong&gt; a partition on disk &lt;strong&gt;%2&lt;/strong&gt; (%3) with %1.</source>
       <translation>&lt;strong&gt;Замяніць&lt;/strong&gt; раздзел на дыску &lt;strong&gt;%2&lt;/strong&gt; (%3) на %1.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="206"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="207"/>
       <source>&lt;strong&gt;Manual&lt;/strong&gt; partitioning on disk &lt;strong&gt;%1&lt;/strong&gt; (%2).</source>
       <translation>&lt;strong&gt;Уласнаручная&lt;/strong&gt; разметка дыска&lt;strong&gt;%1&lt;/strong&gt; (%2).</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="215"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="216"/>
       <source>Disk &lt;strong&gt;%1&lt;/strong&gt; (%2)</source>
       <translation>Дыск &lt;strong&gt;%1&lt;/strong&gt; (%2)</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="241"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="242"/>
       <source>Current:</source>
       <translation>Бягучы:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="259"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="260"/>
       <source>After:</source>
       <translation>Пасля:</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="426"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="427"/>
       <source>No EFI system partition configured</source>
       <translation>Няма наладжанага сістэмнага раздзела EFI</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="427"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="428"/>
       <source>An EFI system partition is necessary to start %1.&lt;br/&gt;&lt;br/&gt;To configure an EFI system partition, go back and select or create a FAT32 filesystem with the &lt;strong&gt;%3&lt;/strong&gt; flag enabled and mount point &lt;strong&gt;%2&lt;/strong&gt;.&lt;br/&gt;&lt;br/&gt;You can continue without setting up an EFI system partition but your system may fail to start.</source>
-      <translation type="unfinished"/>
+      <translation>Для таго, каб пачаць %1, патрабуецца сістэмны раздзел EFI.&lt;br/&gt;&lt;br/&gt; Каб наладзіць сістэмны раздзел EFI, вярніцеся назад, абярыце альбо стварыце файлавую сістэму FAT32 са сцягам &lt;strong&gt;%3&lt;/strong&gt; і пунктам мантавання &lt;strong&gt;%2&lt;/strong&gt;.&lt;br/&gt;&lt;br/&gt;Вы можаце працягнуць і без наладкі сістэмнага раздзела EFI, але ваша сістэма можа не загрузіцца.</translation>
+    </message>
+    <message>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="442"/>
+      <source>An EFI system partition is necessary to start %1.&lt;br/&gt;&lt;br/&gt;A partition was configured with mount point &lt;strong&gt;%2&lt;/strong&gt; but its &lt;strong&gt;%3&lt;/strong&gt; flag is not set.&lt;br/&gt;To set the flag, go back and edit the partition.&lt;br/&gt;&lt;br/&gt;You can continue without setting the flag but your system may fail to start.</source>
+      <translation>Для таго, каб пачаць %1, патрабуецца сістэмны раздзел EFI.&lt;br/&gt;&lt;br/&gt;Быў наладжаны раздзел з пунктам мантавання&lt;strong&gt;%2&lt;/strong&gt; але яго сцяг &lt;strong&gt;%3&lt;/strong&gt; не вызначаны.&lt;br/&gt;Каб вызначыць сцяг, вярніцеся назад і адрэдагуйце раздзел.&lt;br/&gt;&lt;br/&gt; Вы можаце працягнуць без наладкі раздзела, але ваша сістэма можа не загрузіцца.</translation>
     </message>
     <message>
       <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="441"/>
-      <source>An EFI system partition is necessary to start %1.&lt;br/&gt;&lt;br/&gt;A partition was configured with mount point &lt;strong&gt;%2&lt;/strong&gt; but its &lt;strong&gt;%3&lt;/strong&gt; flag is not set.&lt;br/&gt;To set the flag, go back and edit the partition.&lt;br/&gt;&lt;br/&gt;You can continue without setting the flag but your system may fail to start.</source>
-      <translation type="unfinished"/>
-    </message>
-    <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="440"/>
       <source>EFI system partition flag not set</source>
       <translation>Не вызначаны сцяг сістэмнага раздзела EFI</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="467"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="468"/>
       <source>Option to use GPT on BIOS</source>
       <translation>Параметр для выкарыстання GPT у BIOS</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="468"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="469"/>
       <source>A GPT partition table is the best option for all systems. This installer supports such a setup for BIOS systems too.&lt;br/&gt;&lt;br/&gt;To configure a GPT partition table on BIOS, (if not done so already) go back and set the partition table to GPT, next create a 8 MB unformatted partition with the &lt;strong&gt;bios_grub&lt;/strong&gt; flag enabled.&lt;br/&gt;&lt;br/&gt;An unformatted 8 MB partition is necessary to start %1 on a BIOS system with GPT.</source>
       <translation>Табліца раздзелаў GPT - найлепшы варыянт для ўсіх сістэм. Гэтая праграма ўсталёўкі таксама падтрымлівае гэты варыянт і для BIOS.&lt;br/&gt;&lt;br/&gt;Каб наладзіць GPT для BIOS (калі гэта яшчэ не зроблена), вярніцеся назад і абярыце табліцу раздзелаў GPT, пасля стварыце нефарматаваны раздзел памерам 8 МБ са сцягам &lt;strong&gt;bios_grub&lt;/strong&gt;.&lt;br/&gt;&lt;br/&gt;Гэты раздзел патрэбны для запуску %1 у BIOS з GPT.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="496"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="497"/>
       <source>Boot partition not encrypted</source>
       <translation>Загрузачны раздзел не зашыфраваны</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="497"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="498"/>
       <source>A separate boot partition was set up together with an encrypted root partition, but the boot partition is not encrypted.&lt;br/&gt;&lt;br/&gt;There are security concerns with this kind of setup, because important system files are kept on an unencrypted partition.&lt;br/&gt;You may continue if you wish, but filesystem unlocking will happen later during system startup.&lt;br/&gt;To encrypt the boot partition, go back and recreate it, selecting &lt;strong&gt;Encrypt&lt;/strong&gt; in the partition creation window.</source>
       <translation>Уключана шыфраванне каранёвага раздзела, але выкарыстаны асобны загрузачны раздзел без шыфравання.&lt;br/&gt;&lt;br/&gt;Пры такой канфігурацыі могуць узнікнуць праблемы з бяспекай, бо важныя сістэмныя даныя будуць захоўвацца на раздзеле без шыфравання.&lt;br/&gt;Вы можаце працягнуць, але файлавая сістэма разблакуецца падчас запуску сістэмы.&lt;br/&gt;Каб уключыць шыфраванне загрузачнага раздзела, вярніцеся назад і стварыце яго нанова, адзначыўшы &lt;strong&gt;Шыфраваць&lt;/strong&gt; у акне стварэння раздзела.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="626"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="627"/>
       <source>has at least one disk device available.</source>
       <translation>ёсць прынамсі адна даступная дыскавая прылада.</translation>
     </message>
     <message>
-      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="627"/>
+      <location filename="../src/modules/partition/gui/PartitionViewStep.cpp" line="628"/>
       <source>There are no partitions to install on.</source>
       <translation>Няма раздзелаў для ўсталёўкі.</translation>
     </message>
@@ -2690,13 +2730,13 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>PlasmaLnfJob</name>
     <message>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="30"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="33"/>
       <source>Plasma Look-and-Feel Job</source>
       <translation>Plasma Look-and-Feel</translation>
     </message>
     <message>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="62"/>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="63"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="57"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfJob.cpp" line="58"/>
       <source>Could not select KDE Plasma Look-and-Feel package</source>
       <translation>Не атрымалася абраць пакунак KDE Plasma Look-and-Feel</translation>
     </message>
@@ -2709,12 +2749,12 @@ The installer will quit and all changes will be lost.</source>
       <translation>Форма</translation>
     </message>
     <message>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfPage.cpp" line="61"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfPage.cpp" line="79"/>
       <source>Please choose a look-and-feel for the KDE Plasma Desktop. You can also skip this step and configure the look-and-feel once the system is set up. Clicking on a look-and-feel selection will give you a live preview of that look-and-feel.</source>
       <translation>Калі ласка, абярыце "look-and-feel" для працоўнага асяроддзя KDE Plasma. Вы можаце мінуць гэты крок і наладзіць выгляд і паводзіны пасля завяршэння ўсталёўкі сістэмы. Калі пстрыкнуць па "look-and-feel", то можна паглядзець як выглядае гэты стыль.</translation>
     </message>
     <message>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfPage.cpp" line="66"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfPage.cpp" line="84"/>
       <source>Please choose a look-and-feel for the KDE Plasma Desktop. You can also skip this step and configure the look-and-feel once the system is installed. Clicking on a look-and-feel selection will give you a live preview of that look-and-feel.</source>
       <translation>Калі ласка, абярыце "look-and-feel" для працоўнага асяроддзя KDE Plasma. Вы можаце мінуць гэты крок і наладзіць выгляд і паводзіны пасля завяршэння ўсталёўкі сістэмы. Калі пстрыкнуць па "look-and-feel", то можна паглядзець як выглядае гэты стыль.</translation>
     </message>
@@ -2722,7 +2762,7 @@ The installer will quit and all changes will be lost.</source>
   <context>
     <name>PlasmaLnfViewStep</name>
     <message>
-      <location filename="../src/modules/plasmalnf/PlasmaLnfViewStep.cpp" line="61"/>
+      <location filename="../src/modules/plasmalnf/PlasmaLnfViewStep.cpp" line="43"/>
       <source>Look-and-Feel</source>
       <translation>Выгляд</translation>
     </message>
@@ -2842,13 +2882,8 @@ Output:
       <translation>swap</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/keyboardwidget/keyboardglobal.cpp" line="90"/>
-      <source>Default Keyboard Model</source>
-      <translation>Мадэль прадвызначанай клавіятуры</translation>
-    </message>
-    <message>
-      <location filename="../src/modules/keyboard/keyboardwidget/keyboardglobal.cpp" line="136"/>
-      <location filename="../src/modules/keyboard/keyboardwidget/keyboardglobal.cpp" line="173"/>
+      <location filename="../src/modules/keyboard/keyboardwidget/keyboardglobal.cpp" line="130"/>
+      <location filename="../src/modules/keyboard/keyboardwidget/keyboardglobal.cpp" line="167"/>
       <source>Default</source>
       <translation>Прадвызначана</translation>
     </message>
@@ -2868,7 +2903,7 @@ Output:
     <message>
       <location filename="../src/modules/machineid/MachineIdJob.cpp" line="83"/>
       <source>Directory not found</source>
-      <translation type="unfinished"/>
+      <translation>Каталог не знойдзены</translation>
     </message>
     <message>
       <location filename="../src/modules/machineid/MachineIdJob.cpp" line="84"/>
@@ -2903,7 +2938,8 @@ Output:
       <location filename="../src/modules/welcomeq/Recommended.qml" line="40"/>
       <source>&lt;p&gt;This computer does not satisfy some of the recommended requirements for setting up %1.&lt;br/&gt;
         Setup can continue, but some features might be disabled.&lt;/p&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;p&gt;Гэты камп’ютар адпавядае не ўсім патрэбам для ўсталёўкі %1.&lt;br/&gt;
+        Можна працягнуць усталёўку, але некаторыя магчымасці могуць быць недаступнымі.&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -3014,13 +3050,15 @@ Output:
       <location filename="../src/modules/welcomeq/Requirements.qml" line="38"/>
       <source>&lt;p&gt;This computer does not satisfy the minimum requirements for installing %1.&lt;br/&gt;
         Installation cannot continue.&lt;/p&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;p&gt;Гэты камп’ютар не адпавядае мінімальным патрэбам для ўсталёўкі %1.&lt;p&gt;
+        Немагчыма працягнуць. &lt;br/&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcomeq/Requirements.qml" line="40"/>
       <source>&lt;p&gt;This computer does not satisfy some of the recommended requirements for setting up %1.&lt;br/&gt;
         Setup can continue, but some features might be disabled.&lt;/p&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;p&gt;Гэты камп’ютар адпавядае не ўсім патрэбам для ўсталёўкі %1.&lt;br/&gt;
+        Можна працягнуць усталёўку, але некаторыя магчымасці могуць быць недаступнымі.&lt;/p&gt;</translation>
     </message>
   </context>
   <context>
@@ -3038,7 +3076,7 @@ Output:
     <message>
       <location filename="../src/modules/fsresizer/ResizeFSJob.cpp" line="170"/>
       <source>The file-system resize job has an invalid configuration and will not run.</source>
-      <translation>У задачы па змене памеру файлавай сістэмы хібная канфігурафыя, таму яна не будзе выконвацца.</translation>
+      <translation>У задачы па змене памеру файлавай сістэмы хібная канфігурацыя, таму яна не будзе выконвацца.</translation>
     </message>
     <message>
       <location filename="../src/modules/fsresizer/ResizeFSJob.cpp" line="175"/>
@@ -3229,29 +3267,29 @@ Output:
   <context>
     <name>SetKeyboardLayoutJob</name>
     <message>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="53"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="55"/>
       <source>Set keyboard model to %1, layout to %2-%3</source>
       <translation>Прызначыць мадэль клавіятуры %1, раскладку %2-%3</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="356"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="368"/>
       <source>Failed to write keyboard configuration for the virtual console.</source>
       <translation>Не атрымалася запісаць канфігурацыю клавіятуры для віртуальнай кансолі.</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="357"/>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="361"/>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="368"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="369"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="397"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="414"/>
       <source>Failed to write to %1</source>
       <translation>Не атрымалася запісаць у %1</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="360"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="396"/>
       <source>Failed to write keyboard configuration for X11.</source>
       <translation>Не атрымалася запісаць канфігурацыю клавіятуры для X11.</translation>
     </message>
     <message>
-      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="367"/>
+      <location filename="../src/modules/keyboard/SetKeyboardLayoutJob.cpp" line="413"/>
       <source>Failed to write keyboard configuration to existing /etc/default directory.</source>
       <translation>Не атрымалася запісаць параметры клавіятуры ў існы каталог /etc/default.</translation>
     </message>
@@ -3421,6 +3459,43 @@ Output:
     </message>
   </context>
   <context>
+    <name>SetupGroupsJob</name>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="166"/>
+      <source>Preparing groups.</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="178"/>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="183"/>
+      <source>Could not create groups in target system</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="184"/>
+      <source>These groups are missing in the target system: %1</source>
+      <translation type="unfinished"/>
+    </message>
+  </context>
+  <context>
+    <name>SetupSudoJob</name>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="33"/>
+      <source>Configure &lt;pre&gt;sudo&lt;/pre&gt; users.</source>
+      <translation type="unfinished"/>
+    </message>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="55"/>
+      <source>Cannot chmod sudoers file.</source>
+      <translation>Не атрымалася ўжыць chmod да файла sudoers.</translation>
+    </message>
+    <message>
+      <location filename="../src/modules/users/MiscJobs.cpp" line="60"/>
+      <source>Cannot create sudoers file for writing.</source>
+      <translation>Не атрымалася запісаць файл sudoers.</translation>
+    </message>
+  </context>
+  <context>
     <name>ShellProcessJob</name>
     <message>
       <location filename="../src/modules/shellprocess/ShellProcessJob.cpp" line="41"/>
@@ -3440,12 +3515,12 @@ Output:
   <context>
     <name>SummaryPage</name>
     <message>
-      <location filename="../src/modules/summary/SummaryPage.cpp" line="47"/>
+      <location filename="../src/modules/summary/SummaryPage.cpp" line="48"/>
       <source>This is an overview of what will happen once you start the setup procedure.</source>
       <translation>Гэта агляд дзеянняў, якія здейсняцца падчас запуску працэдуры ўсталёўкі.</translation>
     </message>
     <message>
-      <location filename="../src/modules/summary/SummaryPage.cpp" line="49"/>
+      <location filename="../src/modules/summary/SummaryPage.cpp" line="50"/>
       <source>This is an overview of what will happen once you start the install procedure.</source>
       <translation>Гэта агляд дзеянняў, якія здейсняцца падчас запуску працэдуры ўсталёўкі.</translation>
     </message>
@@ -3486,28 +3561,28 @@ Output:
     <message>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="122"/>
       <source>KDE user feedback</source>
-      <translation type="unfinished"/>
+      <translation>Зваротная сувязь KDE</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="128"/>
       <source>Configuring KDE user feedback.</source>
-      <translation type="unfinished"/>
+      <translation>Наладка зваротнай сувязі KDE.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="150"/>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="156"/>
       <source>Error in KDE user feedback configuration.</source>
-      <translation type="unfinished"/>
+      <translation>Падчас наладкі зваротнай сувязі KDE адбылася памылка.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="151"/>
       <source>Could not configure KDE user feedback correctly, script error %1.</source>
-      <translation type="unfinished"/>
+      <translation>Не атрымалася наладзіць зваротную сувязь KDE, памылка скрыпта %1.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingJobs.cpp" line="157"/>
       <source>Could not configure KDE user feedback correctly, Calamares error %1.</source>
-      <translation type="unfinished"/>
+      <translation>Не атрымалася наладзіць зваротную сувязь KDE, памылка Calamares %1.</translation>
     </message>
   </context>
   <context>
@@ -3554,7 +3629,7 @@ Output:
     <message>
       <location filename="../src/modules/tracking/page_trackingstep.ui" line="76"/>
       <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click here to send &lt;span style=" font-weight:600;"&gt;no information at all&lt;/span&gt; about your installation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Пстрыкніце сюды, каб не адпраўляць &lt;span style=" font-weight:600;"&gt;ніякіх звестак&lt;/span&gt; пра вашу ўсталёўку.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/page_trackingstep.ui" line="275"/>
@@ -3564,22 +3639,22 @@ Output:
     <message>
       <location filename="../src/modules/tracking/TrackingPage.cpp" line="86"/>
       <source>Tracking helps %1 to see how often it is installed, what hardware it is installed on and which applications are used. To see what will be sent, please click the help icon next to each area.</source>
-      <translation type="unfinished"/>
+      <translation>Адсочванне дапамагае праекту %1 бачыць, як часта ён усталёўваецца, на якім абсталяванні ён усталёўваецца, якія праграмы выкарыстоўваюцца. Каб убачыць, што будзе адпраўлена, пстрыкніце па значку ля кожнай вобласці.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingPage.cpp" line="91"/>
       <source>By selecting this you will send information about your installation and hardware. This information will only be sent &lt;b&gt;once&lt;/b&gt; after the installation finishes.</source>
-      <translation type="unfinished"/>
+      <translation>Абраўшы гэты пункт вы адправіце звесткі пра сваю канфігурацыю ўсталёўкі і ваша абсталяванне. Звесткі адправяцца &lt;b&gt;адзін раз&lt;/b&gt; пасля завяршэння ўсталёўкі.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingPage.cpp" line="94"/>
       <source>By selecting this you will periodically send information about your &lt;b&gt;machine&lt;/b&gt; installation, hardware and applications, to %1.</source>
-      <translation type="unfinished"/>
+      <translation>Абраўшы гэты пункт вы будзеце перыядычна адпраўляць звесткі пра усталёўку, абсталяванне і праграмы вашага &lt;b&gt;камп'ютара&lt;/b&gt; на %1.</translation>
     </message>
     <message>
       <location filename="../src/modules/tracking/TrackingPage.cpp" line="98"/>
       <source>By selecting this you will regularly send information about your &lt;b&gt;user&lt;/b&gt; installation, hardware, applications and application usage patterns, to %1.</source>
-      <translation type="unfinished"/>
+      <translation>Абраўшы гэты пункт вы будзеце перыядычна адпраўляць звесткі пра усталёўку, абсталяванне, праграмы &lt;b&gt;карыстальніка&lt;/b&gt; і вобласці іх выкарыстання на %1.</translation>
     </message>
   </context>
   <context>
@@ -3625,7 +3700,7 @@ Output:
       <location filename="../src/calamares/VariantModel.cpp" line="232"/>
       <source>Key</source>
       <comment>Column header for key/value</comment>
-      <translation>Клавіша</translation>
+      <translation>Ключ</translation>
     </message>
     <message>
       <location filename="../src/calamares/VariantModel.cpp" line="236"/>
@@ -3783,7 +3858,7 @@ Output:
     <message>
       <location filename="../src/modules/welcome/WelcomePage.cpp" line="238"/>
       <source>&lt;h1&gt;%1&lt;/h1&gt;&lt;br/&gt;&lt;strong&gt;%2&lt;br/&gt;for %3&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;Copyright 2014-2017 Teo Mrnjavac &amp;lt;teo@kde.org&amp;gt;&lt;br/&gt;Copyright 2017-2020 Adriaan de Groot &amp;lt;groot@kde.org&amp;gt;&lt;br/&gt;Thanks to &lt;a href="https://calamares.io/team/"&gt;the Calamares team&lt;/a&gt; and the &lt;a href="https://www.transifex.com/calamares/calamares/"&gt;Calamares translators team&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;&lt;a href="https://calamares.io/"&gt;Calamares&lt;/a&gt; development is sponsored by &lt;br/&gt;&lt;a href="http://www.blue-systems.com/"&gt;Blue Systems&lt;/a&gt; - Liberating Software.</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;%1&lt;/h1&gt;&lt;br/&gt;&lt;strong&gt;%2&lt;br/&gt;for %3&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;Аўтарскія правы 2014-2017 Teo Mrnjavac &amp;lt;teo@kde.org&amp;gt;&lt;br/&gt;Аўтарскія правы 2017-2020 Adriaan de Groot &amp;lt;groot@kde.org&amp;gt;&lt;br/&gt;Шчырыя падзякі &lt;a href="https://calamares.io/team/"&gt;камандзе распрацоўкі Calamares&lt;/a&gt; і &lt;a href="https://www.transifex.com/calamares/calamares/"&gt;камандзе перакладчыкаў Calamares&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;&lt;a href="https://calamares.io/"&gt;Calamares&lt;/a&gt; распрацоўваецца пры падтрымцы&lt;br/&gt;&lt;a href="http://www.blue-systems.com/"&gt;Blue Systems&lt;/a&gt; - Liberating Software.</translation>
     </message>
   </context>
   <context>
@@ -3818,7 +3893,17 @@ Output:
                         development is sponsored by &lt;br/&gt;
                         &lt;a href='http://www.blue-systems.com/'&gt;Blue Systems&lt;/a&gt; -
                         Liberating Software.</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;%1&lt;/h1&gt;&lt;br/&gt;
+                        &lt;strong&gt;%2&lt;br/&gt;
+                        for %3&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;
+                        Аўтарскія правы 2014-2017 Teo Mrnjavac &amp;lt;teo@kde.org&amp;gt;&lt;br/&gt;
+                        Аўтарскія правы 2017-2020 Adriaan de Groot &amp;lt;groot@kde.org&amp;gt;&lt;br/&gt;
+                        Шчырыя падзякі &lt;a href='https://calamares.io/team/'&gt;камандзе распрацоўкі Calamares &lt;/a&gt; 
+                        і &lt;a href='https://www.transifex.com/calamares/calamares/'&gt; перакладчыкам Calamares&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;
+                        &lt;a href='https://calamares.io/'&gt;Calamares&lt;/a&gt; 
+                        распрацоўваецца пры падтрымцы &lt;br/&gt;
+                        &lt;a href='http://www.blue-systems.com/'&gt;Blue Systems&lt;/a&gt; - 
+                        Liberating Software.</translation>
     </message>
     <message>
       <location filename="../src/modules/welcomeq/about.qml" line="96"/>
@@ -3832,13 +3917,15 @@ Output:
       <location filename="../src/modules/localeq/i18n.qml" line="46"/>
       <source>&lt;h1&gt;Languages&lt;/h1&gt; &lt;/br&gt;
                     The system locale setting affects the language and character set for some command line user interface elements. The current setting is &lt;strong&gt;%1&lt;/strong&gt;.</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Мовы&lt;/h1&gt;&lt;/br&gt;
+                    Сістэмныя рэгіянальныя налады вызначаюць мову і кадаванне для пэўных элементаў інтэрфейсу загаднага радка. Бягучыя налады &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/i18n.qml" line="106"/>
       <source>&lt;h1&gt;Locales&lt;/h1&gt; &lt;/br&gt;
                     The system locale setting affects the numbers and dates format. The current setting is &lt;strong&gt;%1&lt;/strong&gt;.</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h1&gt;Рэгіянальныя налады&lt;/h1&gt;&lt;/br&gt;
+                    Сістэмныя рэгіянальныя налады вызначаюць фармат нумароў і датаў. Бягучыя налады &lt;strong&gt;%1&lt;/strong&gt;.</translation>
     </message>
     <message>
       <location filename="../src/modules/localeq/i18n.qml" line="158"/>
@@ -3866,7 +3953,7 @@ Output:
     <message>
       <location filename="../src/modules/keyboardq/keyboardq.qml" line="60"/>
       <source>Click your preferred keyboard model to select layout and variant, or use the default one based on the detected hardware.</source>
-      <translation type="unfinished"/>
+      <translation>Пстрыкніце на пераважную мадэль клавіятуры, каб абраць раскладку і варыянт, альбо выкарыстоўвайце прадвызначаную ў залежнасці ад выяўленага абсталявання.</translation>
     </message>
     <message>
       <location filename="../src/modules/keyboardq/keyboardq.qml" line="253"/>
@@ -3881,7 +3968,7 @@ Output:
     <message>
       <location filename="../src/modules/keyboardq/keyboardq.qml" line="276"/>
       <source>Keyboard Variant</source>
-      <translation type="unfinished"/>
+      <translation>Варыянт клавіятуры</translation>
     </message>
     <message>
       <location filename="../src/modules/keyboardq/keyboardq.qml" line="386"/>
@@ -3894,7 +3981,7 @@ Output:
     <message>
       <location filename="../src/modules/localeq/localeq.qml" line="81"/>
       <source>Change</source>
-      <translation type="unfinished"/>
+      <translation>Змяніць</translation>
     </message>
   </context>
   <context>
@@ -3932,7 +4019,28 @@ Output:
             &lt;/ul&gt;
 
             &lt;p&gt;The vertical scrollbar is adjustable, current width set to 10.&lt;/p&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h3&gt;%1&lt;/h3&gt;
+             &lt;p&gt;Гэта прыклад файла QML, у якім паказваюцца параметры RichText са зменным змесцівам.&lt;/p&gt;
+
+             &lt;p&gt;QML з RichText можа выкарыстоўваць пазнакі HTML. Зменнае змесціва карысна для сэнсарных экранаў.&lt;/p&gt;
+
+             &lt;p&gt;&lt;b&gt;Гэта паўтлусты тэкст&lt;/b&gt;&lt;/p&gt;
+             &lt;p&gt;&lt;i&gt;Гэта тэкст курсівам&lt;/i&gt;&lt;/p&gt;
+             &lt;p&gt;&lt;u&gt;Гэта падкрэслены&lt;/u&gt;&lt;/p&gt;
+             &lt;p&gt;&lt;center&gt;Гэта выраўнаваны па цэнтры тэкст.&lt;/center&gt;&lt;s&gt;
+             &lt;p&gt;&lt;s&gt;Гэта закрэслены тэкст&lt;/s&gt;&lt;/p&gt;
+
+             &lt;p&gt;Прыклад кода:
+             &lt;code&gt;ls -l /
+/home&lt;/code&gt;&lt;/p&gt;
+
+            &lt;p&gt;&lt;b&gt;Спісы:&lt;/b&gt;&lt;/p&gt;
+            &lt;ul&gt;
+                &lt;li&gt;Сістэмы з Intel CPU&lt;/li&gt;
+                &lt;li&gt;Сістэмы з AMD CPU&lt;/li&gt;
+            &lt;/ul&gt;
+
+            &lt;p&gt;Вертыкальная паласа пракруткі наладжваецца. Бягучая шырыня - 10.&lt;/p&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcomeq/release_notes.qml" line="76"/>
@@ -3945,7 +4053,7 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="36"/>
       <source>Pick your user name and credentials to login and perform admin tasks</source>
-      <translation type="unfinished"/>
+      <translation>Абярыце свае імя карыстальніка і ўліковыя даныя для ўваходу і выканання задач адміністратара</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="52"/>
@@ -3965,12 +4073,12 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="87"/>
       <source>Login Name</source>
-      <translation type="unfinished"/>
+      <translation>Лагін</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="103"/>
       <source>If more than one person will use this computer, you can create multiple accounts after installation.</source>
-      <translation type="unfinished"/>
+      <translation>Калі камп’ютарам карыстаецца некалькі чалавек, то вы можаце стварыць для іх акаўнты пасля завяршэння ўсталёўкі.</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="118"/>
@@ -3985,7 +4093,7 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="140"/>
       <source>This name will be used if you make the computer visible to others on a network.</source>
-      <translation type="unfinished"/>
+      <translation>Назва будзе выкарыстоўвацца для пазначэння камп’ютара ў сетцы.</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="155"/>
@@ -4005,12 +4113,12 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="204"/>
       <source>Enter the same password twice, so that it can be checked for typing errors. A good password will contain a mixture of letters, numbers and punctuation, should be at least eight characters long, and should be changed at regular intervals.</source>
-      <translation type="unfinished"/>
+      <translation>Увядзіце двойчы аднолькавы пароль. Гэта неабходна для таго, каб пазбегнуць памылак. Надзейны пароль павінен складацца з літар, лічбаў, знакаў пунктуацыі. Ён павінен змяшчаць прынамсі 8 знакаў, яго перыядычна трэба змяняць.</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="216"/>
       <source>Validate passwords quality</source>
-      <translation type="unfinished"/>
+      <translation>Праверка якасці пароляў</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="226"/>
@@ -4020,12 +4128,12 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="234"/>
       <source>Log in automatically without asking for the password</source>
-      <translation type="unfinished"/>
+      <translation>Аўтаматычна ўваходзіць без уводу пароля</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="243"/>
       <source>Reuse user password as root password</source>
-      <translation type="unfinished"/>
+      <translation>Выкарыстоўваць пароль карыстальніка як пароль адміністратара</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="253"/>
@@ -4035,22 +4143,22 @@ Output:
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="268"/>
       <source>Choose a root password to keep your account safe.</source>
-      <translation type="unfinished"/>
+      <translation>Абярыце пароль адміністратара для абароны вашага акаўнта.</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="279"/>
       <source>Root Password</source>
-      <translation type="unfinished"/>
+      <translation>Пароль адміністратара</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="298"/>
       <source>Repeat Root Password</source>
-      <translation type="unfinished"/>
+      <translation>Паўтарыце пароль адміністратара</translation>
     </message>
     <message>
       <location filename="../src/modules/usersq/usersq.qml" line="318"/>
       <source>Enter the same password twice, so that it can be checked for typing errors.</source>
-      <translation type="unfinished"/>
+      <translation>Увядзіце пароль двойчы, каб пазбегнуць памылак уводу.</translation>
     </message>
   </context>
   <context>
@@ -4059,7 +4167,8 @@ Output:
       <location filename="../src/modules/welcomeq/welcomeq.qml" line="35"/>
       <source>&lt;h3&gt;Welcome to the %1 &lt;quote&gt;%2&lt;/quote&gt; installer&lt;/h3&gt;
             &lt;p&gt;This program will ask you some questions and set up %1 on your computer.&lt;/p&gt;</source>
-      <translation type="unfinished"/>
+      <translation>&lt;h3&gt;Вітаем у %1, праграме ўсталёўкі&lt;quote&gt;%2&lt;/quote&gt; &lt;/h3&gt;
+            &lt;p&gt;Гэтая праграма дапаможа вам усталяваць %1 на ваш камп'ютар.&lt;/p&gt;</translation>
     </message>
     <message>
       <location filename="../src/modules/welcomeq/welcomeq.qml" line="66"/>

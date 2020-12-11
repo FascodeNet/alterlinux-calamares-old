@@ -34,6 +34,7 @@
 #include "utils/CalamaresUtilsGui.h"
 #include "utils/Logger.h"
 #include "utils/NamedEnum.h"
+#include "utils/QtCompat.h"
 #include "utils/Retranslator.h"
 #include "utils/Variant.h"
 #include "widgets/WaitingWidget.h"
@@ -273,7 +274,7 @@ PartitionViewStep::createSummaryWidget() const
         jobsLabel->setText( jobsLines.join( "<br/>" ) );
         jobsLabel->setMargin( CalamaresUtils::defaultFontHeight() / 2 );
         QPalette pal;
-        pal.setColor( QPalette::Background, pal.window().color().lighter( 108 ) );
+        pal.setColor( WindowBackground, pal.window().color().lighter( 108 ) );
         jobsLabel->setAutoFillBackground( true );
         jobsLabel->setPalette( pal );
     }
@@ -542,6 +543,12 @@ PartitionViewStep::setConfigurationMap( const QVariantMap& configurationMap )
         gs->insert( "efiSystemPartitionName", CalamaresUtils::getString( configurationMap, "efiSystemPartitionName" ) );
     }
 
+    // Read and parse key swapPartitionName
+    if ( configurationMap.contains( "swapPartitionName" ) )
+    {
+        gs->insert( "swapPartitionName", CalamaresUtils::getString( configurationMap, "swapPartitionName" ) );
+    }
+
     // OTHER SETTINGS
     //
     gs->insert( "drawNestedPartitions", CalamaresUtils::getBool( configurationMap, "drawNestedPartitions", false ) );
@@ -595,14 +602,8 @@ PartitionViewStep::setConfigurationMap( const QVariantMap& configurationMap )
     QFuture< void > future = QtConcurrent::run( this, &PartitionViewStep::initPartitionCoreModule );
     m_future->setFuture( future );
 
-    if ( configurationMap.contains( "partitionLayout" ) )
-    {
-        m_core->initLayout( configurationMap.value( "partitionLayout" ).toList() );
-    }
-    else
-    {
-        m_core->initLayout();
-    }
+    m_core->initLayout( fsType == FileSystem::Unknown ? FileSystem::Ext4 : fsType,
+                        configurationMap.value( "partitionLayout" ).toList() );
 }
 
 

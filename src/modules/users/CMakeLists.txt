@@ -21,16 +21,42 @@ if( LibPWQuality_FOUND )
     add_definitions( -DCHECK_PWQUALITY -DHAVE_LIBPWQUALITY )
 endif()
 
+find_package( ICU COMPONENTS uc i18n )
+set_package_properties(
+    ICU PROPERTIES
+    PURPOSE "Transliteration support for full name to username conversion"
+)
+
+if( ICU_FOUND )
+    list( APPEND USER_EXTRA_LIB ICU::uc ICU::i18n )
+    include_directories( ${ICU_INCLUDE_DIRS} )
+    add_definitions( -DHAVE_ICU )
+endif()
+
 include_directories( ${PROJECT_BINARY_DIR}/src/libcalamaresui )
 
-set( JOB_SRC
+set( _users_src
+    # Jobs
     CreateUserJob.cpp
+    MiscJobs.cpp
     SetPasswordJob.cpp
     SetHostNameJob.cpp
-)
-set( CONFIG_SRC
+    # Configuration
     CheckPWQuality.cpp
     Config.cpp
+)
+
+calamares_add_library(
+    users_internal
+    EXPORT_MACRO PLUGINDLLEXPORT_PRO
+    TARGET_TYPE STATIC
+    NO_INSTALL
+    NO_VERSION
+    SOURCES
+        ${_users_src}
+    LINK_LIBRARIES
+        Qt5::DBus
+        ${CRYPT_LIBRARIES}
 )
 
 calamares_add_plugin( users
@@ -39,17 +65,15 @@ calamares_add_plugin( users
     SOURCES
         UsersViewStep.cpp
         UsersPage.cpp
-        ${JOB_SRC}
-        ${CONFIG_SRC}
     UI
         page_usersetup.ui
     RESOURCES
         users.qrc
     LINK_PRIVATE_LIBRARIES
+        users_internal
         calamaresui
         ${CRYPT_LIBRARIES}
         ${USER_EXTRA_LIB}
-        Qt5::DBus
     SHARED_LIB
 )
 
@@ -63,10 +87,14 @@ calamares_add_test(
 )
 
 calamares_add_test(
-    userscreatetest
+    usersgroupstest
     SOURCES
-        TestCreateUserJob.cpp
-        CreateUserJob.cpp
+        TestGroupInformation.cpp
+        ${_users_src}  # Build again with test-visibility
+    LIBRARIES
+        Qt5::DBus  # HostName job can use DBus to systemd
+        ${CRYPT_LIBRARIES}  # SetPassword job uses crypt()
+        ${USER_EXTRA_LIB}
 )
 
 calamares_add_test(
@@ -82,10 +110,9 @@ calamares_add_test(
     userstest
     SOURCES
         Tests.cpp
-        ${JOB_SRC}
-        ${CONFIG_SRC}
+        ${_users_src}  # Build again with test-visibility
     LIBRARIES
-        ${USER_EXTRA_LIB}
         Qt5::DBus  # HostName job can use DBus to systemd
         ${CRYPT_LIBRARIES}  # SetPassword job uses crypt()
+        ${USER_EXTRA_LIB}
 )
