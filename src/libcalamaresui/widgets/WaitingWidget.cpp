@@ -36,10 +36,10 @@ WaitingWidget::WaitingWidget( const QString& text, QWidget* parent )
 
     int spnrSize = m_waitingLabel->fontMetrics().height() * 4;
     spnr->setFixedSize( spnrSize, spnrSize );
-    spnr->setInnerRadius( spnrSize );
+    spnr->setInnerRadius( spnrSize / 2 );
     spnr->setRoundness( 0 );
     spnr->setLineLength( spnrSize / 2 );
-    spnr->setLineWidth( spnrSize / 10 );
+    spnr->setLineWidth( spnrSize / 16 );
     spnr->setColor(QColor("#009aff"));
     spnr->start();
 
