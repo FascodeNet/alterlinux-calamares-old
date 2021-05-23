@@ -31,9 +31,17 @@
     <message>
         <location filename="../texts.js" line="9"/>
         <source>Alter Linux is a new OS developed based on Arch Linux.
-Combining a sophisticated UI with Xfce4 and a package management tool complete with a GUI, anyone can easily use the latest OS at high speed.
+Combining a sophisticated UI and a package management tool complete with a GUI, anyone can easily use the latest OS at high speed.
 Installation takes a little time. In the meantime, slides introduce the features of Alter Linux.</source>
         <translation>Alter LinuxはArch Linuxをベースとして開発された新たなOSです。
+洗練されたUIとGUIを備えたパッケージ管理ツールを組み合わせ、全ての人が簡単に最新で高速なOSを利用できます。
+インストールには少し時間を要します。その間、このスライドではAlter Linuxの特徴を紹介します。</translation>
+    </message>
+    <message>
+        <source>Alter Linux is a new OS developed based on Arch Linux.
+Combining a sophisticated UI with Xfce4 and a package management tool complete with a GUI, anyone can easily use the latest OS at high speed.
+Installation takes a little time. In the meantime, slides introduce the features of Alter Linux.</source>
+        <translation type="vanished">Alter LinuxはArch Linuxをベースとして開発された新たなOSです。
 Xfce4による洗練されたUIとGUIを備えたパッケージ管理ツールを組み合わせ、全ての人が簡単に最新で高速なOSを利用できます。
 インストールには少し時間を要します。その間、このスライドではAlter Linuxの特徴を紹介します。</translation>
     </message>
