@@ -45,8 +45,15 @@ class UIDLLEXPORT ViewManager : public QAbstractListModel
 
     Q_PROPERTY( bool quitVisible READ quitVisible NOTIFY quitVisibleChanged FINAL )
 
+    Q_PROPERTY( bool backAndNextVisible READ backAndNextVisible NOTIFY backAndNextVisibleChanged FINAL )
+
     ///@brief Sides on which the ViewManager has side-panels
     Q_PROPERTY( Qt::Orientations panelSides READ panelSides WRITE setPanelSides MEMBER m_panelSides )
+
+    // Global properties, where ViewManager proxies to Settings
+    Q_PROPERTY( bool isDebugMode READ isDebugMode CONSTANT FINAL )
+    Q_PROPERTY( bool isChrootMode READ isChrootMode CONSTANT FINAL )
+    Q_PROPERTY( bool isSetupMode READ isSetupMode CONSTANT FINAL )
 
 public:
     /**
@@ -144,6 +151,10 @@ public Q_SLOTS:
         return m_backIcon;  ///< Name of the icon to show
     }
 
+    bool backAndNextVisible() const
+    {
+        return m_backAndNextVisible;  ///< Is the quit-button to be enabled
+    }
     /**
      * @brief Probably quit
      *
@@ -191,6 +202,13 @@ public Q_SLOTS:
     /// @brief Connected to ViewStep::nextStatusChanged for all steps
     void updateNextStatus( bool enabled );
 
+    /// @brief Proxy to Settings::debugMode() default @c false
+    bool isDebugMode() const;
+    /// @brief Proxy to Settings::doChroot() default @c true
+    bool isChrootMode() const;
+    /// @brief Proxy to Settings::isSetupMode() default @c false
+    bool isSetupMode() const;
+
 signals:
     void currentStepChanged();
     void ensureSize( QSize size ) const;  // See ViewStep::ensureSize()
@@ -203,6 +221,7 @@ signals:
     void backEnabledChanged( bool ) const;
     void backLabelChanged( QString ) const;
     void backIconChanged( QString ) const;
+    void backAndNextVisibleChanged( bool ) const;
 
     void quitEnabledChanged( bool ) const;
     void quitLabelChanged( QString ) const;
@@ -217,6 +236,7 @@ private:
     void insertViewStep( int before, ViewStep* step );
     void updateButtonLabels();
     void updateCancelEnabled( bool enabled );
+    void updateBackAndNextVisibility( bool visible );
 
     inline bool currentStepValid() const { return ( 0 <= m_currentStep ) && ( m_currentStep < m_steps.length() ); }
 
@@ -235,6 +255,8 @@ private:
     bool m_backEnabled = false;
     QString m_backLabel;
     QString m_backIcon;
+
+    bool m_backAndNextVisible = true;
 
     bool m_quitEnabled = false;
     QString m_quitLabel;

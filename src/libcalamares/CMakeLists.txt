@@ -48,14 +48,19 @@ set( libSources
     locale/TranslatableString.cpp
 
     # Modules
+    modulesystem/Config.cpp
     modulesystem/Descriptor.cpp
     modulesystem/InstanceKey.cpp
     modulesystem/Module.cpp
+    modulesystem/Preset.cpp
     modulesystem/RequirementsChecker.cpp
     modulesystem/RequirementsModel.cpp
 
     # Network service
     network/Manager.cpp
+
+    # Packages service
+    packages/Globals.cpp
 
     # Partition service
     partition/Mount.cpp
@@ -76,6 +81,14 @@ set( libSources
     utils/Variant.cpp
     utils/Yaml.cpp
 )
+
+### OPTIONAL Automount support (requires dbus)
+#
+#
+if( Qt5DBus_FOUND)
+    list( APPEND libSources partition/AutoMount.cpp )
+    list( APPEND OPTIONAL_PRIVATE_LIBRARIES Qt5::DBus )
+endif()
 
 ### OPTIONAL Python support
 #
@@ -219,6 +232,12 @@ calamares_add_test(
 )
 
 calamares_add_test(
+    libcalamarespackagestest
+    SOURCES
+        packages/Tests.cpp
+)
+
+calamares_add_test(
     libcalamarespartitiontest
     SOURCES
         partition/Tests.cpp
@@ -252,3 +271,8 @@ calamares_add_test(
 add_executable( test_geoip geoip/test_geoip.cpp ${geoip_src} )
 target_link_libraries( test_geoip calamares Qt5::Network yamlcpp )
 calamares_automoc( test_geoip )
+
+if ( Qt5DBus_FOUND )
+    add_executable( test_automount partition/calautomount.cpp )
+    target_link_libraries( test_automount calamares Qt5::DBus )
+endif()

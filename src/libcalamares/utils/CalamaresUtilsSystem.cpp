@@ -188,7 +188,7 @@ System::runCommand( System::RunLocation location,
                                        : -1 ) )
     {
         cWarning() << "Process" << args.first() << "timed out after" << timeoutSec.count() << "s. Output so far:\n"
-                   << Logger::NoQuote {} << process.readAllStandardOutput();
+                   << Logger::NoQuote << process.readAllStandardOutput();
         return ProcessResult::Code::TimedOut;
     }
 
@@ -196,17 +196,34 @@ System::runCommand( System::RunLocation location,
 
     if ( process.exitStatus() == QProcess::CrashExit )
     {
-        cWarning() << "Process" << args.first() << "crashed. Output so far:\n" << Logger::NoQuote {} << output;
+        cWarning() << "Process" << args.first() << "crashed. Output so far:\n" << Logger::NoQuote << output;
         return ProcessResult::Code::Crashed;
     }
 
     auto r = process.exitCode();
-    cDebug() << Logger::SubEntry << "Finished. Exit code:" << r;
     bool showDebug = ( !Calamares::Settings::instance() ) || ( Calamares::Settings::instance()->debugMode() );
-    if ( ( r != 0 ) || showDebug )
+    if ( r == 0 )
     {
-        cDebug() << Logger::SubEntry << "Target cmd:" << RedactedList( args ) << "output:\n"
-                 << Logger::NoQuote {} << output;
+        if ( showDebug && !output.isEmpty() )
+        {
+            cDebug() << Logger::SubEntry << "Finished. Exit code:" << r << "output:\n" << Logger::NoQuote << output;
+        }
+        else
+        {
+            cDebug() << Logger::SubEntry << "Finished. Exit code:" << r;
+        }
+    }
+    else  // if ( r != 0 )
+    {
+        if ( !output.isEmpty() )
+        {
+            cDebug() << Logger::SubEntry << "Target cmd:" << RedactedList( args ) << "Exit code:" << r << "output:\n"
+                     << Logger::NoQuote << output;
+        }
+        else
+        {
+            cDebug() << Logger::SubEntry << "Target cmd:" << RedactedList( args ) << "Exit code:" << r << "(no output)";
+        }
     }
     return ProcessResult( r, output );
 }

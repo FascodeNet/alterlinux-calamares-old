@@ -4,6 +4,7 @@
  *   SPDX-FileCopyrightText: 2017-2018 Adriaan de Groot <groot@kde.org>
  *   SPDX-FileCopyrightText: 2019 Dominic Hayes <ferenosdev@outlook.com>
  *   SPDX-FileCopyrightText: 2019 Gabriel Craciunescu <crazy@frugalware.org>
+ *   SPDX-FileCopyrightText: 2021 Anubhav Choudhary <ac.10edu@gmail.com>
  *   SPDX-License-Identifier: GPL-3.0-or-later
  *
  *   Calamares is Free Software: see the License-Identifier above.
@@ -19,21 +20,24 @@
 #include "utils/Logger.h"
 #include "utils/Paste.h"
 #include "utils/Retranslator.h"
+#include "utils/String.h"
 #include "viewpages/BlankViewStep.h"
 #include "viewpages/ExecutionViewStep.h"
 #include "viewpages/ViewStep.h"
 
 #include <QApplication>
 #include <QBoxLayout>
+#include <QClipboard>
 #include <QFile>
 #include <QMessageBox>
 #include <QMetaObject>
 
 #define UPDATE_BUTTON_PROPERTY( name, value ) \
+    do \
     { \
         m_##name = value; \
         emit name##Changed( m_##name ); \
-    }
+    } while ( false )
 
 namespace Calamares
 {
@@ -77,7 +81,7 @@ ViewManager::ViewManager( QObject* parent )
     connect( JobQueue::instance(), &JobQueue::failed, this, &ViewManager::onInstallationFailed );
     connect( JobQueue::instance(), &JobQueue::finished, this, &ViewManager::next );
 
-    CALAMARES_RETRANSLATE_SLOT( &ViewManager::updateButtonLabels )
+    CALAMARES_RETRANSLATE_SLOT( &ViewManager::updateButtonLabels );
 }
 
 
@@ -136,15 +140,15 @@ ViewManager::insertViewStep( int before, ViewStep* step )
     emit endInsertRows();
 }
 
-
 void
 ViewManager::onInstallationFailed( const QString& message, const QString& details )
 {
-    bool shouldOfferWebPaste = false;  // TODO: config var
+    bool shouldOfferWebPaste
+        = Calamares::Branding::instance()->uploadServer().first != Calamares::Branding::UploadServerType::None;
 
-    cError() << "Installation failed:";
-    cDebug() << "- message:" << message;
-    cDebug() << "- details:" << details;
+    cError() << "Installation failed:" << message;
+    cDebug() << Logger::SubEntry << "- message:" << message;
+    cDebug() << Logger::SubEntry << "- details:" << Logger::NoQuote << details;
 
     QString heading
         = Calamares::Settings::instance()->isSetupMode() ? tr( "Setup Failed" ) : tr( "Installation Failed" );
@@ -152,7 +156,10 @@ ViewManager::onInstallationFailed( const QString& message, const QString& detail
     QString text = "<p>" + message + "</p>";
     if ( !details.isEmpty() )
     {
-        text += "<p>" + details + "</p>";
+        text += "<p>"
+            + CalamaresUtils::truncateMultiLine( details, CalamaresUtils::LinesStartEnd { 6, 2 } )
+                  .replace( '\n', QStringLiteral( "<br/>" ) )
+            + "</p>";
     }
     if ( shouldOfferWebPaste )
     {
@@ -183,17 +190,7 @@ ViewManager::onInstallationFailed( const QString& message, const QString& detail
     connect( msgBox, &QMessageBox::buttonClicked, [msgBox]( QAbstractButton* button ) {
         if ( msgBox->buttonRole( button ) == QMessageBox::ButtonRole::YesRole )
         {
-            // TODO: host and port should be configurable
-            QString pasteUrlMsg = CalamaresUtils::sendLogToPastebin( msgBox, QStringLiteral( "termbin.com" ), 9999 );
-
-            QString pasteUrlTitle = tr( "Install Log Paste URL" );
-            if ( pasteUrlMsg.isEmpty() )
-            {
-                pasteUrlMsg = tr( "The upload was unsuccessful. No web-paste was done." );
-            }
-
-            // TODO: make the URL clickable, or copy it to the clipboard automatically
-            QMessageBox::critical( nullptr, pasteUrlTitle, pasteUrlMsg );
+            CalamaresUtils::Paste::doLogUploadUI( msgBox );
         }
         QApplication::quit();
     } );
@@ -238,6 +235,8 @@ ViewManager::onInitComplete()
     {
         m_steps.first()->onActivate();
     }
+
+    emit currentStepChanged();
 }
 
 void
@@ -365,10 +364,11 @@ ViewManager::next()
         {
             // Reached the end in a weird state (e.g. no finished step after an exec)
             executing = false;
-            UPDATE_BUTTON_PROPERTY( nextEnabled, false )
-            UPDATE_BUTTON_PROPERTY( backEnabled, false )
+            UPDATE_BUTTON_PROPERTY( nextEnabled, false );
+            UPDATE_BUTTON_PROPERTY( backEnabled, false );
         }
         updateCancelEnabled( !settings->disableCancel() && !( executing && settings->disableCancelDuringExec() ) );
+        updateBackAndNextVisibility( !( executing && settings->hideBackAndNextDuringExec() ) );
     }
     else
     {
@@ -377,8 +377,8 @@ ViewManager::next()
 
     if ( m_currentStep < m_steps.count() )
     {
-        UPDATE_BUTTON_PROPERTY( nextEnabled, !executing && m_steps.at( m_currentStep )->isNextEnabled() )
-        UPDATE_BUTTON_PROPERTY( backEnabled, !executing && m_steps.at( m_currentStep )->isBackEnabled() )
+        UPDATE_BUTTON_PROPERTY( nextEnabled, !executing && m_steps.at( m_currentStep )->isNextEnabled() );
+        UPDATE_BUTTON_PROPERTY( backEnabled, !executing && m_steps.at( m_currentStep )->isBackEnabled() );
     }
 
     updateButtonLabels();
@@ -400,26 +400,26 @@ ViewManager::updateButtonLabels()
     // If we're going into the execution step / install phase, other message
     if ( stepIsExecute( m_steps, m_currentStep + 1 ) )
     {
-        UPDATE_BUTTON_PROPERTY( nextLabel, nextIsInstallationStep )
-        UPDATE_BUTTON_PROPERTY( nextIcon, "run-install" )
+        UPDATE_BUTTON_PROPERTY( nextLabel, nextIsInstallationStep );
+        UPDATE_BUTTON_PROPERTY( nextIcon, "run-install" );
     }
     else
     {
-        UPDATE_BUTTON_PROPERTY( nextLabel, tr( "&Next" ) )
-        UPDATE_BUTTON_PROPERTY( nextIcon, "go-next" )
+        UPDATE_BUTTON_PROPERTY( nextLabel, tr( "&Next" ) );
+        UPDATE_BUTTON_PROPERTY( nextIcon, "go-next" );
     }
 
     // Going back is always simple
-    UPDATE_BUTTON_PROPERTY( backLabel, tr( "&Back" ) )
-    UPDATE_BUTTON_PROPERTY( backIcon, "go-previous" )
+    UPDATE_BUTTON_PROPERTY( backLabel, tr( "&Back" ) );
+    UPDATE_BUTTON_PROPERTY( backIcon, "go-previous" );
 
     // Cancel button changes label at the end
     if ( isAtVeryEnd( m_steps, m_currentStep ) )
     {
-        UPDATE_BUTTON_PROPERTY( quitLabel, tr( "&Done" ) )
-        UPDATE_BUTTON_PROPERTY( quitTooltip, quitOnCompleteTooltip )
-        UPDATE_BUTTON_PROPERTY( quitVisible, true )
-        UPDATE_BUTTON_PROPERTY( quitIcon, "dialog-ok-apply" )
+        UPDATE_BUTTON_PROPERTY( quitLabel, tr( "&Done" ) );
+        UPDATE_BUTTON_PROPERTY( quitTooltip, quitOnCompleteTooltip );
+        UPDATE_BUTTON_PROPERTY( quitVisible, true );
+        UPDATE_BUTTON_PROPERTY( quitIcon, "dialog-ok-apply" );
         updateCancelEnabled( true );
         if ( settings->quitAtEnd() )
         {
@@ -430,14 +430,14 @@ ViewManager::updateButtonLabels()
     {
         if ( settings->disableCancel() )
         {
-            UPDATE_BUTTON_PROPERTY( quitVisible, false )
+            UPDATE_BUTTON_PROPERTY( quitVisible, false );
         }
         updateCancelEnabled( !settings->disableCancel()
                              && !( stepIsExecute( m_steps, m_currentStep ) && settings->disableCancelDuringExec() ) );
 
-        UPDATE_BUTTON_PROPERTY( quitLabel, tr( "&Cancel" ) )
-        UPDATE_BUTTON_PROPERTY( quitTooltip, cancelBeforeInstallationTooltip )
-        UPDATE_BUTTON_PROPERTY( quitIcon, "dialog-cancel" )
+        UPDATE_BUTTON_PROPERTY( quitLabel, tr( "&Cancel" ) );
+        UPDATE_BUTTON_PROPERTY( quitTooltip, cancelBeforeInstallationTooltip );
+        UPDATE_BUTTON_PROPERTY( quitIcon, "dialog-cancel" );
     }
 }
 
@@ -467,11 +467,11 @@ ViewManager::back()
         return;
     }
 
-    UPDATE_BUTTON_PROPERTY( nextEnabled, m_steps.at( m_currentStep )->isNextEnabled() )
+    UPDATE_BUTTON_PROPERTY( nextEnabled, m_steps.at( m_currentStep )->isNextEnabled() );
     UPDATE_BUTTON_PROPERTY( backEnabled,
                             ( m_currentStep == 0 && m_steps.first()->isAtBeginning() )
                                 ? false
-                                : m_steps.at( m_currentStep )->isBackEnabled() )
+                                : m_steps.at( m_currentStep )->isBackEnabled() );
 
     updateButtonLabels();
 }
@@ -524,8 +524,14 @@ ViewManager::confirmCancelInstallation()
 void
 ViewManager::updateCancelEnabled( bool enabled )
 {
-    UPDATE_BUTTON_PROPERTY( quitEnabled, enabled )
+    UPDATE_BUTTON_PROPERTY( quitEnabled, enabled );
     emit cancelEnabled( enabled );
+}
+
+void
+ViewManager::updateBackAndNextVisibility( bool visible )
+{
+    UPDATE_BUTTON_PROPERTY( backAndNextVisible, visible );
 }
 
 QVariant
@@ -583,6 +589,27 @@ ViewManager::rowCount( const QModelIndex& parent ) const
         return 0;
     }
     return m_steps.length();
+}
+
+bool
+ViewManager::isChrootMode() const
+{
+    const auto* s = Settings::instance();
+    return s ? s->doChroot() : true;
+}
+
+bool
+ViewManager::isDebugMode() const
+{
+    const auto* s = Settings::instance();
+    return s ? s->debugMode() : false;
+}
+
+bool
+ViewManager::isSetupMode() const
+{
+    const auto* s = Settings::instance();
+    return s ? s->isSetupMode() : false;
 }
 
 }  // namespace Calamares

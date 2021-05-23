@@ -11,16 +11,16 @@
 #include "DebugWindow.h"
 #include "ui_DebugWindow.h"
 
-#include "VariantModel.h"
-
 #include "Branding.h"
-#include "modulesystem/Module.h"
-#include "modulesystem/ModuleManager.h"
-
 #include "GlobalStorage.h"
 #include "Job.h"
 #include "JobQueue.h"
+#include "Settings.h"
+#include "VariantModel.h"
+#include "modulesystem/Module.h"
+#include "modulesystem/ModuleManager.h"
 #include "utils/Logger.h"
+#include "utils/Paste.h"
 #include "utils/Retranslator.h"
 
 #ifdef WITH_PYTHONQT
@@ -59,7 +59,7 @@ dumpWidgetTree( QDebug& deb, const QWidget* widget, int depth )
     {
         deb << ' ';
     }
-    deb << widget->objectName();
+    deb << widget->metaObject()->className() << widget->objectName();
 
     for ( const auto* w : widget->findChildren< QWidget* >( QString(), Qt::FindDirectChildrenOnly ) )
     {
@@ -214,7 +214,11 @@ DebugWindow::DebugWindow()
         }
     } );
 
-    CALAMARES_RETRANSLATE( m_ui->retranslateUi( this ); setWindowTitle( tr( "Debug information" ) ); )
+    // Send Log button only if it would be useful
+    m_ui->sendLogButton->setVisible( CalamaresUtils::Paste::isEnabled() );
+    connect( m_ui->sendLogButton, &QPushButton::clicked, [this]() { CalamaresUtils::Paste::doLogUploadUI( this ); } );
+
+    CALAMARES_RETRANSLATE( m_ui->retranslateUi( this ); setWindowTitle( tr( "Debug information" ) ); );
 }
 
 
@@ -224,5 +228,62 @@ DebugWindow::closeEvent( QCloseEvent* e )
     Q_UNUSED( e )
     emit closed();
 }
+
+
+DebugWindowManager::DebugWindowManager( QObject* parent )
+    : QObject( parent )
+{
+}
+
+
+bool
+DebugWindowManager::enabled() const
+{
+    const auto* s = Settings::instance();
+    return ( Logger::logLevel() >= Logger::LOGVERBOSE ) || ( s ? s->debugMode() : false );
+}
+
+
+void
+DebugWindowManager::show( bool visible )
+{
+    if ( !enabled() )
+    {
+        visible = false;
+    }
+    if ( m_visible == visible )
+    {
+        return;
+    }
+
+    if ( visible )
+    {
+        m_debugWindow = new Calamares::DebugWindow();
+        m_debugWindow->show();
+        connect( m_debugWindow.data(), &Calamares::DebugWindow::closed, this, [=]() {
+            m_debugWindow->deleteLater();
+            m_visible = false;
+            emit visibleChanged( false );
+        } );
+        m_visible = true;
+        emit visibleChanged( true );
+    }
+    else
+    {
+        if ( m_debugWindow )
+        {
+            m_debugWindow->deleteLater();
+        }
+        m_visible = false;
+        emit visibleChanged( false );
+    }
+}
+
+void
+DebugWindowManager::toggle()
+{
+    show( !m_visible );
+}
+
 
 }  // namespace Calamares

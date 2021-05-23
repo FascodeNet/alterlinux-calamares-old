@@ -15,6 +15,7 @@
  */
 
 #include "String.h"
+#include "Logger.h"
 
 #include <QStringList>
 
@@ -120,5 +121,108 @@ obscure( const QString& string )
     }
     return result;
 }
+
+
+QString
+truncateMultiLine( const QString& string, CalamaresUtils::LinesStartEnd lines, CalamaresUtils::CharCount chars )
+{
+    const char NEWLINE = '\n';
+    const int maxLines = lines.atStart + lines.atEnd;
+    if ( maxLines < 1 )
+    {
+        QString shorter( string );
+        shorter.truncate( chars.total );
+        return shorter;
+    }
+
+    const int physicalLinesInString = string.count( NEWLINE );
+    const int logicalLinesInString = physicalLinesInString + ( string.endsWith( NEWLINE ) ? 0 : 1 );
+    if ( ( string.length() <= chars.total ) && ( logicalLinesInString <= maxLines ) )
+    {
+        return string;
+    }
+
+    QString front, back;
+    if ( physicalLinesInString >= maxLines )
+    {
+        int from = -1;
+        for ( int i = 0; i < lines.atStart; ++i )
+        {
+            from = string.indexOf( NEWLINE, from + 1 );
+            if ( from < 0 )
+            {
+                // That's strange, we counted at least maxLines newlines before
+                break;
+            }
+        }
+        if ( from > 0 )
+        {
+            front = string.left( from + 1 );
+        }
+
+        int lastNewLine = -1;
+        int lastCount = string.endsWith( NEWLINE ) ? -1 : 0;
+        for ( auto i = string.rbegin(); i != string.rend() && lastCount < lines.atEnd; ++i )
+        {
+            if ( *i == NEWLINE )
+            {
+                ++lastCount;
+                lastNewLine = int( i - string.rbegin() );
+            }
+        }
+        if ( ( lastNewLine >= 0 ) && ( lastCount >= lines.atEnd ) )
+        {
+            back = string.right( lastNewLine );
+        }
+    }
+    else
+    {
+        // We have: <= maxLines and longer than chars.total, so:
+        //   - carve out a chunk in the middle, based a little on
+        //     how the balance of atStart and atEnd is
+        const int charsToChop = string.length() - chars.total;
+        if ( charsToChop < 1 )
+        {
+            // That's strange, again
+            return string;
+        }
+        const int startPortion = charsToChop * lines.atStart / maxLines;
+        const int endPortion = charsToChop * lines.atEnd / maxLines;
+        front = string.left( string.length() / 2 - startPortion );
+        back = string.right( string.length() / 2 - endPortion );
+    }
+
+    if ( front.length() + back.length() <= chars.total )
+    {
+        return front + back;
+    }
+
+    // We need to cut off some bits, preserving whether there are
+    // newlines present at the end of the string. Go case-by-case:
+    if ( !front.isEmpty() && back.isEmpty() )
+    {
+        // Truncate towards the front
+        bool needsNewline = front.endsWith( NEWLINE );
+        front.truncate( chars.total );
+        if ( !front.endsWith( NEWLINE ) && needsNewline )
+        {
+            front.append( NEWLINE );
+        }
+        return front;
+    }
+    if ( front.isEmpty() && !back.isEmpty() )
+    {
+        // Truncate towards the tail
+        return back.right( chars.total );
+    }
+    // Both are non-empty, so nibble away at both of them
+    front.truncate( chars.total / 2 );
+    if ( !front.endsWith( NEWLINE ) && physicalLinesInString > 0 )
+    {
+        front.append( NEWLINE );
+    }
+    return front + back.right( chars.total / 2 );
+}
+
 
 }  // namespace CalamaresUtils

@@ -43,6 +43,8 @@ SlideshowQML::SlideshowQML( QWidget* parent )
     , m_qmlComponent( nullptr )
     , m_qmlObject( nullptr )
 {
+    m_qmlShow->setObjectName( "qml" );
+
     CalamaresUtils::registerQmlModels();
 
     m_qmlShow->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
@@ -51,7 +53,7 @@ SlideshowQML::SlideshowQML( QWidget* parent )
 
     cDebug() << "QML import paths:" << Logger::DebugList( m_qmlShow->engine()->importPathList() );
 #if QT_VERSION >= QT_VERSION_CHECK( 5, 10, 0 )
-    CALAMARES_RETRANSLATE( if ( m_qmlShow ) { m_qmlShow->engine()->retranslate(); } )
+    CALAMARES_RETRANSLATE( if ( m_qmlShow ) { m_qmlShow->engine()->retranslate(); } );
 #endif
 
     if ( Branding::instance()->slideshowAPI() == 2 )
@@ -203,6 +205,8 @@ SlideshowPictures::SlideshowPictures( QWidget* parent )
     , m_imageIndex( 0 )
     , m_images( Branding::instance()->slideshowImages() )
 {
+    m_label->setObjectName( "image" );
+
     m_label->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     m_label->setAlignment( Qt::AlignCenter );
     m_timer->setInterval( std::chrono::milliseconds( 2000 ) );
