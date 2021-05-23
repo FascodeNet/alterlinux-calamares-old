@@ -44,6 +44,9 @@ private Q_SLOTS:
     void testHostActions();
     void testPasswordChecks();
     void testUserPassword();
+
+    void testAutoLogin_data();
+    void testAutoLogin();
 };
 
 UserTests::UserTests() {}
@@ -83,13 +86,13 @@ UserTests::testGetSet()
     }
     {
         const QString al( "autolg" );
-        QCOMPARE( c.autologinGroup(), QString() );
-        c.setAutologinGroup( al );
-        QCOMPARE( c.autologinGroup(), al );
+        QCOMPARE( c.autoLoginGroup(), QString() );
+        c.setAutoLoginGroup( al );
+        QCOMPARE( c.autoLoginGroup(), al );
         QVERIFY( !c.doAutoLogin() );
         c.setAutoLogin( true );
         QVERIFY( c.doAutoLogin() );
-        QCOMPARE( c.autologinGroup(), al );
+        QCOMPARE( c.autoLoginGroup(), al );
     }
     {
         const QString su( "sudogrp" );
@@ -337,6 +340,43 @@ UserTests::testUserPassword()
         QCOMPARE( spy_pwStatusChanged.count(), 3 );
         QCOMPARE( c.userPasswordValidity(), Config::PasswordValidity::Valid );
     }
+}
+
+void
+UserTests::testAutoLogin_data()
+{
+    QTest::addColumn< QString >( "filename" );
+    QTest::addColumn< bool >( "autoLoginIsSet" );
+    QTest::addColumn< QString >( "autoLoginGroupName" );
+
+    QTest::newRow( "old, old" ) << "tests/6a-issue-1672.conf" << true << "derp";
+    QTest::newRow( "old, new" ) << "tests/6b-issue-1672.conf" << true << "derp";
+    QTest::newRow( "new, old" ) << "tests/6c-issue-1672.conf" << true << "derp";
+    QTest::newRow( "new, new" ) << "tests/6d-issue-1672.conf" << true << "derp";
+    QTest::newRow( "default" ) << "tests/6e-issue-1672.conf" << false << QString();
+}
+
+void
+UserTests::testAutoLogin()
+{
+    QFETCH( QString, filename );
+    QFETCH( bool, autoLoginIsSet );
+    QFETCH( QString, autoLoginGroupName );
+
+    // BUILD_AS_TEST is the source-directory path
+    QFile fi( QString( "%1/%2" ).arg( BUILD_AS_TEST, filename ) );
+    QVERIFY( fi.exists() );
+
+    bool ok = false;
+    const auto map = CalamaresUtils::loadYaml( fi, &ok );
+    QVERIFY( ok );
+    QVERIFY( map.count() > 0 );
+
+    Config c;
+    c.setConfigurationMap( map );
+
+    QCOMPARE( c.doAutoLogin(), autoLoginIsSet );
+    QCOMPARE( c.autoLoginGroup(), autoLoginGroupName );
 }
 
 

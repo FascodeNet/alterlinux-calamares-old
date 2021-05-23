@@ -32,12 +32,10 @@ def pretty_name():
 def mount_partition(root_mount_point, partition, partitions):
     """
     Do a single mount of @p partition inside @p root_mount_point.
-
-    The @p partitions are used to handle btrfs special-cases:
-    then subvolumes are created for root and home.
     """
     # Create mount point with `+` rather than `os.path.join()` because
     # `partition["mountPoint"]` starts with a '/'.
+    global_storage = libcalamares.globalstorage
     raw_mount_point = partition["mountPoint"]
     if not raw_mount_point:
         return
@@ -73,26 +71,29 @@ def mount_partition(root_mount_point, partition, partitions):
                                 partition.get("options", "")) != 0:
         libcalamares.utils.warning("Cannot mount {}".format(device))
 
-    # If the root partition is btrfs, we create a subvolume "@"
-    # for the root mount point.
-    # If a separate /home partition isn't defined, we also create
-    # a subvolume "@home".
-    # Finally we remount all of the above on the correct paths.
+    # Special handling for btrfs subvolumes. Create the subvolumes listed in mount.conf
     if fstype == "btrfs" and partition["mountPoint"] == '/':
-        has_home_mount_point = False
+        # Root has been mounted to btrfs volume -> create subvolumes from configuration
+        btrfs_subvolumes = libcalamares.job.configuration.get("btrfsSubvolumes") or []
+        subvolume_mountpoints = [d['mountPoint'] for d in btrfs_subvolumes]
+        # Check if listed mountpoints besides / are already present and don't create subvolume for those
         for p in partitions:
             if "mountPoint" not in p or not p["mountPoint"]:
                 continue
-            if p["mountPoint"] == "/home":
-                has_home_mount_point = True
-                break
-
-        subprocess.check_call(['btrfs', 'subvolume', 'create',
-                               root_mount_point + '/@'])
-
-        if not has_home_mount_point:
+            if p["mountPoint"] in subvolume_mountpoints and p["mountPoint"] != '/':
+                btrfs_subvolumes = [d for d in btrfs_subvolumes if d['mountPoint'] != p["mountPoint"]]
+        # Check if we need a subvolume for swap file
+        swap_choice = global_storage.value( "partitionChoices" )
+        if swap_choice:
+            swap_choice = swap_choice.get( "swap", None )
+            if swap_choice and swap_choice == "file":
+                btrfs_subvolumes.append({'mountPoint': '/swap', 'subvolume': '/@swap'})
+        # Store created list in global storage so it can be used in the fstab module
+        libcalamares.globalstorage.insert("btrfsSubvolumes", btrfs_subvolumes)
+        # Create the subvolumes that are in the completed list
+        for s in btrfs_subvolumes:
             subprocess.check_call(['btrfs', 'subvolume', 'create',
-                                   root_mount_point + '/@home'])
+                               root_mount_point + s['subvolume']])
 
         subprocess.check_call(["umount", "-v", root_mount_point])
 
@@ -101,17 +102,14 @@ def mount_partition(root_mount_point, partition, partitions):
         if "luksMapperName" in partition:
             device = os.path.join("/dev/mapper", partition["luksMapperName"])
 
-        if libcalamares.utils.mount(device,
-                                    mount_point,
-                                    fstype,
-                                    ",".join(["subvol=@", partition.get("options", "")])) != 0:
-            libcalamares.utils.warning("Cannot mount {}".format(device))
-
-        if not has_home_mount_point:
+        # Mount the subvolumes
+        for s in btrfs_subvolumes:
+            mount_option = "subvol={}".format(s['subvolume'])
+            subvolume_mountpoint = mount_point[:-1] + s['mountPoint']
             if libcalamares.utils.mount(device,
-                                        root_mount_point + "/home",
-                                        fstype,
-                                        ",".join(["subvol=@home", partition.get("options", "")])) != 0:
+                                    subvolume_mountpoint,
+                                    fstype,
+                                    ",".join([mount_option, partition.get("options", "")])) != 0:
                 libcalamares.utils.warning("Cannot mount {}".format(device))
 
 

@@ -5,8 +5,11 @@
 # Calamares: Distribution-Independent Installer Framework
 ---------
 
-[![GitHub release](https://img.shields.io/github/v/release/sereneteam/alterlinux-calamares?color=%234169e1&include_prereleases&style=flat-square)](https://github.com/sereneteam/alterlinux-calamares/releases)
-[![GitHub license](https://img.shields.io/github/license/sereneteam/alterlinux-calamares?style=flat-square&logo=gnu)](https://github.com/sereneteam/alterlinux-calamares/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/calamares/calamares.svg)](https://github.com/calamares/calamares/releases)
+[![GitHub Build Status](https://img.shields.io/github/workflow/status/calamares/calamares/ci?label=GH%20build)](https://github.com/calamares/calamares/actions?query=workflow%3Aci)
+[![Travis Build Status](https://travis-ci.org/calamares/calamares.svg?branch=calamares)](https://travis-ci.org/calamares/calamares)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/5389/badge.svg)](https://scan.coverity.com/projects/5389)
+[![GitHub license](https://img.shields.io/github/license/calamares/calamares.svg)](https://github.com/calamares/calamares/blob/calamares/LICENSE)
 
 [If you find a Bug, please report a Bug](https://github.com/SereneTeam/alterlinux-calamares/issues/new/choose)
 

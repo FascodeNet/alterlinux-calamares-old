@@ -7,6 +7,161 @@ contributors are listed. Note that Calamares does not have a historical
 changelog -- this log starts with version 3.2.0. The release notes on the
 website will have to do for older versions.
 
+# 3.2.39.3 (2021-04-14) #
+
+A minor bugfix tweak release. Since this contains yet **another**
+autologin-related fix, and there is nothing large enough to justify
+a 3.2.40 release yet, add it to the growing tail of 3.2.39. (Reported
+by Joe Kamprad, #1672). Also fixes a regression from 3.2.28 in
+localized packages (e.g. *package-LOCALE* did not work).
+
+
+# 3.2.39.2 (2021-04-02) #
+
+This is **another** hotfix release for issues around autologin ..
+autoLogin, really, since the whole problem is that internal capitalization
+changed. An unrelated bug in writing /etc/default/keyboard was
+also fixed. (Reported by pcrepix, #1668)
+
+
+# 3.2.39.1 (2021-03-30) #
+
+This hotfix release corrects a regression in the *displaymanager*
+module caused by changes in the *users* module; autologin was
+internally renamed and no longer recognized by the *displaymanager*
+module. (Reported by Erik Dubois, #1665)
+
+
+# 3.2.39 (2021-03-19) #
+
+This release contains contributions from (alphabetically by first name):
+ - Matti Hyttinen
+
+## Core ##
+ - A *packages* service has been added to the core, for use by
+   *netinstall* module and any others that need to set up
+   package information for the *packages* module.
+
+## Modules ##
+ - The *mount* module has gained a configurable setup for btrfs volumes.
+   If your distro has a default-to-btrfs setup, it can skip the hard-
+   coded setup (which Calamares has had for a long time with @home
+   and similar) and introduce a custom btrfs configuration through the
+   `mount.conf` file. See issues #1659 and #1661 for warnings about
+   using this in production.
+ - *netinstall* now supports fallbacks for the groups data.
+   Instead of a single URL, multiple URLs may be specified in
+   a list and Calamares goes through them until one is successfully
+   retrieved. Older configurations with a single string are
+   treated like a one-item list. #1579
+ - The *usersq* module now connects to the internal configuration
+   object and may be usable for regular installations.
+
+
+# 3.2.38.1 (2021-03-15) #
+
+This hotfix release is for this item in the release notes of 3.2.38:
+ - The .desktop file for Calamares now makes a longer trip, calling
+   `sh -c "pkexec calamares"`; distributions may still need to adjust.
+The change had been lost while updating other files. It has been restored
+in `calamares.desktop` and `calamares.desktop.in`. (Reported by Erik)
+Other minor changes and fixes:
+ - presets in the *users* module show the hostname, too,
+ - translations update for Korean, Ukranian and Chinese (zh_TW).
+
+
+# 3.2.38 (2021-03-14) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Anubhav Choudhary
+ - Neal Gompa
+
+## Core ##
+ - Uploading your log files (in case of installation failure) has been
+   expanded and is now more configurable. Users should still take care
+   when uploading logs, and distro's should configure a URL with
+   no public viewing of those logs. (Thanks Anubhav)
+ - The .desktop file for Calamares now makes a longer trip, calling
+   `sh -c "pkexec calamares"`; distributions may still need to adjust.
+
+## Modules ##
+ - A new QML-based *finishedq* module has been added. (Thanks Anke)
+ - The *packages* module no longer supports *urpmi*; no Calamares-
+   consumers with that package manager seem to exist. (Thanks Neal)
+ - The *users* module now can set a fixed username and prevent editing.
+   The *presets* configuration entry in `users.conf` can set a *loginName*
+   and a *fullName* and (independently) enable or disable editing of
+   that value. You can, for instance, set *loginName* to "manjaro" if
+   you like; the user can change it afterwards. You could set the
+   *loginName* to "oem" and prevent editing it as well. #942
+
+
+# 3.2.37 (2021-02-23) #
+
+This release contains contributions from (alphabetically by first name):
+ - benne-dee
+
+## Core ##
+ - Calamares has a table of 'best guess' languages for each country
+   and when GeoIP is enabled, it will automatically select that
+   country's language as default -- the user can of course pick
+   a different one. The 'best guess' is based on Unicode / ISO
+   data, which is sometimes dubious. Based on some personal notes,
+   the 'best guess' language for Belarus has been changed to Russian.
+ - Calamares has a table of 'best guess' keyboard mappings,
+   allowing native language input. However, usernames and
+   passwords should be in US-ASCII (this is a limitation of
+   the login system -- **some** parts of the system will support
+   non-ASCII input, but it's better safe than sorry).
+   Add Greek to the list of languages that needs US-ASCII
+   in addition to native input.
+ - The CI infrastructure now builds Calamares and Calamares-extensions
+   on a nightly basis.
+
+## Modules ##
+ - The *netinstall* module has a YAML schema, allowing packagers
+   to validate and verify their netinstall configurations before
+   shipping an ISO (or writing bug reports). Thanks benne-dee.
+ - The *finished* module has been heavily refactored, opening
+   the way to a QML-based version of the same module. This is
+   also preparatory work for allowing packagers (e.g. PostmarketOS)
+   to customize the messages on the finished page.
+
+
+# 3.2.36 (2021-02-03) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anubhav Choudhary
+ - benne-dee
+ - Gaël PORTAY
+ - Jonas Strassel
+ - Kevin Kofler
+ - Matti Hyttinen
+ - Neal Gompa
+
+## Core ##
+ - It is now possible to hide the *next* and *back* buttons during
+   the "exec" phase of installation. Thanks Anubhav.
+ - The Calamares CI has migrated to GitHub actions. Thanks Jonas.
+
+## Modules ##
+ - *bootloader* now uses the current file names for the UEFI Secure Boot
+   shim instead of obsolete ones.
+ - The *mount* module creates swap in its own subvolume, if btrfs is used.
+   Thanks Matti.
+ - *partition* includes more information about what it will do, including
+   GPT partition types (in human-readable format, if possible). Thanks Gaël.
+ - Some edge-cases with overlay filesystems have been resolved in the
+   *partition* module. Thanks Gaël.
+ - During the creation of filesystems and partitions, automounting is
+   turned off (if DBus is available, and the host system supports
+   KDE Solid automount control). This should reduce the number of
+   failed installations if automount grabs partitions while they are
+   being created. The code is prepared to handle other ways to control
+   automount-behavior as well.
+
+
 # 3.2.35.1 (2020-12-07) #
 
 This release contains contributions from (alphabetically by first name):

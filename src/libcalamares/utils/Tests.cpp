@@ -13,6 +13,7 @@
 #include "Entropy.h"
 #include "Logger.h"
 #include "RAII.h"
+#include "String.h"
 #include "Traits.h"
 #include "UMask.h"
 #include "Variant.h"
@@ -63,6 +64,10 @@ private Q_SLOTS:
     void testVariantStringListYAMLDashed();
     void testVariantStringListYAMLBracketed();
 
+    /** @brief Test smart string truncation. */
+    void testStringTruncation();
+    void testStringTruncationShorter();
+    void testStringTruncationDegenerate();
 
 private:
     void recursiveCompareMap( const QVariantMap& a, const QVariantMap& b, int depth );
@@ -494,6 +499,216 @@ strings: [ aap, noot, mies ]
     QVERIFY( getStringList( m, key ).contains( "mies" ) );
     QVERIFY( !getStringList( m, key ).contains( "lam" ) );
 }
+
+void
+LibCalamaresTests::testStringTruncation()
+{
+    Logger::setupLogLevel( Logger::LOGDEBUG );
+
+    using namespace CalamaresUtils;
+
+    const QString longString( R"(---
+--- src/libcalamares/utils/String.h
++++ src/libcalamares/utils/String.h
+@@ -62,15 +62,22 @@ DLLEXPORT QString removeDiacritics( const QString& string );
+  */
+ DLLEXPORT QString obscure( const QString& string );
+
++/** @brief Parameter for counting lines at beginning and end of string
++ *
++ * This is used by truncateMultiLine() to indicate how many lines from
++ * the beginning and how many from the end should be kept.
++ */
+ struct LinesStartEnd
+ {
+-    int atStart;
+-    int atEnd;
++    int atStart = 0;
++    int atEnd = 0;
+)" );
+
+    const int sufficientLength = 812;
+    // There's 18 lines in all
+    QCOMPARE( longString.count( '\n' ), 18 );
+    QVERIFY( longString.length() < sufficientLength );
+
+    // If we ask for more, we get everything back
+    QCOMPARE( longString, truncateMultiLine( longString, LinesStartEnd { 20, 0 }, CharCount { sufficientLength } ) );
+    QCOMPARE( longString, truncateMultiLine( longString, LinesStartEnd { 0, 20 }, CharCount { sufficientLength } ) );
+
+    // If we ask for no lines, only characters, we get that
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 0 }, CharCount { 4 } );
+        QCOMPARE( s.length(), 4 );
+        QCOMPARE( s, QString( "---\n" ) );
+    }
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 0 }, CharCount { sufficientLength } );
+        QCOMPARE( s, longString );
+    }
+
+    // Lines at the start
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 4, 0 }, CharCount { sufficientLength } );
+        QVERIFY( s.length() > 1 );
+        QVERIFY( longString.startsWith( s ) );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QCOMPARE( s.count( '\n' ), 4 );
+    }
+
+    // Lines at the end
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 4 }, CharCount { sufficientLength } );
+        QVERIFY( s.length() > 1 );
+        QVERIFY( longString.endsWith( s ) );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QCOMPARE( s.count( '\n' ), 4 );
+    }
+
+    // Lines at both ends
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 2, 2 }, CharCount { sufficientLength } );
+        QVERIFY( s.length() > 1 );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QCOMPARE( s.count( '\n' ), 4 );
+
+        auto firsttwo = truncateMultiLine( s, LinesStartEnd { 2, 0 }, CharCount { sufficientLength } );
+        auto lasttwo = truncateMultiLine( s, LinesStartEnd { 0, 2 }, CharCount { sufficientLength } );
+        QCOMPARE( firsttwo + lasttwo, s );
+        QCOMPARE( firsttwo.count( '\n' ), 2 );
+        QVERIFY( longString.startsWith( firsttwo ) );
+        QVERIFY( longString.endsWith( lasttwo ) );
+    }
+}
+
+void
+LibCalamaresTests::testStringTruncationShorter()
+{
+    Logger::setupLogLevel( Logger::LOGDEBUG );
+
+    using namespace CalamaresUtils;
+
+    const QString longString( R"(Some strange string artifacts appeared, leading to `{1?}` being
+displayed in various user-facing messages. These have been removed
+and the translations updated.)" );
+    const char NEWLINE = '\n';
+
+    const int insufficientLength = 42;
+    // There's 2 newlines in all, no trailing newline
+    QVERIFY( !longString.endsWith( NEWLINE ) );
+    QCOMPARE( longString.count( NEWLINE ), 2 );
+    QVERIFY( longString.length() > insufficientLength );
+    // Even the first line must be more than the insufficientLength
+    QVERIFY( longString.indexOf( NEWLINE ) > insufficientLength );
+
+    // Grab first line, untruncated
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 1, 0 } );
+        QVERIFY( s.length() > 1 );
+        QVERIFY( longString.startsWith( s ) );
+        QVERIFY( s.endsWith( NEWLINE ) );
+        QVERIFY( s.endsWith( "being\n" ) );
+        QVERIFY( s.startsWith( "Some " ) );
+    }
+
+    // Grab last line, untruncated
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 1 } );
+        QVERIFY( s.length() > 1 );
+        QVERIFY( longString.endsWith( s ) );
+        QVERIFY( !s.endsWith( NEWLINE ) );
+        QVERIFY( s.endsWith( "updated." ) );
+        QCOMPARE( s.count( NEWLINE ), 0 );  // Because last line doesn't end with a newline
+        QVERIFY( s.startsWith( "and the " ) );
+    }
+
+    // Grab last two lines, untruncated
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 2 } );
+        QVERIFY( s.length() > 1 );
+        QVERIFY( longString.endsWith( s ) );
+        QVERIFY( !s.endsWith( NEWLINE ) );
+        QVERIFY( s.endsWith( "updated." ) );
+        QCOMPARE( s.count( NEWLINE ), 1 );  // Because last line doesn't end with a newline
+        QVERIFY( s.startsWith( "displayed in " ) );
+    }
+
+    // First line, truncated
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 1, 0 }, CharCount { insufficientLength } );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QVERIFY( s.length() > 1 );
+        QVERIFY( s.endsWith( NEWLINE ) );
+        QVERIFY( s.startsWith( "Some " ) );
+        // Because the first line has a newline, the truncated version does too,
+        //   but that makes it one longer than requested.
+        QCOMPARE( s.length(), insufficientLength + 1 );
+        QVERIFY( longString.startsWith( s.left( insufficientLength ) ) );
+    }
+
+    // Last line, truncated; this line is quite short
+    {
+        const int quiteShort = 8;
+        QVERIFY( longString.lastIndexOf( NEWLINE ) < longString.length() - quiteShort );
+
+        auto s = truncateMultiLine( longString, LinesStartEnd { 0, 1 }, CharCount { quiteShort } );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QVERIFY( s.length() > 1 );
+        QVERIFY( !s.endsWith( NEWLINE ) );  // Because the original doesn't either
+        QVERIFY( s.startsWith( "upda" ) );
+        QCOMPARE( s.length(), quiteShort );  // No extra newlines
+        QVERIFY( longString.endsWith( s ) );
+    }
+
+    // First and last, but both truncated
+    {
+        const int quiteShort = 16;
+        QVERIFY( longString.indexOf( NEWLINE ) > quiteShort );
+        QVERIFY( longString.lastIndexOf( NEWLINE ) < longString.length() - quiteShort );
+
+        auto s = truncateMultiLine( longString, LinesStartEnd { 1, 1 }, CharCount { quiteShort } );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QVERIFY( s.length() > 1 );
+        QVERIFY( !s.endsWith( NEWLINE ) );  // Because the original doesn't either
+        QVERIFY( s.startsWith( "Some " ) );
+        QVERIFY( s.endsWith( "updated." ) );
+        QCOMPARE( s.length(), quiteShort + 1 );  // Newline between front and back part
+    }
+}
+
+void
+LibCalamaresTests::testStringTruncationDegenerate()
+{
+    Logger::setupLogLevel( Logger::LOGDEBUG );
+
+    using namespace CalamaresUtils;
+
+    // This is quite long, 1 line only, with no newlines
+    const QString longString( "The portscout new distfile checker has detected that one or more of your "
+                              "ports appears to be out of date. Please take the opportunity to check "
+                              "each of the ports listed below, and if possible and appropriate, "
+                              "submit/commit an update. If any ports have already been updated, you can "
+                              "safely ignore the entry." );
+
+    const char NEWLINE = '\n';
+    const int quiteShort = 16;
+    QVERIFY( longString.length() > quiteShort );
+    QVERIFY( !longString.contains( NEWLINE ) );
+    QVERIFY( longString.indexOf( NEWLINE ) < 0 );
+
+    {
+        auto s = truncateMultiLine( longString, LinesStartEnd { 1, 0 }, CharCount { quiteShort } );
+        cDebug() << "Result-line" << Logger::Quote << s;
+        QVERIFY( s.length() > 1 );
+        QCOMPARE( s.length(), quiteShort );  // No newline between front and back part
+        QVERIFY( s.startsWith( "The port" ) );  // 8, which is quiteShort / 2
+        QVERIFY( s.endsWith( "e entry." ) );  // also 8 chars
+
+        auto t = truncateMultiLine( longString, LinesStartEnd { 2, 2 }, CharCount { quiteShort } );
+        QCOMPARE( s, t );
+    }
+}
+
 
 QTEST_GUILESS_MAIN( LibCalamaresTests )
 

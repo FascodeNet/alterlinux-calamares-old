@@ -22,7 +22,9 @@
 
 #include <QCoreApplication>
 #include <QFile>
+#include <QMetaProperty>
 #include <QRegExp>
+#include <QTimer>
 
 #ifdef HAVE_ICU
 #include <unicode/translit.h>
@@ -35,6 +37,8 @@ static const char TRANSLITERATOR_ID[] = "Russian-Latin/BGN;"
                                         "Any-Latin;"
                                         "Latin-ASCII";
 #endif
+
+#include <memory>
 
 static const QRegExp USERNAME_RX( "^[a-z_][a-z0-9_-]*[$]?$" );
 static constexpr const int USERNAME_MAX_LENGTH = 31;
@@ -55,11 +59,11 @@ updateGSAutoLogin( bool doAutoLogin, const QString& login )
 
     if ( doAutoLogin && !login.isEmpty() )
     {
-        gs->insert( "autologinUser", login );
+        gs->insert( "autoLoginUser", login );
     }
     else
     {
-        gs->remove( "autologinUser" );
+        gs->remove( "autoLoginUser" );
     }
 
     if ( login.isEmpty() )
@@ -89,7 +93,7 @@ hostNameActionNames()
 }
 
 Config::Config( QObject* parent )
-    : QObject( parent )
+    : Calamares::ModuleSystem::Config( parent )
 {
     emit readyChanged( m_isReady );  // false
 
@@ -103,7 +107,7 @@ Config::Config( QObject* parent )
     connect( this, &Config::requireStrongPasswordsChanged, this, &Config::checkReady );
 }
 
-Config::~Config() { }
+Config::~Config() {}
 
 void
 Config::setUserShell( const QString& shell )
@@ -138,13 +142,13 @@ insertInGlobalStorage( const QString& key, const QString& group )
 }
 
 void
-Config::setAutologinGroup( const QString& group )
+Config::setAutoLoginGroup( const QString& group )
 {
-    if ( group != m_autologinGroup )
+    if ( group != m_autoLoginGroup )
     {
-        m_autologinGroup = group;
-        insertInGlobalStorage( QStringLiteral( "autologinGroup" ), group );
-        emit autologinGroupChanged( group );
+        m_autoLoginGroup = group;
+        insertInGlobalStorage( QStringLiteral( "autoLoginGroup" ), group );
+        emit autoLoginGroupChanged( group );
     }
 }
 
@@ -158,9 +162,9 @@ Config::groupsForThisUser() const
     {
         l << g.name();
     }
-    if ( doAutoLogin() && !autologinGroup().isEmpty() )
+    if ( doAutoLogin() && !autoLoginGroup().isEmpty() )
     {
-        l << autologinGroup();
+        l << autoLoginGroup();
     }
 
     return l;
@@ -181,6 +185,7 @@ Config::setSudoersGroup( const QString& group )
 void
 Config::setLoginName( const QString& login )
 {
+    CONFIG_PREVENT_EDITING( QString, "loginName" );
     if ( login != m_loginName )
     {
         m_customLoginName = !login.isEmpty();
@@ -391,6 +396,8 @@ makeHostnameSuggestion( const QStringList& parts )
 void
 Config::setFullName( const QString& name )
 {
+    CONFIG_PREVENT_EDITING( QString, "fullName" );
+
     if ( name.isEmpty() && !m_fullName.isEmpty() )
     {
         if ( !m_customHostName )
@@ -796,6 +803,29 @@ addPasswordCheck( const QString& key, const QVariant& value, PasswordCheckList& 
     return true;
 }
 
+/** @brief Returns a value of either key from the map
+ *
+ * Takes a function (e.g. getBool, or getString) and two keys,
+ * returning the value in the map of the one that is there (or @p defaultArg)
+ */
+template < typename T, typename U >
+T
+either( T ( *f )( const QVariantMap&, const QString&, U ),
+        const QVariantMap& configurationMap,
+        const QString& oldKey,
+        const QString& newKey,
+        U defaultArg )
+{
+    if ( configurationMap.contains( oldKey ) )
+    {
+        return f( configurationMap, oldKey, defaultArg );
+    }
+    else
+    {
+        return f( configurationMap, newKey, defaultArg );
+    }
+}
+
 void
 Config::setConfigurationMap( const QVariantMap& configurationMap )
 {
@@ -807,13 +837,21 @@ Config::setConfigurationMap( const QVariantMap& configurationMap )
     // Now it might be explicitly set to empty, which is ok
     setUserShell( shell );
 
-    setAutologinGroup( CalamaresUtils::getString( configurationMap, "autologinGroup" ) );
+    setAutoLoginGroup( either< QString, const QString& >(
+        CalamaresUtils::getString, configurationMap, "autologinGroup", "autoLoginGroup", QString() ) );
     setSudoersGroup( CalamaresUtils::getString( configurationMap, "sudoersGroup" ) );
 
     m_hostNameActions = getHostNameActions( configurationMap );
 
     setConfigurationDefaultGroups( configurationMap, m_defaultGroups );
-    m_doAutoLogin = CalamaresUtils::getBool( configurationMap, "doAutologin", false );
+
+    // Renaming of Autologin -> AutoLogin in 4ffa79d4cf also affected
+    // configuration keys, which was not intended. Accept both.
+    m_doAutoLogin = either( CalamaresUtils::getBool,
+                            configurationMap,
+                            QStringLiteral( "doAutologin" ),
+                            QStringLiteral( "doAutoLogin" ),
+                            false );
 
     m_writeRootPassword = CalamaresUtils::getBool( configurationMap, "setRootPassword", true );
     Calamares::JobQueue::instance()->globalStorage()->insert( "setRootPassword", m_writeRootPassword );
@@ -834,6 +872,9 @@ Config::setConfigurationMap( const QVariantMap& configurationMap )
 
     updateGSAutoLogin( doAutoLogin(), loginName() );
     checkReady();
+
+    ApplyPresets( *this, configurationMap ) << "fullName"
+                                            << "loginName";
 }
 
 void
