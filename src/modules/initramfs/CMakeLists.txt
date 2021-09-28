@@ -8,8 +8,6 @@ calamares_add_plugin( initramfs
     EXPORT_MACRO PLUGINDLLEXPORT_PRO
     SOURCES
         InitramfsJob.cpp
-    LINK_PRIVATE_LIBRARIES
-        calamares
     SHARED_LIB
 )
 
@@ -19,5 +17,5 @@ calamares_add_test(
         Tests.cpp
     LIBRARIES
         calamares_job_initramfs # From above
-        yamlcpp
+        yamlcpp::yamlcpp
 )

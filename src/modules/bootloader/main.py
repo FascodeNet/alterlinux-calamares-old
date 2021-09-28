@@ -133,6 +133,12 @@ def create_systemd_boot_conf(install_path, efi_dir, uuid, entry, entry_name, ker
                                   "root=/dev/mapper/"
                                   + partition["luksMapperName"]]
 
+    # systemd-boot with a BTRFS root filesystem needs to be told
+    # about the root subvolume.
+    for partition in partitions:
+        if partition["mountPoint"] == "/" and partition["fs"] == "btrfs":
+            kernel_params.append("rootflags=subvol=@")
+
     if cryptdevice_params:
         kernel_params.extend(cryptdevice_params)
     else:
@@ -281,6 +287,33 @@ def install_systemd_boot(efi_directory):
     create_loader(loader_path, distribution_translated)
 
 
+def get_grub_efi_parameters():
+    """
+    Returns a 3-tuple of suitable parameters for GRUB EFI installation,
+    depending on the host machine architecture. The return is
+        - target name
+        - grub.efi name
+        - boot.efi name
+    all three are strings. May return None if there is no suitable
+    set for the current machine. May return unsuitable values if the
+    host architecture is unknown (e.g. defaults to x86_64).
+    """
+    import platform
+    efi_bitness = efi_word_size()
+    cpu_type = platform.machine()
+
+    if efi_bitness == "32":
+        # Assume all 32-bitters are legacy x86
+        return ("i386-efi", "grubia32.efi", "bootia32.efi")
+    elif efi_bitness == "64" and cpu_type == "aarch64":
+        return ("arm64-efi", "grubaa64.efi", "bootaa64.efi")
+    elif efi_bitness == "64":
+        # If it's not ARM, must by AMD64
+        return ("x86_64-efi", "grubx64.efi", "bootx64.efi")
+    libcalamares.utils.warning("Could not find GRUB parameters for bits {b} and cpu {c}".format(b=repr(efi_bitness), c=repr(cpu_type)))
+    return None
+
+
 def install_grub(efi_directory, fw_type):
     """
     Installs grub as bootloader, either in pc or efi mode.
@@ -297,16 +330,8 @@ def install_grub(efi_directory, fw_type):
             os.makedirs(install_efi_directory)
 
         efi_bootloader_id = efi_label()
-        efi_bitness = efi_word_size()
 
-        if efi_bitness == "32":
-            efi_target = "i386-efi"
-            efi_grub_file = "grubia32.efi"
-            efi_boot_file = "bootia32.efi"
-        elif efi_bitness == "64":
-            efi_target = "x86_64-efi"
-            efi_grub_file = "grubx64.efi"
-            efi_boot_file = "bootx64.efi"
+        efi_target, efi_grub_file, efi_boot_file = get_grub_efi_parameters()
 
         check_target_env_call([libcalamares.job.configuration["grubInstall"],
                                "--target=" + efi_target,
@@ -474,6 +499,14 @@ def run():
             libcalamares.utils.warning( "EFI system, but nothing mounted on {!s}".format(efi_system_partition) )
             return None
 
-    prepare_bootloader(fw_type)
+    try:
+        prepare_bootloader(fw_type)
+    except subprocess.CalledProcessError as e:
+        libcalamares.utils.warning(str(e))
+        libcalamares.utils.debug("stdout:" + str(e.stdout))
+        libcalamares.utils.debug("stderr:" + str(e.stderr))
+        return (_("Bootloader installation error"),
+                _("The bootloader could not be installed. The installation command <pre>{!s}</pre> returned error code {!s}.")
+                .format(e.cmd, e.returncode))
 
     return None

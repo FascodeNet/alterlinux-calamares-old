@@ -24,11 +24,20 @@
 #include "modulesystem/ModuleManager.h"
 #include "modulesystem/ViewModule.h"
 #include "utils/Logger.h"
+#include "utils/Retranslator.h"
+#include "utils/Yaml.h"
+#include "viewpages/ExecutionViewStep.h"
+
+// Optional features of Calamares
+// - Python support
+// - QML support
+#ifdef WITH_PYTHON
+#include "PythonJob.h"
+#endif
 #ifdef WITH_QML
 #include "utils/Qml.h"
 #endif
-#include "utils/Yaml.h"
-#include "viewpages/ExecutionViewStep.h"
+
 
 #include <QApplication>
 #include <QCommandLineOption>
@@ -54,6 +63,7 @@ struct ModuleConfig
     QString m_language;
     QString m_branding;
     bool m_ui;
+    bool m_pythonInjection;
 };
 
 static ModuleConfig
@@ -61,24 +71,21 @@ handle_args( QCoreApplication& a )
 {
     QCommandLineOption debugLevelOption(
         QStringLiteral( "D" ), "Verbose output for debugging purposes (0-8), ignored.", "level" );
-    QCommandLineOption globalOption( QStringList() << QStringLiteral( "g" ) << QStringLiteral( "global " ),
+    QCommandLineOption globalOption( { QStringLiteral( "g" ), QStringLiteral( "global" ) },
                                      QStringLiteral( "Global settings document" ),
                                      "global.yaml" );
-    QCommandLineOption jobOption( QStringList() << QStringLiteral( "j" ) << QStringLiteral( "job" ),
-                                  QStringLiteral( "Job settings document" ),
-                                  "job.yaml" );
-    QCommandLineOption langOption( QStringList() << QStringLiteral( "l" ) << QStringLiteral( "language" ),
+    QCommandLineOption jobOption(
+        { QStringLiteral( "j" ), QStringLiteral( "job" ) }, QStringLiteral( "Job settings document" ), "job.yaml" );
+    QCommandLineOption langOption( { QStringLiteral( "l" ), QStringLiteral( "language" ) },
                                    QStringLiteral( "Language (global)" ),
                                    "languagecode" );
-    QCommandLineOption brandOption( QStringList() << QStringLiteral( "b" ) << QStringLiteral( "branding" ),
+    QCommandLineOption brandOption( { QStringLiteral( "b" ), QStringLiteral( "branding" ) },
                                     QStringLiteral( "Branding directory" ),
                                     "path/to/branding.desc",
                                     "src/branding/default/branding.desc" );
-    QCommandLineOption uiOption( QStringList() << QStringLiteral( "U" ) << QStringLiteral( "ui" ),
-                                 QStringLiteral( "Enable UI" ) );
-    QCommandLineOption slideshowOption( QStringList() << QStringLiteral( "s" ) << QStringLiteral( "slideshow" ),
+    QCommandLineOption uiOption( { QStringLiteral( "U" ), QStringLiteral( "ui" ) }, QStringLiteral( "Enable UI" ) );
+    QCommandLineOption slideshowOption( { QStringLiteral( "s" ), QStringLiteral( "slideshow" ) },
                                         QStringLiteral( "Run slideshow module" ) );
-
     QCommandLineParser parser;
     parser.setApplicationDescription( "Calamares module tester" );
     parser.addHelpOption();
@@ -91,6 +98,12 @@ handle_args( QCoreApplication& a )
     parser.addOption( brandOption );
     parser.addOption( uiOption );
     parser.addOption( slideshowOption );
+#ifdef WITH_PYTHON
+    QCommandLineOption pythonOption( { QStringLiteral( "P" ), QStringLiteral( "no-injected-python" ) },
+                                     QStringLiteral( "Do not disable potentially-harmful Python commands" ) );
+    parser.addOption( pythonOption );
+#endif
+
     parser.addPositionalArgument( "module", "Path or name of module to run." );
     parser.addPositionalArgument( "job.yaml", "Path of job settings document to use.", "[job.yaml]" );
 
@@ -115,12 +128,20 @@ handle_args( QCoreApplication& a )
             jobSettings = args.at( 1 );
         }
 
+        bool pythonInjection = true;
+#ifdef WITH_PYTHON
+        if ( parser.isSet( pythonOption ) )
+        {
+            pythonInjection = false;
+        }
+#endif
         return ModuleConfig { parser.isSet( slideshowOption ) ? QStringLiteral( "-" ) : args.first(),
                               jobSettings,
                               parser.value( globalOption ),
                               parser.value( langOption ),
                               parser.value( brandOption ),
-                              parser.isSet( slideshowOption ) || parser.isSet( uiOption ) };
+                              parser.isSet( slideshowOption ) || parser.isSet( uiOption ),
+                              pythonInjection };
     }
 }
 
@@ -275,7 +296,8 @@ load_module( const ModuleConfig& moduleConfig )
     bool ok = false;
     QVariantMap descriptor;
 
-    for ( const QString& prefix : QStringList { "./", "src/modules/", "modules/" } )
+    QStringList moduleDirectories { "./", "src/modules/", "modules/", CMAKE_INSTALL_FULL_LIBDIR "/calamares/modules/" };
+    for ( const QString& prefix : qAsConst( moduleDirectories ) )
     {
         // Could be a complete path, eg. src/modules/dummycpp/module.desc
         fi = QFileInfo( prefix + moduleName );
@@ -301,12 +323,23 @@ load_module( const ModuleConfig& moduleConfig )
             {
                 break;
             }
+            else
+            {
+                if ( !fi.exists() )
+                {
+                    cDebug() << "Expected a descriptor file" << fi.path();
+                }
+                else
+                {
+                    cDebug() << "Read descriptor" << fi.path() << "and it was empty.";
+                }
+            }
         }
     }
 
     if ( !ok )
     {
-        cWarning() << "No suitable module descriptor found.";
+        cWarning() << "No suitable module descriptor found in" << Logger::DebugList( moduleDirectories );
         return nullptr;
     }
 
@@ -321,7 +354,7 @@ load_module( const ModuleConfig& moduleConfig )
     QString configFile( moduleConfig.configFile().isEmpty() ? moduleDirectory + '/' + name + ".conf"
                                                             : moduleConfig.configFile() );
 
-    cDebug() << "Module" << moduleName << "job-configuration:" << configFile;
+    cDebug() << Logger::SubEntry << "Module" << moduleName << "job-configuration:" << configFile;
 
     Calamares::Module* module = Calamares::moduleFromDescriptor(
         Calamares::ModuleSystem::Descriptor::fromDescriptorData( descriptor ), name, configFile, moduleDirectory );
@@ -365,6 +398,46 @@ createApplication( int& argc, char* argv[] )
     return new QCoreApplication( argc, argv );
 }
 
+#ifdef WITH_PYTHON
+static const char pythonPreScript[] = R"%(
+# This is Python code executed by Python modules *before* the
+# script file (e.g. main.py) is executed.
+#
+# Calls to suprocess methods that execute something are
+# suppressed and logged -- scripts should really be using libcalamares
+# methods instead.
+_calamares_subprocess = __import__("subprocess", globals(), locals(), [], 0)
+import sys
+import libcalamares
+class fake_subprocess(object):
+    PIPE = object()
+    STDOUT = object()
+    STDERR = object()
+    class CompletedProcess(object):
+        returncode = 0
+        stdout = ""
+        stderr = ""
+    @staticmethod
+    def call(*args, **kwargs):
+        libcalamares.utils.debug("subprocess.call(%r,%r) X ignored" % (args, kwargs))
+        return 0
+    @staticmethod
+    def check_call(*args, **kwargs):
+        libcalamares.utils.debug("subprocess.check_call(%r,%r) X ignored" % (args, kwargs))
+        return 0
+    # This is a 3.5-and-later method, is supposed to return a CompletedProcess
+    @staticmethod
+    def run(*args, **kwargs):
+        libcalamares.utils.debug("subprocess.run(%r,%r) X ignored" % (args, kwargs))
+        return fake_subprocess.CompletedProcess()
+for attr in ("CalledProcessError",):
+    setattr(fake_subprocess,attr,getattr(_calamares_subprocess,attr))
+sys.modules["subprocess"] = fake_subprocess
+libcalamares.utils.debug('pre-script for testing purposes injected')
+
+)%";
+#endif
+
 int
 main( int argc, char* argv[] )
 {
@@ -394,6 +467,12 @@ main( int argc, char* argv[] )
         gs->insert( "localeConf", vm );
     }
 
+#ifdef WITH_PYTHON
+    if ( module.m_pythonInjection )
+    {
+        Calamares::PythonJob::setInjectedPreScript( pythonPreScript );
+    }
+#endif
 #ifdef WITH_QML
     CalamaresUtils::initQmlModulesDir();  // don't care if failed
 #endif
@@ -406,7 +485,7 @@ main( int argc, char* argv[] )
         return 1;
     }
 
-    cDebug() << " .. got" << m->name() << m->typeString() << m->interfaceString();
+    cDebug() << Logger::SubEntry << " .. got" << m->name() << m->typeString() << m->interfaceString();
     if ( m->type() == Calamares::Module::Type::View )
     {
         // If we forgot the --ui, any ViewModule will core dump as it
@@ -420,6 +499,10 @@ main( int argc, char* argv[] )
             aw = replace_app;
         }
         mw = module.m_ui ? new QMainWindow() : nullptr;
+        if ( mw )
+        {
+            mw->installEventFilter( CalamaresUtils::Retranslator::instance() );
+        }
 
         (void)new Calamares::Branding( module.m_branding );
         auto* modulemanager = new Calamares::ModuleManager( QStringList(), nullptr );
@@ -455,7 +538,6 @@ main( int argc, char* argv[] )
     cDebug() << "Module metadata" << TR( "name", m->name() ) << TR( "type", m->typeString() )
              << TR( "interface", m->interfaceString() );
 
-    cDebug() << "Job outputs:";
     Calamares::JobList jobList = m->jobs();
     unsigned int failure_count = 0;
     unsigned int count = 1;

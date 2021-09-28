@@ -8,8 +8,9 @@
 # want to allow unsafe partitioning choices (e.g. doing things to the
 # current disk). Set DEBUG_PARTITION_UNSAFE to allow that (it turns off
 # some filtering of devices). If you **do** allow unsafe partitioning,
-# it will error out unless you **also** switch **off** DEBUG_PARTITION_LAME,
-# at which point you are welcome to shoot yourself in the foot.
+# it will error out at runtime unless you **also** switch **off**
+# DEBUG_PARTITION_LAME, at which point you are welcome to shoot
+# yourself in the foot.
 option( DEBUG_PARTITION_UNSAFE "Allow unsafe partitioning choices." OFF )
 option( DEBUG_PARTITION_LAME   "Unsafe partitioning will error out on exec." ON )
 
@@ -48,9 +49,11 @@ if ( KPMcore_FOUND AND Qt5DBus_FOUND AND KF5CoreAddons_FOUND AND KF5Config_FOUND
         TYPE viewmodule
         EXPORT_MACRO PLUGINDLLEXPORT_PRO
         SOURCES
+            Config.cpp
+            PartitionViewStep.cpp
+
             core/BootLoaderModel.cpp
             core/ColorUtils.cpp
-            core/Config.cpp
             core/DeviceList.cpp
             core/DeviceModel.cpp
             core/KPMHelpers.cpp
@@ -74,12 +77,12 @@ if ( KPMcore_FOUND AND Qt5DBus_FOUND AND KF5CoreAddons_FOUND AND KF5Config_FOUND
             gui/PartitionLabelsView.cpp
             gui/PartitionSizeController.cpp
             gui/PartitionSplitterWidget.cpp
-            gui/PartitionViewStep.cpp
             gui/ResizeVolumeGroupDialog.cpp
             gui/ScanningDialog.cpp
             gui/ReplaceWidget.cpp
             gui/VolumeGroupBaseDialog.cpp
             jobs/AutoMountManagementJob.cpp
+            jobs/ChangeFilesystemLabelJob.cpp
             jobs/ClearMountsJob.cpp
             jobs/ClearTempMountsJob.cpp
             jobs/CreatePartitionJob.cpp
@@ -105,7 +108,6 @@ if ( KPMcore_FOUND AND Qt5DBus_FOUND AND KF5CoreAddons_FOUND AND KF5Config_FOUND
             gui/VolumeGroupBaseDialog.ui
         LINK_PRIVATE_LIBRARIES
             kpmcore
-            calamaresui
             KF5::CoreAddons
         COMPILE_DEFINITIONS ${_partition_defs}
         SHARED_LIB
@@ -117,3 +119,4 @@ else()
         calamares_skip_module( "partition (missing dependencies for KPMcore)" )
     endif()
 endif()
+

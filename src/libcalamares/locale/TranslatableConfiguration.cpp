@@ -10,7 +10,7 @@
 
 #include "TranslatableConfiguration.h"
 
-#include "LabelModel.h"
+#include "TranslationsModel.h"
 
 #include "utils/Logger.h"
 #include "utils/Variant.h"
@@ -23,9 +23,15 @@ namespace CalamaresUtils
 {
 namespace Locale
 {
-TranslatedString::TranslatedString( const QString& string )
+TranslatedString::TranslatedString( const QString& key, const char* context )
+    : m_context( context )
 {
-    m_strings[ QString() ] = string;
+    m_strings[ QString() ] = key;
+}
+
+TranslatedString::TranslatedString( const QString& string )
+    : TranslatedString( string, nullptr )
+{
 }
 
 TranslatedString::TranslatedString( const QVariantMap& map, const QString& key, const char* context )
@@ -63,6 +69,7 @@ TranslatedString::get() const
 QString
 TranslatedString::get( const QLocale& locale ) const
 {
+    // TODO: keep track of special cases like sr@latin and ca@valencia
     QString localeName = locale.name();
     // Special case, sr@latin doesn't have the @latin reflected in the name
     if ( locale.language() == QLocale::Language::Serbian && locale.script() == QLocale::Script::LatinScript )

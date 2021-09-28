@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:27+0100\n"
+"POT-Creation-Date: 2021-09-08 13:31+0200\n"
 "PO-Revision-Date: 2017-08-09 10:34+0000\n"
 "Last-Translator: Pier Jose Gotta Perez <piegope@protonmail.com>, 2020\n"
 "Language-Team: Spanish (https://www.transifex.com/calamares/teams/20061/es/)\n"
@@ -34,19 +34,19 @@ msgstr "Configure GRUB - menú de arranque multisistema -"
 msgid "Mounting partitions."
 msgstr "Montando particiones"
 
-#: src/modules/mount/main.py:125 src/modules/initcpiocfg/main.py:198
-#: src/modules/initcpiocfg/main.py:202
+#: src/modules/mount/main.py:144 src/modules/initcpiocfg/main.py:197
+#: src/modules/initcpiocfg/main.py:201
 #: src/modules/luksopenswaphookcfg/main.py:86
 #: src/modules/luksopenswaphookcfg/main.py:90 src/modules/rawfs/main.py:164
 #: src/modules/initramfscfg/main.py:85 src/modules/initramfscfg/main.py:89
 #: src/modules/openrcdmcryptcfg/main.py:72
 #: src/modules/openrcdmcryptcfg/main.py:76 src/modules/fstab/main.py:355
-#: src/modules/fstab/main.py:361 src/modules/localecfg/main.py:135
-#: src/modules/networkcfg/main.py:39
+#: src/modules/fstab/main.py:361 src/modules/fstab/main.py:388
+#: src/modules/localecfg/main.py:135 src/modules/networkcfg/main.py:42
 msgid "Configuration Error"
 msgstr "Error de configuración"
 
-#: src/modules/mount/main.py:126 src/modules/initcpiocfg/main.py:199
+#: src/modules/mount/main.py:145 src/modules/initcpiocfg/main.py:198
 #: src/modules/luksopenswaphookcfg/main.py:87 src/modules/rawfs/main.py:165
 #: src/modules/initramfscfg/main.py:86 src/modules/openrcdmcryptcfg/main.py:73
 #: src/modules/fstab/main.py:356
@@ -164,59 +164,59 @@ msgstr ""
 msgid "The destination \"{}\" in the target system is not a directory"
 msgstr "El destino \"{}\" en el sistema escogido  no es una carpeta"
 
-#: src/modules/displaymanager/main.py:514
+#: src/modules/displaymanager/main.py:526
 msgid "Cannot write KDM configuration file"
 msgstr "No se puede escribir el archivo de configuración KDM"
 
-#: src/modules/displaymanager/main.py:515
+#: src/modules/displaymanager/main.py:527
 msgid "KDM config file {!s} does not exist"
 msgstr "El archivo de configuración {!s} de KDM no existe"
 
-#: src/modules/displaymanager/main.py:576
+#: src/modules/displaymanager/main.py:588
 msgid "Cannot write LXDM configuration file"
 msgstr "No se puede escribir el archivo de configuración LXDM"
 
-#: src/modules/displaymanager/main.py:577
+#: src/modules/displaymanager/main.py:589
 msgid "LXDM config file {!s} does not exist"
 msgstr "El archivo de configuracion {!s} de LXDM no existe"
 
-#: src/modules/displaymanager/main.py:660
+#: src/modules/displaymanager/main.py:672
 msgid "Cannot write LightDM configuration file"
 msgstr "No se puede escribir el archivo de configuración de LightDM"
 
-#: src/modules/displaymanager/main.py:661
+#: src/modules/displaymanager/main.py:673
 msgid "LightDM config file {!s} does not exist"
 msgstr "El archivo de configuración {!s} de LightDM no existe"
 
-#: src/modules/displaymanager/main.py:735
+#: src/modules/displaymanager/main.py:747
 msgid "Cannot configure LightDM"
 msgstr "No se puede configurar LightDM"
 
-#: src/modules/displaymanager/main.py:736
+#: src/modules/displaymanager/main.py:748
 msgid "No LightDM greeter installed."
 msgstr "No está instalado el menú de bienvenida LightDM"
 
-#: src/modules/displaymanager/main.py:767
+#: src/modules/displaymanager/main.py:779
 msgid "Cannot write SLIM configuration file"
 msgstr "No se puede escribir el archivo de configuración de SLIM"
 
-#: src/modules/displaymanager/main.py:768
+#: src/modules/displaymanager/main.py:780
 msgid "SLIM config file {!s} does not exist"
 msgstr "El archivo de configuración {!s} de SLIM no existe"
 
-#: src/modules/displaymanager/main.py:894
+#: src/modules/displaymanager/main.py:906
 msgid "No display managers selected for the displaymanager module."
 msgstr ""
 "No se ha seleccionado ningún gestor de pantalla para el modulo "
 "displaymanager"
 
-#: src/modules/displaymanager/main.py:895
+#: src/modules/displaymanager/main.py:907
 msgid ""
 "The displaymanagers list is empty or undefined in both globalstorage and "
 "displaymanager.conf."
 msgstr ""
 
-#: src/modules/displaymanager/main.py:977
+#: src/modules/displaymanager/main.py:989
 msgid "Display manager configuration was incomplete"
 msgstr "La configuración del gestor de pantalla estaba incompleta"
 
@@ -224,11 +224,11 @@ msgstr "La configuración del gestor de pantalla estaba incompleta"
 msgid "Configuring mkinitcpio."
 msgstr "Configurando mkinitcpio - sistema de arranque básico -."
 
-#: src/modules/initcpiocfg/main.py:203
+#: src/modules/initcpiocfg/main.py:202
 #: src/modules/luksopenswaphookcfg/main.py:91
 #: src/modules/initramfscfg/main.py:90 src/modules/openrcdmcryptcfg/main.py:77
 #: src/modules/fstab/main.py:362 src/modules/localecfg/main.py:136
-#: src/modules/networkcfg/main.py:40
+#: src/modules/networkcfg/main.py:43
 msgid "No root mount point is given for <pre>{!s}</pre> to use."
 msgstr ""
 "No se facilitó un punto de montaje raíz utilizable para <pre>{!s}</pre> "
@@ -323,9 +323,42 @@ msgid_plural "Removing %(num)d packages."
 msgstr[0] "Eliminando un paquete."
 msgstr[1] "Eliminando %(num)d paquetes."
 
+#: src/modules/packages/main.py:638 src/modules/packages/main.py:650
+#: src/modules/packages/main.py:678
+msgid "Package Manager error"
+msgstr ""
+
+#: src/modules/packages/main.py:639
+msgid ""
+"The package manager could not prepare updates. The command <pre>{!s}</pre> "
+"returned error code {!s}."
+msgstr ""
+
+#: src/modules/packages/main.py:651
+msgid ""
+"The package manager could not update the system. The command <pre>{!s}</pre>"
+" returned error code {!s}."
+msgstr ""
+
+#: src/modules/packages/main.py:679
+msgid ""
+"The package manager could not make changes to the installed system. The "
+"command <pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+
 #: src/modules/bootloader/main.py:43
 msgid "Install bootloader."
 msgstr "Instalar gestor de arranque."
+
+#: src/modules/bootloader/main.py:508
+msgid "Bootloader installation error"
+msgstr ""
+
+#: src/modules/bootloader/main.py:509
+msgid ""
+"The bootloader could not be installed. The installation command "
+"<pre>{!s}</pre> returned error code {!s}."
+msgstr ""
 
 #: src/modules/hwclock/main.py:26
 msgid "Setting hardware clock."
@@ -364,6 +397,10 @@ msgstr "Configurando el servicio   - de arranque encriptado -. OpenRC dmcrypt"
 msgid "Writing fstab."
 msgstr "Escribiendo la tabla de particiones fstab"
 
+#: src/modules/fstab/main.py:389
+msgid "No <pre>{!s}</pre> configuration is given for <pre>{!s}</pre> to use."
+msgstr ""
+
 #: src/modules/dummypython/main.py:35
 msgid "Dummy python job."
 msgstr "Tarea de python ficticia."
@@ -377,6 +414,6 @@ msgstr "Paso {} de python ficticio"
 msgid "Configuring locales."
 msgstr "Configurando especificaciones locales o regionales."
 
-#: src/modules/networkcfg/main.py:28
+#: src/modules/networkcfg/main.py:29
 msgid "Saving network configuration."
 msgstr "Guardando la  configuración de red."

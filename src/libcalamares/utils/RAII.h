@@ -14,6 +14,7 @@
 #include <QObject>
 #include <QSignalBlocker>
 
+#include <optional>
 #include <type_traits>
 
 /** @brief Convenience to zero out and deleteLater of any QObject-derived-class
@@ -41,21 +42,71 @@ struct cqDeleter
     }
 };
 
-/// @brief Sets a bool to @p value and resets to !value on destruction
-template < bool value >
-struct cBoolSetter
-{
-    bool& m_b;
-
-    cBoolSetter( bool& b )
-        : m_b( b )
-    {
-        m_b = value;
-    }
-    ~cBoolSetter() { m_b = !value; }
-};
-
 /// @brief Blocks signals on a QObject until destruction
 using cSignalBlocker = QSignalBlocker;
 
+/** @brief Writes a value on destruction to a pointed-to location.
+ *
+ * If the pointer is non-null, write the last-given-value if there
+ * is one to the pointed-to object. This is called the "then-value".
+ *
+ */
+template < typename T >
+struct cScopedAssignment
+{
+    std::optional< T > m_value;
+    T* m_pointer;
+
+    /** @brief Create a setter with no value set
+     *
+     * Until a value is set via operator=(), this pointer-setter
+     * will do nothing on destruction, leaving the pointed-to
+     * value unchanged.
+     */
+    cScopedAssignment( T* p )
+        : m_pointer( p )
+    {
+    }
+    /** @brief Create a setter with a then-value already set
+     *
+     * This ensures that on destruction, the value @p v will be written;
+     * it is equivalent to assigning @p v immediately. The pointed-to
+     * value is **not** changed (until destruction).
+     */
+    cScopedAssignment( T* p, T then )
+        : m_value( then )
+        , m_pointer( p )
+    {
+    }
+    /** @brief Create a setter with a then-value and assign a new value now
+     *
+     * As above, but also assign @p now to the thing pointed-to.
+     */
+    cScopedAssignment( T* p, T now, T then )
+        : m_value( then )
+        , m_pointer( p )
+    {
+        if ( p )
+        {
+            *p = now;
+        }
+    }
+
+    ~cScopedAssignment()
+    {
+        if ( m_pointer && m_value.has_value() )
+        {
+            *m_pointer = m_value.value();
+        }
+    }
+
+    const T& operator=( const T& then )
+    {
+        m_value = then;
+        return then;
+    }
+};
+
+template < typename T >
+cScopedAssignment( T p )->cScopedAssignment< decltype( *p ) >;
 #endif

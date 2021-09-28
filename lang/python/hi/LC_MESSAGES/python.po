@@ -4,16 +4,16 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
 # Translators:
-# Panwar108 <caspian7pena@gmail.com>, 2020
+# Panwar108 <caspian7pena@gmail.com>, 2021
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:27+0100\n"
+"POT-Creation-Date: 2021-09-08 13:31+0200\n"
 "PO-Revision-Date: 2017-08-09 10:34+0000\n"
-"Last-Translator: Panwar108 <caspian7pena@gmail.com>, 2020\n"
+"Last-Translator: Panwar108 <caspian7pena@gmail.com>, 2021\n"
 "Language-Team: Hindi (https://www.transifex.com/calamares/teams/20061/hi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,19 +29,19 @@ msgstr "GRUB विन्यस्त करना।"
 msgid "Mounting partitions."
 msgstr "विभाजन माउंट करना।"
 
-#: src/modules/mount/main.py:125 src/modules/initcpiocfg/main.py:198
-#: src/modules/initcpiocfg/main.py:202
+#: src/modules/mount/main.py:144 src/modules/initcpiocfg/main.py:197
+#: src/modules/initcpiocfg/main.py:201
 #: src/modules/luksopenswaphookcfg/main.py:86
 #: src/modules/luksopenswaphookcfg/main.py:90 src/modules/rawfs/main.py:164
 #: src/modules/initramfscfg/main.py:85 src/modules/initramfscfg/main.py:89
 #: src/modules/openrcdmcryptcfg/main.py:72
 #: src/modules/openrcdmcryptcfg/main.py:76 src/modules/fstab/main.py:355
-#: src/modules/fstab/main.py:361 src/modules/localecfg/main.py:135
-#: src/modules/networkcfg/main.py:39
+#: src/modules/fstab/main.py:361 src/modules/fstab/main.py:388
+#: src/modules/localecfg/main.py:135 src/modules/networkcfg/main.py:42
 msgid "Configuration Error"
 msgstr "विन्यास त्रुटि"
 
-#: src/modules/mount/main.py:126 src/modules/initcpiocfg/main.py:199
+#: src/modules/mount/main.py:145 src/modules/initcpiocfg/main.py:198
 #: src/modules/luksopenswaphookcfg/main.py:87 src/modules/rawfs/main.py:165
 #: src/modules/initramfscfg/main.py:86 src/modules/openrcdmcryptcfg/main.py:73
 #: src/modules/fstab/main.py:356
@@ -151,51 +151,51 @@ msgstr ""
 msgid "The destination \"{}\" in the target system is not a directory"
 msgstr "लक्षित सिस्टम में \"{}\" स्थान कोई डायरेक्टरी नहीं है"
 
-#: src/modules/displaymanager/main.py:514
+#: src/modules/displaymanager/main.py:526
 msgid "Cannot write KDM configuration file"
 msgstr "KDM विन्यास फ़ाइल राइट नहीं की जा सकती"
 
-#: src/modules/displaymanager/main.py:515
+#: src/modules/displaymanager/main.py:527
 msgid "KDM config file {!s} does not exist"
 msgstr "KDM विन्यास फ़ाइल {!s} मौजूद नहीं है"
 
-#: src/modules/displaymanager/main.py:576
+#: src/modules/displaymanager/main.py:588
 msgid "Cannot write LXDM configuration file"
 msgstr "LXDM विन्यास फ़ाइल राइट नहीं की जा सकती"
 
-#: src/modules/displaymanager/main.py:577
+#: src/modules/displaymanager/main.py:589
 msgid "LXDM config file {!s} does not exist"
 msgstr "LXDM विन्यास फ़ाइल {!s} मौजूद नहीं है"
 
-#: src/modules/displaymanager/main.py:660
+#: src/modules/displaymanager/main.py:672
 msgid "Cannot write LightDM configuration file"
 msgstr "LightDM विन्यास फ़ाइल राइट नहीं की जा सकती"
 
-#: src/modules/displaymanager/main.py:661
+#: src/modules/displaymanager/main.py:673
 msgid "LightDM config file {!s} does not exist"
 msgstr "LightDM विन्यास फ़ाइल {!s} मौजूद नहीं है"
 
-#: src/modules/displaymanager/main.py:735
+#: src/modules/displaymanager/main.py:747
 msgid "Cannot configure LightDM"
 msgstr "LightDM को विन्यस्त नहीं किया जा सकता"
 
-#: src/modules/displaymanager/main.py:736
+#: src/modules/displaymanager/main.py:748
 msgid "No LightDM greeter installed."
 msgstr "कोई LightDM लॉगिन स्क्रीन इंस्टॉल नहीं है।"
 
-#: src/modules/displaymanager/main.py:767
+#: src/modules/displaymanager/main.py:779
 msgid "Cannot write SLIM configuration file"
 msgstr "SLIM विन्यास फ़ाइल राइट नहीं की जा सकती"
 
-#: src/modules/displaymanager/main.py:768
+#: src/modules/displaymanager/main.py:780
 msgid "SLIM config file {!s} does not exist"
 msgstr "SLIM विन्यास फ़ाइल {!s} मौजूद नहीं है"
 
-#: src/modules/displaymanager/main.py:894
+#: src/modules/displaymanager/main.py:906
 msgid "No display managers selected for the displaymanager module."
 msgstr "चयनित डिस्प्ले प्रबंधक मॉड्यूल हेतु कोई डिस्प्ले प्रबंधक नहीं मिला।"
 
-#: src/modules/displaymanager/main.py:895
+#: src/modules/displaymanager/main.py:907
 msgid ""
 "The displaymanagers list is empty or undefined in both globalstorage and "
 "displaymanager.conf."
@@ -203,7 +203,7 @@ msgstr ""
 "globalstorage व displaymanager.conf में डिस्प्ले प्रबंधक सूची रिक्त या "
 "अपरिभाषित है।"
 
-#: src/modules/displaymanager/main.py:977
+#: src/modules/displaymanager/main.py:989
 msgid "Display manager configuration was incomplete"
 msgstr "डिस्प्ले प्रबंधक विन्यास अधूरा था"
 
@@ -211,11 +211,11 @@ msgstr "डिस्प्ले प्रबंधक विन्यास अ
 msgid "Configuring mkinitcpio."
 msgstr "mkinitcpio को विन्यस्त करना।"
 
-#: src/modules/initcpiocfg/main.py:203
+#: src/modules/initcpiocfg/main.py:202
 #: src/modules/luksopenswaphookcfg/main.py:91
 #: src/modules/initramfscfg/main.py:90 src/modules/openrcdmcryptcfg/main.py:77
 #: src/modules/fstab/main.py:362 src/modules/localecfg/main.py:136
-#: src/modules/networkcfg/main.py:40
+#: src/modules/networkcfg/main.py:43
 msgid "No root mount point is given for <pre>{!s}</pre> to use."
 msgstr ""
 "<pre>{!s}</pre> के उपयोग हेतु कोई रुट माउंट पॉइंट प्रदान नहीं किया गया।"
@@ -302,9 +302,50 @@ msgid_plural "Removing %(num)d packages."
 msgstr[0] "एक पैकेज हटाया जा रहा है।"
 msgstr[1] "%(num)d पैकेज हटाए जा रहे हैं।"
 
+#: src/modules/packages/main.py:638 src/modules/packages/main.py:650
+#: src/modules/packages/main.py:678
+msgid "Package Manager error"
+msgstr "पैकेज प्रबंधक त्रुटि"
+
+#: src/modules/packages/main.py:639
+msgid ""
+"The package manager could not prepare updates. The command <pre>{!s}</pre> "
+"returned error code {!s}."
+msgstr ""
+"पैकेज प्रबंधक द्वारा अपडेट तैयार करना विफल। कमांड <pre>{!s}</pre> हेतु "
+"त्रुटि कोड {!s} प्राप्त।"
+
+#: src/modules/packages/main.py:651
+msgid ""
+"The package manager could not update the system. The command <pre>{!s}</pre>"
+" returned error code {!s}."
+msgstr ""
+"पैकेज प्रबंधक द्वारा सिस्टम अपडेट करना विफल। कमांड <pre>{!s}</pre> हेतु "
+"त्रुटि कोड {!s} प्राप्त।"
+
+#: src/modules/packages/main.py:679
+msgid ""
+"The package manager could not make changes to the installed system. The "
+"command <pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"पैकेज प्रबंधक द्वारा इंस्टॉल हो रखें सिस्टम पर परिवर्तन करना विफल। कमांड "
+"<pre>{!s}</pre> हेतु त्रुटि कोड {!s} प्राप्त।"
+
 #: src/modules/bootloader/main.py:43
 msgid "Install bootloader."
 msgstr "बूट लोडर इंस्टॉल करना।"
+
+#: src/modules/bootloader/main.py:508
+msgid "Bootloader installation error"
+msgstr "बूट लोडर इंस्टॉल त्रुटि"
+
+#: src/modules/bootloader/main.py:509
+msgid ""
+"The bootloader could not be installed. The installation command "
+"<pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"बूट लोडर इंस्टॉल करना विफल। इंस्टॉल कमांड <pre>{!s}</pre> हेतु त्रुटि कोड "
+"{!s} प्राप्त।"
 
 #: src/modules/hwclock/main.py:26
 msgid "Setting hardware clock."
@@ -342,6 +383,12 @@ msgstr "OpenRC dmcrypt सेवा विन्यस्त करना।"
 msgid "Writing fstab."
 msgstr "fstab पर राइट करना।"
 
+#: src/modules/fstab/main.py:389
+msgid "No <pre>{!s}</pre> configuration is given for <pre>{!s}</pre> to use."
+msgstr ""
+"कोई <pre>{!s}</pre> विन्यास प्रदान नहीं किया गया <pre>{!s}</pre> के उपयोग "
+"हेतु।"
+
 #: src/modules/dummypython/main.py:35
 msgid "Dummy python job."
 msgstr "डमी पाइथन प्रक्रिया ।"
@@ -355,6 +402,6 @@ msgstr "डमी पाइथन प्रक्रिया की चरण �
 msgid "Configuring locales."
 msgstr "स्थानिकी को विन्यस्त करना।"
 
-#: src/modules/networkcfg/main.py:28
+#: src/modules/networkcfg/main.py:29
 msgid "Saving network configuration."
 msgstr "नेटवर्क विन्यास सेटिंग्स संचित करना।"

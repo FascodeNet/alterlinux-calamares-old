@@ -10,7 +10,7 @@
 #include "CalamaresApplication.h"
 
 #include "CalamaresConfig.h"
-#include "CalamaresVersion.h"
+#include "CalamaresVersionX.h"
 #include "CalamaresWindow.h"
 #include "progresstree/ProgressTreeView.h"
 
@@ -78,7 +78,7 @@ CalamaresApplication::init()
     initQmlPath();
     initBranding();
 
-    CalamaresUtils::installTranslator( QLocale::system(), QString() );
+    CalamaresUtils::installTranslator();
 
     setQuitOnLastWindowClosed( false );
     setWindowIcon( QIcon( Calamares::Branding::instance()->imagePath( Calamares::Branding::ProductIcon ) ) );

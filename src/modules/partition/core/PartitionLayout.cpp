@@ -75,7 +75,7 @@ PartitionLayout::PartitionEntry::PartitionEntry( const QString& label,
     , partMinSize( minSize )
     , partMaxSize( maxSize )
 {
-    PartUtils::findFS( fs, &partFileSystem );
+    PartUtils::canonicalFilesystemName( fs, &partFileSystem );
 }
 
 
@@ -95,7 +95,7 @@ PartitionLayout::addEntry( const PartitionEntry& entry )
 void
 PartitionLayout::init( FileSystem::Type defaultFsType, const QVariantList& config )
 {
-    bool ok;
+    bool ok = true;  // bogus argument to getSubMap()
 
     m_partLayout.clear();
 
@@ -130,9 +130,76 @@ PartitionLayout::init( FileSystem::Type defaultFsType, const QVariantList& confi
 
     if ( !m_partLayout.count() )
     {
-        addEntry( { defaultFsType, QString( "/" ), QString( "100%" ) } );
+        // Unknown will be translated to defaultFsType at apply-time
+        addEntry( { FileSystem::Type::Unknown, QString( "/" ), QString( "100%" ) } );
     }
+
+    setDefaultFsType( defaultFsType );
 }
+
+void
+PartitionLayout::setDefaultFsType( FileSystem::Type defaultFsType )
+{
+    using FileSystem = FileSystem::Type;
+    switch ( defaultFsType )
+    {
+    case FileSystem::Unknown:
+    case FileSystem::Unformatted:
+    case FileSystem::Extended:
+    case FileSystem::LinuxSwap:
+    case FileSystem::Luks:
+    case FileSystem::Ocfs2:
+    case FileSystem::Lvm2_PV:
+    case FileSystem::Udf:
+    case FileSystem::Iso9660:
+#ifdef WITH_KPMCORE4API
+    case FileSystem::Luks2:
+    case FileSystem::LinuxRaidMember:
+    case FileSystem::BitLocker:
+#endif
+        // bad bad
+        cWarning() << "The selected default FS" << defaultFsType << "is not suitable."
+                   << "Using ext4 instead.";
+        defaultFsType = FileSystem::Ext4;
+        break;
+    case FileSystem::Ext2:
+    case FileSystem::Ext3:
+    case FileSystem::Ext4:
+    case FileSystem::Fat32:
+    case FileSystem::Ntfs:
+    case FileSystem::Reiser4:
+    case FileSystem::ReiserFS:
+    case FileSystem::Xfs:
+    case FileSystem::Jfs:
+    case FileSystem::Btrfs:
+    case FileSystem::Exfat:
+    case FileSystem::F2fs:
+        // ok
+        break;
+    case FileSystem::Fat16:
+    case FileSystem::Hfs:
+    case FileSystem::HfsPlus:
+    case FileSystem::Ufs:
+    case FileSystem::Hpfs:
+    case FileSystem::Zfs:
+    case FileSystem::Nilfs2:
+#ifdef WITH_KPMCORE4API
+    case FileSystem::Fat12:
+    case FileSystem::Apfs:
+    case FileSystem::Minix:
+#endif
+        // weird
+        cWarning() << "The selected default FS" << defaultFsType << "is unusual, but not wrong.";
+        break;
+    default:
+        cWarning() << "The selected default FS" << defaultFsType << "is not known to Calamares."
+                   << "Using ext4 instead.";
+        defaultFsType = FileSystem::Ext4;
+    }
+
+    m_defaultFsType = defaultFsType;
+}
+
 
 QList< Partition* >
 PartitionLayout::createPartitions( Device* dev,
@@ -142,6 +209,9 @@ PartitionLayout::createPartitions( Device* dev,
                                    PartitionNode* parent,
                                    const PartitionRole& role )
 {
+    // Make sure the default FS is sensible; warn and use ext4 if not
+    setDefaultFsType( m_defaultFsType );
+
     QList< Partition* > partList;
     // Map each partition entry to its requested size (0 when calculated later)
     QMap< const PartitionLayout::PartitionEntry*, qint64 > partSectorsMap;
@@ -210,6 +280,8 @@ PartitionLayout::createPartitions( Device* dev,
         }
     }
 
+    auto correctFS = [d = m_defaultFsType]( FileSystem::Type t ) { return t == FileSystem::Type::Unknown ? d : t; };
+
     // Create the partitions.
     currentSector = firstSector;
     availableSectors = totalSectors;
@@ -229,7 +301,8 @@ PartitionLayout::createPartitions( Device* dev,
             part = KPMHelpers::createNewPartition( parent,
                                                    *dev,
                                                    role,
-                                                   entry.partFileSystem,
+                                                   correctFS( entry.partFileSystem ),
+                                                   entry.partLabel,
                                                    currentSector,
                                                    currentSector + sectors - 1,
                                                    KPM_PARTITION_FLAG( None ) );
@@ -239,7 +312,8 @@ PartitionLayout::createPartitions( Device* dev,
             part = KPMHelpers::createNewEncryptedPartition( parent,
                                                             *dev,
                                                             role,
-                                                            entry.partFileSystem,
+                                                            correctFS( entry.partFileSystem ),
+                                                            entry.partLabel,
                                                             currentSector,
                                                             currentSector + sectors - 1,
                                                             luksPassphrase,

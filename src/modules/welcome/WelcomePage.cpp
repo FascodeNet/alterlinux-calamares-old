@@ -20,13 +20,13 @@
 #include "Settings.h"
 #include "ViewManager.h"
 
-#include "locale/LabelModel.h"
 #include "modulesystem/ModuleManager.h"
 #include "modulesystem/RequirementsModel.h"
 #include "utils/CalamaresUtilsGui.h"
 #include "utils/Logger.h"
 #include "utils/NamedEnum.h"
 #include "utils/Retranslator.h"
+#include "widgets/TranslationFix.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -36,12 +36,12 @@
 #include <QLabel>
 #include <QMessageBox>
 
-WelcomePage::WelcomePage( Config* conf, QWidget* parent )
+WelcomePage::WelcomePage( Config* config, QWidget* parent )
     : QWidget( parent )
     , ui( new Ui::WelcomePage )
-    , m_checkingWidget( new CheckerContainer( *( conf->requirementsModel() ), this ) )
+    , m_checkingWidget( new CheckerContainer( config, this ) )
     , m_languages( nullptr )
-    , m_conf( conf )
+    , m_conf( config )
 {
     using Branding = Calamares::Branding;
 
@@ -252,6 +252,7 @@ WelcomePage::showAboutBox()
                         .arg( Calamares::Branding::instance()->versionedName() ),
                     QMessageBox::Ok,
                     this );
+    Calamares::fixButtonLabels( &mb );
     mb.setIconPixmap( CalamaresUtils::defaultPixmap(
         CalamaresUtils::Squid,
         CalamaresUtils::Original,
@@ -275,5 +276,5 @@ LocaleTwoColumnDelegate::paint( QPainter* painter, const QStyleOptionViewItem& o
         Qt::AlignRight | Qt::AlignVCenter,
         option.palette,
         false,
-        index.data( CalamaresUtils::Locale::LabelModel::EnglishLabelRole ).toString() );
+        index.data( CalamaresUtils::Locale::TranslationsModel::EnglishLabelRole ).toString() );
 }

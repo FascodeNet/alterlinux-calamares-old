@@ -60,14 +60,6 @@ CreatePartitionTableJob::prettyStatusMessage() const
 }
 
 
-static inline QDebug&
-operator<<( QDebug&& s, PartitionIterator& it )
-{
-    s << ( ( *it ) ? ( *it )->deviceNode() : QString( "<null device>" ) );
-    return s;
-}
-
-
 Calamares::JobResult
 CreatePartitionTableJob::exec()
 {
@@ -75,13 +67,13 @@ CreatePartitionTableJob::exec()
     QString message = tr( "The installer failed to create a partition table on %1." ).arg( m_device->name() );
 
     PartitionTable* table = m_device->partitionTable();
-    cDebug() << "Creating new partition table of type" << table->typeName() << ", uncommitted yet:";
 
     if ( Logger::logLevelEnabled( Logger::LOGDEBUG ) )
     {
+        cDebug() << "Creating new partition table of type" << table->typeName() << ", uncommitted partitions:";
         for ( auto it = PartitionIterator::begin( table ); it != PartitionIterator::end( table ); ++it )
         {
-            cDebug() << it;
+            cDebug() << Logger::SubEntry << ( ( *it ) ? ( *it )->deviceNode() : QString( "<null device>" ) );
         }
 
         QProcess lsblk;
@@ -89,14 +81,14 @@ CreatePartitionTableJob::exec()
         lsblk.setProcessChannelMode( QProcess::MergedChannels );
         lsblk.start();
         lsblk.waitForFinished();
-        cDebug() << "lsblk:\n" << lsblk.readAllStandardOutput();
+        cDebug() << Logger::SubEntry << "lsblk output:\n" << Logger::NoQuote << lsblk.readAllStandardOutput();
 
         QProcess mount;
         mount.setProgram( "mount" );  // Debug output only, not mounting something
         mount.setProcessChannelMode( QProcess::MergedChannels );
         mount.start();
         mount.waitForFinished();
-        cDebug() << "mount:\n" << mount.readAllStandardOutput();
+        cDebug() << Logger::SubEntry << "mount output:\n" << Logger::NoQuote << mount.readAllStandardOutput();
     }
 
     CreatePartitionTableOperation op( *m_device, table );

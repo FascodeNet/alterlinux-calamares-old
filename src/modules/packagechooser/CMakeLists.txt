@@ -15,7 +15,7 @@ option( WITH_APPDATA "Support appdata: items in PackageChooser (requires QtXml)"
 if ( WITH_APPDATA )
     find_package(Qt5 COMPONENTS Xml)
     if ( Qt5Xml_FOUND )
-        add_definitions( -DHAVE_XML )
+        add_definitions( -DHAVE_APPDATA )
         list( APPEND _extra_libraries Qt5::Xml )
         list( APPEND _extra_src ItemAppData.cpp )
     endif()
@@ -45,6 +45,7 @@ calamares_add_plugin( packagechooser
     TYPE viewmodule
     EXPORT_MACRO PLUGINDLLEXPORT_PRO
     SOURCES
+        Config.cpp
         PackageChooserPage.cpp
         PackageChooserViewStep.cpp
         PackageModel.cpp
@@ -54,7 +55,6 @@ calamares_add_plugin( packagechooser
     UI
         page_package.ui
     LINK_PRIVATE_LIBRARIES
-        calamaresui
         ${_extra_libraries}
     SHARED_LIB
 )

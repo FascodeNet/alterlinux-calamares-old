@@ -31,10 +31,9 @@ calamares_add_plugin( locale
     RESOURCES
         locale.qrc
     LINK_PRIVATE_LIBRARIES
-        calamaresui
         Qt5::Network
         ${geoip_libs}
-        yamlcpp
+        yamlcpp::yamlcpp
     SHARED_LIB
 )
 

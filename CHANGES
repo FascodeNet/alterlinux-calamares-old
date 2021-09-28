@@ -7,6 +7,198 @@ contributors are listed. Note that Calamares does not have a historical
 changelog -- this log starts with version 3.2.0. The release notes on the
 website will have to do for older versions.
 
+# 3.2.44.2 (2021-09-27) #
+
+This release contains contributions from (alphabetically by first name):
+ - Corey Lang (new contributor, welcome!)
+
+This is a hotfix for a typo -- not a syntax error -- that affects the
+*networkcfg* module. Reported and fixed by Corey.
+
+
+# 3.2.44.1 (2021-09-24) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+
+This is a hotfix for a typo -- not a syntax error -- that affects the
+*initcpiocfg* module. Reported and fixed by Anke.
+
+
+# 3.2.44 (2021-09-24) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Shrinivas Vishnu Kumbhar (new contributor, welcome!)
+ - whorfin (new contributor, welcome!)
+
+## Core ##
+ - "Log spam" has been reduced a little in the partitioning module.
+
+## Modules ##
+ - *initcpiocfg* has had a number of internal code-fixes, and now adds
+   the `consolefont` hook by default as well. (Thanks Shrinivas)
+ - Both *locale* and *keyboard* have received some tweaks for configurations
+   in India; unless the user selects otherwise, English is preferred.
+ - The *luksbootkeyfile* module was reported to be too quick to declare
+   a timeout when applying the keyfile. The timeout has been increased
+   to one minute. (Thanks whorfin)
+ - *networkcfg* tries harder to find the live-user login for re-working
+   networking settings. This fixes a regression on FerenOS, where the
+   installer was crashing because it could not find the live-user login.
+
+
+# 3.2.43 (2021-09-17) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Joe Kamprad
+
+## Core ##
+ - Translations have been made more consistent. In particular, some *OK*,
+   *Yes*, *No* and *Cancel* buttons that were previously untranslated
+   or "stuck" in the language that Calamares started in, are now
+   changed to the current language as selected in the welcome page.
+ - Documentation improvements from Joe Kamprad. A *sizeLimit* of zero
+   (which is the default if nothing is set in the branding configuration)
+   disables log uploads.
+
+## Modules ##
+ - The *keyboardq* module (QML-based UI for keyboard-layout-selection)
+   now features an interactive keyboard preview and has the
+   layout adjusted. (Thanks Anke)
+
+
+# 3.2.42 (2021-09-06) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Artem Grinev
+ - Nico 'dr460nf1r3' (new contributor, welcome!)
+ - Waneon Kim (new contributor, welcome!)
+
+## Core ##
+ - No core changes yet
+
+## Modules ##
+ - BTRFS partitions are no longer listed as "check in phase 2" in
+   the *fstab* module. (Thanks Nico)
+ - The *keyboard* module (and *keyboardq*) now pick an English layout
+   (with Rupee) for keyboards when the language is English and locale is India,
+   rather than Hindi layout.
+ - The *localeq* module had the i18n.qml rewritten to make it easier
+   to customize. A bug in the layout has been fixed, and the overall
+   look has been updated.
+ - *networkcfg* now translates the "live user" on an ISO to the regular
+   user on the installed system, so that network configuration changes
+   made in the live system are automatically used after installation. #1755
+ - *partition* no longer allows you to delete an extended partition with
+   children (which led to crashes). #1749 (Thanks Artem)
+ - *partition* complains in more detail about the state of the UEFI
+   boot partition (under manual partitioning schemes). #1761
+ - *welcome* can now check multiple URLs to determine if internet connectivity
+   is available. It is still recommended to check the distro home-page or
+   some special "ping" page of the distro, although that has some privacy
+   implications; using example.com or google.com may work as well. Listing
+   multiple URLs will ping each of them in turn until one succeeds. #1669
+ - The work to make a QML version available for all view modules is almost
+   completed. Two new QML modules have been added *packagechooserq* and *summaryq*.
+   Summaryq brings the option to present the summary page in a customizable
+   way, with a bit more of a contemporary look. Packagechooserq adds the option
+   to preselect an item and displays all options in one overview.
+   (Thanks Anke)
+
+
+# 3.2.41.1 (2021-08-05) #
+
+This is a hotfix release for a crash in the *partition* module, reported on
+KDE neon. #1746
+
+
+# 3.2.41 (2021-07-31) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Camilo Higuita
+
+## Core ##
+ - The (re)translation framework has been internally re-vamped to be
+   less resource-intensive and to work with all QObjects, not just
+   widgets. Consumers of the translations framework are expected to
+   set up the event filter on the top-level widget(s) manually. Since
+   Calamares and the Calamares-test-applications have been adjusted already,
+   no further action is needed.
+
+## Modules ##
+ - When the *keyboard* module is activated, it no longer replaces
+   an explicit user choice (e.g. for a Belgian layout) by a guessed-for-
+   this-language layout (e.g. Danish if you're installing in Danish).
+ - Logic for handling installation lists has been moved around in the
+   *packages* module so that package managers can, in principle,
+   adjust how to handle critical and non-critical package lists.
+ - In the *partition* module, translation code has been simplified.
+ - The *usersq* module has had a fair bit of QML rewritten to make it easier
+   to customize the colors used by the module in a consistent way.
+   (Thanks Anke)
+ - *Welcome* now uses a translated message from the Config object,
+   increasing the sharing between widgets- and QML-modules.
+
+
+# 3.2.40 (2021-07-14) #
+
+This release contains contributions from (alphabetically by first name):
+ - Anke Boersma
+ - Anubhav Choudhary (SoK success!)
+ - Emmanuel Arias (new contributor! welcome!)
+ - Erik Dubois
+ - Jerrod Frost (new contributor! welcome!)
+ - Jia Chao (new contributor! welcome!)
+ - Joe Kamprad
+ - Lisa Vitolo (blast from the past!)
+ - Omer I.S. (new contributor! welcome!)
+
+In project news, chat (instant-messaging) communications has largely
+moved to Matrix and Libera.Chat. CI notifications -- issues and build
+results -- are sent to Matrix only.
+
+## Core ##
+ - The CMake modules for consumption by external modules (e.g. the
+   calamares-extensions repository, but also any other modules built
+   by distro's for internal use) now support consistent skip-module
+   behavior and reporting. #1641 (one tiny part of this change)
+ - In global storage, the *filesystem_use* key now has an API in
+   libcalamares to systematically mark filesystem (types) as "in use"
+   or not. This, in turn, means that modules can depend on that information
+   for other work (e.g. removing drivers for unused filesystems). #1635
+ - The "upload log file" now has a configurable log-file-size. (Thanks Anubhav)
+
+## Modules ##
+ - *bootloader* can now install an aarch64 (ARM) compatible EFI GRUB. (Thanks Jia)
+ - *displaymanager* example configuration has been shuffled around a bit,
+   for better results when the live image is running XFCE. Also lists
+   more potential display managers. #1205 (Thanks Erik)
+ - *keyboard* now switches on an alternate `en_US` keyboard layout when
+   Arabic or Hebrew is selected as primary layout. (Thanks Omer)
+ - *localeq* now has a fully functional offline option (alongside the default
+   interactive map option, which requires internet).
+ - The *netinstall* module can now fall back to alternative URLs when
+   loading groups data. The first URL to yield a non-empty groups
+   collection is accepted. No changes are needed in the configuration. #1673
+ - *packagechooser* can now integrate with the *packages* module; that
+   means you can specify package names to install for a given selection,
+   and the regular package-installation mechanism will take care of it.
+   Legacy configurations that use *contextualprocess* are still supported.
+   See the `packagechooser.conf` file for details. #1550
+ - A long-neglected pull request from Lisa Vitolo for the *partition*
+   module -- allowing to set filesystem labels during manual partitioning --
+   has been revived and merged.
+ - The *partition* manager has had a long-standing bug with partition-flags
+   and manual partitioning resolved. This may help resolve some installation
+   issues on UEFI systems. #1724
+ - *usersq* is further implemented and can now be used for a successful install.
+   Not all warning messages available in the regular users module are implemented.
+
+
 # 3.2.39.3 (2021-04-14) #
 
 A minor bugfix tweak release. Since this contains yet **another**

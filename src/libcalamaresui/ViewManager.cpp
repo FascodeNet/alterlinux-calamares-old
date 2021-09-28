@@ -24,6 +24,7 @@
 #include "viewpages/BlankViewStep.h"
 #include "viewpages/ExecutionViewStep.h"
 #include "viewpages/ViewStep.h"
+#include "widgets/TranslationFix.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -82,6 +83,12 @@ ViewManager::ViewManager( QObject* parent )
     connect( JobQueue::instance(), &JobQueue::finished, this, &ViewManager::next );
 
     CALAMARES_RETRANSLATE_SLOT( &ViewManager::updateButtonLabels );
+
+#ifdef PRESERVE_FOR_TRANSLATION_PURPOSES
+    tr( "&Yes" );
+    tr( "&No" );
+    tr( "&Close" );
+#endif
 }
 
 
@@ -143,8 +150,9 @@ ViewManager::insertViewStep( int before, ViewStep* step )
 void
 ViewManager::onInstallationFailed( const QString& message, const QString& details )
 {
-    bool shouldOfferWebPaste
-        = Calamares::Branding::instance()->uploadServer().first != Calamares::Branding::UploadServerType::None;
+    bool shouldOfferWebPaste = std::get< 0 >( Calamares::Branding::instance()->uploadServer() )
+            != Calamares::Branding::UploadServerType::None
+        and std::get< 2 >( Calamares::Branding::instance()->uploadServer() ) != 0;
 
     cError() << "Installation failed:" << message;
     cDebug() << Logger::SubEntry << "- message:" << message;
@@ -175,15 +183,13 @@ ViewManager::onInstallationFailed( const QString& message, const QString& detail
     {
         msgBox->setStandardButtons( QMessageBox::Yes | QMessageBox::No );
         msgBox->setDefaultButton( QMessageBox::No );
-        msgBox->button( QMessageBox::Yes )->setText( tr( "&Yes" ) );
-        msgBox->button( QMessageBox::No )->setText( tr( "&No" ) );
     }
     else
     {
         msgBox->setStandardButtons( QMessageBox::Close );
         msgBox->setDefaultButton( QMessageBox::Close );
-        msgBox->button( QMessageBox::Close )->setText( tr( "&Close" ) );
     }
+    Calamares::fixButtonLabels( msgBox );
     msgBox->show();
 
     cDebug() << "Calamares will quit when the dialog closes.";
@@ -515,8 +521,7 @@ ViewManager::confirmCancelInstallation()
                                                      "The installer will quit and all changes will be lost." );
     QMessageBox mb( QMessageBox::Question, title, question, QMessageBox::Yes | QMessageBox::No, m_widget );
     mb.setDefaultButton( QMessageBox::No );
-    mb.button( QMessageBox::Yes )->setText( tr( "&Yes" ) );
-    mb.button( QMessageBox::No )->setText( tr( "&No" ) );
+    Calamares::fixButtonLabels( &mb );
     int response = mb.exec();
     return response == QMessageBox::Yes;
 }
@@ -610,6 +615,12 @@ ViewManager::isSetupMode() const
 {
     const auto* s = Settings::instance();
     return s ? s->isSetupMode() : false;
+}
+
+QString
+ViewManager::logFilePath() const
+{
+    return Logger::logFile();
 }
 
 }  // namespace Calamares

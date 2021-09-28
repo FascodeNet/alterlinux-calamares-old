@@ -22,6 +22,7 @@
 #include "core/PartitionInfo.h"
 #include "core/PartitionModel.h"
 #include "jobs/AutoMountManagementJob.h"
+#include "jobs/ChangeFilesystemLabelJob.h"
 #include "jobs/ClearMountsJob.h"
 #include "jobs/ClearTempMountsJob.h"
 #include "jobs/CreatePartitionJob.h"
@@ -254,13 +255,22 @@ PartitionCoreModule::doInit()
     DeviceList devices = PartUtils::getDevices( PartUtils::DeviceType::WritableOnly );
 
     cDebug() << "LIST OF DETECTED DEVICES:";
-    cDebug() << "node\tcapacity\tname\tprettyName";
+    cDebug() << Logger::SubEntry << "node\tcapacity\tname\tprettyName";
     for ( auto device : devices )
     {
-        // Gives ownership of the Device* to the DeviceInfo object
-        auto deviceInfo = new DeviceInfo( device );
-        m_deviceInfos << deviceInfo;
-        cDebug() << device->deviceNode() << device->capacity() << device->name() << device->prettyName();
+        cDebug() << Logger::SubEntry << Logger::Pointer( device );
+        if ( device )
+        {
+            // Gives ownership of the Device* to the DeviceInfo object
+            auto deviceInfo = new DeviceInfo( device );
+            m_deviceInfos << deviceInfo;
+            cDebug() << Logger::SubEntry << device->deviceNode() << device->capacity() << device->name()
+                     << device->prettyName();
+        }
+        else
+        {
+            cDebug() << Logger::SubEntry << "(skipped null device)";
+        }
     }
     cDebug() << Logger::SubEntry << devices.count() << "devices detected.";
     m_deviceModel->init( devices );
@@ -339,7 +349,7 @@ PartitionCoreModule::deviceModel() const
     return m_deviceModel;
 }
 
-QAbstractItemModel*
+BootLoaderModel*
 PartitionCoreModule::bootLoaderModel() const
 {
     return m_bootLoaderModel;
@@ -542,6 +552,16 @@ PartitionCoreModule::formatPartition( Device* device, Partition* partition )
 }
 
 void
+PartitionCoreModule::setFilesystemLabel( Device* device, Partition* partition, const QString& newLabel )
+{
+    auto deviceInfo = infoForDevice( device );
+    Q_ASSERT( deviceInfo );
+
+    OperationHelper helper( partitionModelForDevice( device ), this );
+    deviceInfo->makeJob< ChangeFilesystemLabelJob >( partition, newLabel );
+}
+
+void
 PartitionCoreModule::resizePartition( Device* device, Partition* partition, qint64 first, qint64 last )
 {
     auto* deviceInfo = infoForDevice( device );
@@ -648,10 +668,10 @@ PartitionCoreModule::dumpQueue() const
     cDebug() << "# Queue:";
     for ( auto info : m_deviceInfos )
     {
-        cDebug() << "## Device:" << info->device->name();
+        cDebug() << Logger::SubEntry << "## Device:" << info->device->name();
         for ( const auto& job : info->jobs() )
         {
-            cDebug() << "-" << job->prettyName();
+            cDebug() << Logger::SubEntry << "-" << job->prettyName();
         }
     }
 }
@@ -667,7 +687,7 @@ void
 PartitionCoreModule::refreshPartition( Device* device, Partition* )
 {
     // Keep it simple for now: reset the model. This can be improved to cause
-    // the model to emit dataChanged() for the affected row instead, avoiding
+    // the model to Q_EMIT dataChanged() for the affected row instead, avoiding
     // the loss of the current selection.
     auto model = partitionModelForDevice( device );
     Q_ASSERT( model );
@@ -911,6 +931,14 @@ PartitionCoreModule::layoutApply( Device* dev,
         = std::find_if( partList.constBegin(), partList.constEnd(), is_boot ) != partList.constEnd();
     for ( Partition* part : partList )
     {
+        if ( is_boot( part ) )
+        {
+            part->setLabel( "boot" );
+        }
+        if ( is_root( part ) )
+        {
+            part->setLabel( "root" );
+        }
         if ( ( separate_boot_partition && is_boot( part ) ) || ( !separate_boot_partition && is_root( part ) ) )
         {
             createPartition(
@@ -938,7 +966,7 @@ PartitionCoreModule::revert()
     m_deviceInfos.clear();
     doInit();
     updateIsDirty();
-    emit reverted();
+    Q_EMIT reverted();
 }
 
 
@@ -1012,7 +1040,7 @@ PartitionCoreModule::revertDevice( Device* dev, bool individualRevert )
     {
         refreshAfterModelChange();
     }
-    emit deviceReverted( newDev );
+    Q_EMIT deviceReverted( newDev );
 }
 
 

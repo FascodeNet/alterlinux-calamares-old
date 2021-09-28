@@ -5,17 +5,17 @@
 # 
 # Translators:
 # pavelrz, 2017
-# LiberteCzech <liberte.czech@gmail.com>, 2020
-# Pavel Borecki <pavel.borecki@gmail.com>, 2020
+# LiberteCzech <martin.kriz.czech@gmail.com>, 2020
+# Pavel Borecki <pavel.borecki@gmail.com>, 2021
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:27+0100\n"
+"POT-Creation-Date: 2021-09-08 13:31+0200\n"
 "PO-Revision-Date: 2017-08-09 10:34+0000\n"
-"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>, 2020\n"
+"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>, 2021\n"
 "Language-Team: Czech (Czech Republic) (https://www.transifex.com/calamares/teams/20061/cs_CZ/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,19 +31,19 @@ msgstr "Nastavování zavaděče GRUB."
 msgid "Mounting partitions."
 msgstr "Připojování oddílů."
 
-#: src/modules/mount/main.py:125 src/modules/initcpiocfg/main.py:198
-#: src/modules/initcpiocfg/main.py:202
+#: src/modules/mount/main.py:144 src/modules/initcpiocfg/main.py:197
+#: src/modules/initcpiocfg/main.py:201
 #: src/modules/luksopenswaphookcfg/main.py:86
 #: src/modules/luksopenswaphookcfg/main.py:90 src/modules/rawfs/main.py:164
 #: src/modules/initramfscfg/main.py:85 src/modules/initramfscfg/main.py:89
 #: src/modules/openrcdmcryptcfg/main.py:72
 #: src/modules/openrcdmcryptcfg/main.py:76 src/modules/fstab/main.py:355
-#: src/modules/fstab/main.py:361 src/modules/localecfg/main.py:135
-#: src/modules/networkcfg/main.py:39
+#: src/modules/fstab/main.py:361 src/modules/fstab/main.py:388
+#: src/modules/localecfg/main.py:135 src/modules/networkcfg/main.py:42
 msgid "Configuration Error"
 msgstr "Chyba nastavení"
 
-#: src/modules/mount/main.py:126 src/modules/initcpiocfg/main.py:199
+#: src/modules/mount/main.py:145 src/modules/initcpiocfg/main.py:198
 #: src/modules/luksopenswaphookcfg/main.py:87 src/modules/rawfs/main.py:165
 #: src/modules/initramfscfg/main.py:86 src/modules/openrcdmcryptcfg/main.py:73
 #: src/modules/fstab/main.py:356
@@ -157,59 +157,59 @@ msgstr ""
 msgid "The destination \"{}\" in the target system is not a directory"
 msgstr "Cíl „{}“ v cílovém systému není složka"
 
-#: src/modules/displaymanager/main.py:514
+#: src/modules/displaymanager/main.py:526
 msgid "Cannot write KDM configuration file"
 msgstr "Nedaří se zapsat soubor s nastaveními pro KDM"
 
-#: src/modules/displaymanager/main.py:515
+#: src/modules/displaymanager/main.py:527
 msgid "KDM config file {!s} does not exist"
 msgstr "Soubor s nastaveními pro KDM {!s} neexistuje"
 
-#: src/modules/displaymanager/main.py:576
+#: src/modules/displaymanager/main.py:588
 msgid "Cannot write LXDM configuration file"
 msgstr "Nedaří se zapsat soubor s nastaveními pro LXDM"
 
-#: src/modules/displaymanager/main.py:577
+#: src/modules/displaymanager/main.py:589
 msgid "LXDM config file {!s} does not exist"
 msgstr "Soubor s nastaveními pro LXDM {!s} neexistuje"
 
-#: src/modules/displaymanager/main.py:660
+#: src/modules/displaymanager/main.py:672
 msgid "Cannot write LightDM configuration file"
 msgstr "Nedaří se zapsat soubor s nastaveními pro LightDM"
 
-#: src/modules/displaymanager/main.py:661
+#: src/modules/displaymanager/main.py:673
 msgid "LightDM config file {!s} does not exist"
 msgstr "Soubor s nastaveními pro LightDM {!s} neexistuje"
 
-#: src/modules/displaymanager/main.py:735
+#: src/modules/displaymanager/main.py:747
 msgid "Cannot configure LightDM"
 msgstr "Nedaří se nastavit LightDM"
 
-#: src/modules/displaymanager/main.py:736
+#: src/modules/displaymanager/main.py:748
 msgid "No LightDM greeter installed."
 msgstr "Není nainstalovaný žádný LightDM přivítač"
 
-#: src/modules/displaymanager/main.py:767
+#: src/modules/displaymanager/main.py:779
 msgid "Cannot write SLIM configuration file"
 msgstr "Nedaří se zapsat soubor s nastaveními pro SLIM"
 
-#: src/modules/displaymanager/main.py:768
+#: src/modules/displaymanager/main.py:780
 msgid "SLIM config file {!s} does not exist"
 msgstr "Soubor s nastaveními pro SLIM {!s} neexistuje"
 
-#: src/modules/displaymanager/main.py:894
+#: src/modules/displaymanager/main.py:906
 msgid "No display managers selected for the displaymanager module."
 msgstr "Pro modul správce sezení nejsou vybrány žádní správci sezení."
 
-#: src/modules/displaymanager/main.py:895
+#: src/modules/displaymanager/main.py:907
 msgid ""
 "The displaymanagers list is empty or undefined in both globalstorage and "
 "displaymanager.conf."
 msgstr ""
-"Seznam správců displejů je prázdný nebo není definován v jak "
-"bothglobalstorage, tak v displaymanager.conf."
+"Seznam správců displejů je prázdný nebo není definován v jak globalstorage, "
+"tak v displaymanager.conf."
 
-#: src/modules/displaymanager/main.py:977
+#: src/modules/displaymanager/main.py:989
 msgid "Display manager configuration was incomplete"
 msgstr "Nastavení správce displeje nebylo úplné"
 
@@ -217,11 +217,11 @@ msgstr "Nastavení správce displeje nebylo úplné"
 msgid "Configuring mkinitcpio."
 msgstr "Nastavování mkinitcpio."
 
-#: src/modules/initcpiocfg/main.py:203
+#: src/modules/initcpiocfg/main.py:202
 #: src/modules/luksopenswaphookcfg/main.py:91
 #: src/modules/initramfscfg/main.py:90 src/modules/openrcdmcryptcfg/main.py:77
 #: src/modules/fstab/main.py:362 src/modules/localecfg/main.py:136
-#: src/modules/networkcfg/main.py:40
+#: src/modules/networkcfg/main.py:43
 msgid "No root mount point is given for <pre>{!s}</pre> to use."
 msgstr "Pro <pre>{!s}</pre> není zadán žádný přípojný bod."
 
@@ -292,7 +292,7 @@ msgstr "Nastavit téma vzhledu pro Plymouth"
 #: src/modules/packages/main.py:50 src/modules/packages/main.py:59
 #: src/modules/packages/main.py:69
 msgid "Install packages."
-msgstr "Instalovat balíčky."
+msgstr "Nainstalovat balíčky."
 
 #: src/modules/packages/main.py:57
 #, python-format
@@ -317,9 +317,50 @@ msgstr[1] "Odebírají se %(num)d balíčky."
 msgstr[2] "Odebírá se %(num)d balíčků."
 msgstr[3] "Odebírá se %(num)d balíčků."
 
+#: src/modules/packages/main.py:638 src/modules/packages/main.py:650
+#: src/modules/packages/main.py:678
+msgid "Package Manager error"
+msgstr "Chyba nástroje pro správu balíčků"
+
+#: src/modules/packages/main.py:639
+msgid ""
+"The package manager could not prepare updates. The command <pre>{!s}</pre> "
+"returned error code {!s}."
+msgstr ""
+"Nástroji pro správu balíčků se nepodařilo připravit aktualizace. Příkaz "
+"<pre>{!s}</pre> vrátil chybový kód {!s}."
+
+#: src/modules/packages/main.py:651
+msgid ""
+"The package manager could not update the system. The command <pre>{!s}</pre>"
+" returned error code {!s}."
+msgstr ""
+"Nástroji pro správu balíčků se nepodařilo aktualizovat systém. Příkaz "
+"<pre>{!s}</pre> vrátil chybový kód {!s}."
+
+#: src/modules/packages/main.py:679
+msgid ""
+"The package manager could not make changes to the installed system. The "
+"command <pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"Nástroji pro správu balíčků se nepodařilo udělat změny v instalovaném "
+"systému. Příkaz <pre>{!s}</pre> vrátil chybový kód {!s}."
+
 #: src/modules/bootloader/main.py:43
 msgid "Install bootloader."
 msgstr "Instalace zavaděče systému."
+
+#: src/modules/bootloader/main.py:508
+msgid "Bootloader installation error"
+msgstr "Chyba při instalaci zavaděče systému"
+
+#: src/modules/bootloader/main.py:509
+msgid ""
+"The bootloader could not be installed. The installation command "
+"<pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"Zavaděč systému se nepodařilo nainstalovat. Instalační příkaz <pre>{!s} "
+"vrátil chybový kód {!s}."
 
 #: src/modules/hwclock/main.py:26
 msgid "Setting hardware clock."
@@ -327,7 +368,7 @@ msgstr "Nastavování hardwarových hodin."
 
 #: src/modules/mkinitfs/main.py:27
 msgid "Creating initramfs with mkinitfs."
-msgstr "Vytváření initramfs s mkinitfs."
+msgstr "Vytváření initramfs nástrojem mkinitfs."
 
 #: src/modules/mkinitfs/main.py:49
 msgid "Failed to run mkinitfs on the target"
@@ -357,6 +398,12 @@ msgstr "Nastavování služby OpenRC dmcrypt."
 msgid "Writing fstab."
 msgstr "Zapisování fstab."
 
+#: src/modules/fstab/main.py:389
+msgid "No <pre>{!s}</pre> configuration is given for <pre>{!s}</pre> to use."
+msgstr ""
+"Pro <pre>{!s}</pre> není zadáno žádné nastavení <pre>{!s}</pre>, které "
+"použít. "
+
 #: src/modules/dummypython/main.py:35
 msgid "Dummy python job."
 msgstr "Testovací úloha python."
@@ -370,6 +417,6 @@ msgstr "Testovací krok {} python."
 msgid "Configuring locales."
 msgstr "Nastavování místních a jazykových nastavení."
 
-#: src/modules/networkcfg/main.py:28
+#: src/modules/networkcfg/main.py:29
 msgid "Saving network configuration."
 msgstr "Ukládání nastavení sítě."

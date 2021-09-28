@@ -29,6 +29,7 @@ set( calamaresui_SOURCES
     widgets/ClickableLabel.cpp
     widgets/FixedAspectRatioLabel.cpp
     widgets/PrettyRadioButton.cpp
+    widgets/TranslationFix.cpp
     widgets/WaitingWidget.cpp
     ${CMAKE_SOURCE_DIR}/3rdparty/waitingspinnerwidget.cpp
 
@@ -72,12 +73,11 @@ calamares_add_library( calamaresui
     EXPORT_MACRO UIDLLEXPORT_PRO
     LINK_LIBRARIES
         Qt5::Svg
-        yamlcpp
     RESOURCES libcalamaresui.qrc
     EXPORT Calamares
     VERSION ${CALAMARES_VERSION_SHORT}
 )
-
+target_link_libraries( calamaresui PRIVATE yamlcpp::yamlcpp )
 if( KF5CoreAddons_FOUND AND KF5CoreAddons_VERSION VERSION_GREATER_EQUAL 5.58 )
     target_compile_definitions( calamaresui PRIVATE WITH_KOSRelease )
 endif()
@@ -89,6 +89,8 @@ endif()
 if( WITH_QML )
     target_link_libraries( calamaresui PUBLIC Qt5::QuickWidgets )
 endif()
+
+add_library(Calamares::calamaresui ALIAS calamaresui)
 
 
 ### Installation

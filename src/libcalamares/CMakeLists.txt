@@ -40,12 +40,12 @@ set( libSources
 
     # Locale-data service
     locale/Global.cpp
-    locale/Label.cpp
-    locale/LabelModel.cpp
     locale/Lookup.cpp
     locale/TimeZone.cpp
     locale/TranslatableConfiguration.cpp
     locale/TranslatableString.cpp
+    locale/Translation.cpp
+    locale/TranslationsModel.cpp
 
     # Modules
     modulesystem/Config.cpp
@@ -63,6 +63,7 @@ set( libSources
     packages/Globals.cpp
 
     # Partition service
+    partition/Global.cpp
     partition/Mount.cpp
     partition/PartitionSize.cpp
     partition/Sync.cpp
@@ -159,11 +160,13 @@ target_link_libraries( calamares
     LINK_PRIVATE
         ${OPTIONAL_PRIVATE_LIBRARIES}
     LINK_PUBLIC
-        yamlcpp
+        yamlcpp::yamlcpp
         Qt5::Core
         KF5::CoreAddons
         ${OPTIONAL_PUBLIC_LIBRARIES}
 )
+
+add_library(Calamares::calamares ALIAS calamares)
 
 ### Installation
 #
@@ -187,6 +190,7 @@ file( GLOB rootHeaders "*.h" )
 install(
     FILES
         ${CMAKE_CURRENT_BINARY_DIR}/CalamaresConfig.h
+        ${CMAKE_CURRENT_BINARY_DIR}/CalamaresVersion.h
         ${rootHeaders}
     DESTINATION include/libcalamares
 )
@@ -213,10 +217,49 @@ calamares_add_test(
         ${geoip_src}
 )
 
+function ( calamares_qrc_translations basename )
+    set( NAME ${ARGV0} )
+    set( options "" )
+    set( oneValueArgs SUBDIRECTORY OUTPUT_VARIABLE )
+    set( multiValueArgs LANGUAGES )
+    cmake_parse_arguments( _qrt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+
+    if( NOT _qrt_OUTPUT_VARIABLE )
+        set( _qrt_OUTPUT_VARIABLE "qrc_translations_${basename}" )
+    endif()
+
+    set( translations_qrc_infile ${CMAKE_CURRENT_BINARY_DIR}/${basename}.qrc )
+    set( translations_qrc_outfile ${CMAKE_CURRENT_BINARY_DIR}/qrc_${basename}.cxx )
+
+    # Must use this variable name because of the @ substitution
+    set( calamares_i18n_qrc_content "" )
+    set( calamares_i18n_ts_filelist "" )
+    foreach( lang ${_qrt_LANGUAGES} )
+        string( APPEND calamares_i18n_qrc_content "<file>${basename}_${lang}.qm</file>" )
+        list( APPEND calamares_i18n_ts_filelist "${CMAKE_CURRENT_SOURCE_DIR}/${_qrt_SUBDIRECTORY}/${basename}_${lang}.ts" )
+    endforeach()
+
+    configure_file( ${CMAKE_SOURCE_DIR}/lang/calamares_i18n.qrc.in ${translations_qrc_infile} @ONLY )
+    qt5_add_translation(QM_FILES ${calamares_i18n_ts_filelist})
+
+    # Run the resource compiler (rcc_options should already be set)
+    add_custom_command(
+        OUTPUT ${translations_qrc_outfile}
+        COMMAND "${Qt5Core_RCC_EXECUTABLE}"
+        ARGS ${rcc_options} --format-version 1 -name ${basename} -o ${translations_qrc_outfile} ${translations_qrc_infile}
+        MAIN_DEPENDENCY ${translations_qrc_infile}
+        DEPENDS ${QM_FILES}
+    )
+
+    set( ${_qrt_OUTPUT_VARIABLE} ${translations_qrc_outfile} PARENT_SCOPE )
+endfunction()
+
+calamares_qrc_translations( localetest OUTPUT_VARIABLE localetest_qrc SUBDIRECTORY testdata LANGUAGES nl )
 calamares_add_test(
     libcalamareslocaletest
     SOURCES
         locale/Tests.cpp
+        ${localetest_qrc}
 )
 
 calamares_add_test(
@@ -240,7 +283,10 @@ calamares_add_test(
 calamares_add_test(
     libcalamarespartitiontest
     SOURCES
+        partition/Global.cpp
         partition/Tests.cpp
+    LIBRARIES
+        ${OPTIONAL_PRIVATE_LIBRARIES}
 )
 
 if( KPMcore_FOUND )
@@ -269,10 +315,10 @@ calamares_add_test(
 # This is not an actual test, it's a test / demo application
 # for experimenting with GeoIP.
 add_executable( test_geoip geoip/test_geoip.cpp ${geoip_src} )
-target_link_libraries( test_geoip calamares Qt5::Network yamlcpp )
+target_link_libraries( test_geoip Calamares::calamares Qt5::Network yamlcpp::yamlcpp )
 calamares_automoc( test_geoip )
 
 if ( Qt5DBus_FOUND )
     add_executable( test_automount partition/calautomount.cpp )
-    target_link_libraries( test_automount calamares Qt5::DBus )
+    target_link_libraries( test_automount Calamares::calamares Qt5::DBus )
 endif()

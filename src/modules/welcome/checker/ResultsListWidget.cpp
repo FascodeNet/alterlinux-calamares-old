@@ -52,9 +52,12 @@ createResultWidgets( QLayout* layout,
             continue;
         }
 
+        const QString checkName = model.data( index, Calamares::RequirementsModel::Name ).toString();
         const bool is_satisfied = model.data( index, Calamares::RequirementsModel::Satisfied ).toBool();
         const bool is_mandatory = model.data( index, Calamares::RequirementsModel::Mandatory ).toBool();
         ResultWidget* ciw = new ResultWidget( is_satisfied, is_mandatory );
+        ciw->setObjectName( checkName );
+
         layout->addWidget( ciw );
         ciw->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
 
@@ -105,6 +108,7 @@ ResultsListDialog::ResultsListDialog( const Calamares::RequirementsModel& model,
     auto* entriesLayout = new QVBoxLayout;
 
     m_title = new QLabel( this );
+    m_title->setObjectName( "resultDialogTitle" );
 
     createResultWidgets(
         entriesLayout, m_resultWidgets, model, []( const Calamares::RequirementsModel& m, QModelIndex i ) {
@@ -112,6 +116,7 @@ ResultsListDialog::ResultsListDialog( const Calamares::RequirementsModel& model,
         } );
 
     QDialogButtonBox* buttonBox = new QDialogButtonBox( QDialogButtonBox::Close, Qt::Horizontal, this );
+    buttonBox->setObjectName( "resultDialogButtons" );
 
     mainLayout->addWidget( m_title );
     mainLayout->addLayout( entriesLayout );
@@ -122,7 +127,6 @@ ResultsListDialog::ResultsListDialog( const Calamares::RequirementsModel& model,
     connect( buttonBox, &QDialogButtonBox::clicked, this, &QDialog::close );
 
     CALAMARES_RETRANSLATE_SLOT( &ResultsListDialog::retranslate );
-    retranslate();  // Do it now to fill in the texts
 }
 
 ResultsListDialog::~ResultsListDialog() {}
@@ -144,9 +148,9 @@ ResultsListDialog::retranslate()
 }
 
 
-ResultsListWidget::ResultsListWidget( const Calamares::RequirementsModel& model, QWidget* parent )
+ResultsListWidget::ResultsListWidget( Config* config, QWidget* parent )
     : QWidget( parent )
-    , m_model( model )
+    , m_config( config )
 {
     setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 
@@ -164,22 +168,25 @@ ResultsListWidget::ResultsListWidget( const Calamares::RequirementsModel& model,
     spacerLayout->addSpacing( paddingSize );
     CalamaresUtils::unmarginLayout( spacerLayout );
 
-    m_explanation = new QLabel;
-    m_explanation->setWordWrap( true );
-    m_explanation->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
-    m_explanation->setOpenExternalLinks( false );
-    connect( m_explanation, &QLabel::linkActivated, this, &ResultsListWidget::linkClicked );
-    entriesLayout->addWidget( m_explanation );
+    auto* explanation = new QLabel( m_config->warningMessage() );
+    explanation->setWordWrap( true );
+    explanation->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
+    explanation->setOpenExternalLinks( false );
+    explanation->setObjectName( "resultsExplanation" );
+    entriesLayout->addWidget( explanation );
+
+    connect( config, &Config::warningMessageChanged, explanation, &QLabel::setText );
+    connect( explanation, &QLabel::linkActivated, this, &ResultsListWidget::linkClicked );
 
     // Check that all are satisfied (gives warnings if not) and
     // all *mandatory* entries are satisfied (gives errors if not).
 
-    const bool requirementsSatisfied = m_model.satisfiedRequirements();
+    const bool requirementsSatisfied = config->requirementsModel()->satisfiedRequirements();
     auto isUnSatisfied = []( const Calamares::RequirementsModel& m, QModelIndex i ) {
         return !m.data( i, Calamares::RequirementsModel::Satisfied ).toBool();
     };
 
-    createResultWidgets( entriesLayout, m_resultWidgets, model, isUnSatisfied );
+    createResultWidgets( entriesLayout, m_resultWidgets, *( config->requirementsModel() ), isUnSatisfied );
 
     if ( !requirementsSatisfied )
     {
@@ -208,16 +215,16 @@ ResultsListWidget::ResultsListWidget( const Calamares::RequirementsModel& model,
                 }
 
                 imageLabel->setContentsMargins( 4, CalamaresUtils::defaultFontHeight() * 3 / 4, 4, 4 );
-                mainLayout->addWidget( imageLabel );
                 imageLabel->setAlignment( Qt::AlignCenter );
                 imageLabel->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+                imageLabel->setObjectName( "welcomeLogo" );
+                mainLayout->addWidget( imageLabel );
             }
         }
-        m_explanation->setAlignment( Qt::AlignCenter );
+        explanation->setAlignment( Qt::AlignCenter );
     }
 
     CALAMARES_RETRANSLATE_SLOT( &ResultsListWidget::retranslate );
-    retranslate();
 }
 
 
@@ -226,7 +233,7 @@ ResultsListWidget::linkClicked( const QString& link )
 {
     if ( link == "#details" )
     {
-        auto* dialog = new ResultsListDialog( m_model, this );
+        auto* dialog = new ResultsListDialog( *( m_config->requirementsModel() ), this );
         dialog->exec();
         dialog->deleteLater();
     }
@@ -235,51 +242,14 @@ ResultsListWidget::linkClicked( const QString& link )
 void
 ResultsListWidget::retranslate()
 {
-    for ( auto i = 0; i < m_model.count(); i++ )
+    const auto& model = *( m_config->requirementsModel() );
+    for ( auto i = 0; i < model.count(); i++ )
     {
         if ( m_resultWidgets[ i ] )
         {
             m_resultWidgets[ i ]->setText(
-                m_model.data( m_model.index( i ), Calamares::RequirementsModel::NegatedText ).toString() );
+                model.data( model.index( i ), Calamares::RequirementsModel::NegatedText ).toString() );
         }
-    }
-
-    // Check that all are satisfied (gives warnings if not) and
-    // all *mandatory* entries are satisfied (gives errors if not).
-
-    if ( !m_model.satisfiedRequirements() )
-    {
-        QString message;
-        const bool setup = Calamares::Settings::instance()->isSetupMode();
-        if ( !m_model.satisfiedMandatory() )
-        {
-            message = setup ? tr( "This computer does not satisfy the minimum "
-                                  "requirements for setting up %1.<br/>"
-                                  "Setup cannot continue. "
-                                  "<a href=\"#details\">Details...</a>" )
-                            : tr( "This computer does not satisfy the minimum "
-                                  "requirements for installing %1.<br/>"
-                                  "Installation cannot continue. "
-                                  "<a href=\"#details\">Details...</a>" );
-        }
-        else
-        {
-            message = setup ? tr( "This computer does not satisfy some of the "
-                                  "recommended requirements for setting up %1.<br/>"
-                                  "Setup can continue, but some features "
-                                  "might be disabled." )
-                            : tr( "This computer does not satisfy some of the "
-                                  "recommended requirements for installing %1.<br/>"
-                                  "Installation can continue, but some features "
-                                  "might be disabled." );
-        }
-        m_explanation->setText( message.arg( Calamares::Branding::instance()->shortVersionedName() ) );
-    }
-    else
-    {
-        m_explanation->setText( tr( "This program will ask you some questions and "
-                                    "set up %2 on your computer." )
-                                    .arg( Calamares::Branding::instance()->productName() ) );
     }
 }
 

@@ -6,16 +6,16 @@
 # Translators:
 # Eli Shleifer <eligator@gmail.com>, 2017
 # Omer I.S. <omeritzicschwartz@gmail.com>, 2020
-# Yaron Shahrabani <sh.yaron@gmail.com>, 2020
+# Yaron Shahrabani <sh.yaron@gmail.com>, 2021
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 14:27+0100\n"
+"POT-Creation-Date: 2021-09-08 13:31+0200\n"
 "PO-Revision-Date: 2017-08-09 10:34+0000\n"
-"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>, 2020\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>, 2021\n"
 "Language-Team: Hebrew (https://www.transifex.com/calamares/teams/20061/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,19 +31,19 @@ msgstr "הגדרת GRUB."
 msgid "Mounting partitions."
 msgstr "מחיצות מעוגנות."
 
-#: src/modules/mount/main.py:125 src/modules/initcpiocfg/main.py:198
-#: src/modules/initcpiocfg/main.py:202
+#: src/modules/mount/main.py:144 src/modules/initcpiocfg/main.py:197
+#: src/modules/initcpiocfg/main.py:201
 #: src/modules/luksopenswaphookcfg/main.py:86
 #: src/modules/luksopenswaphookcfg/main.py:90 src/modules/rawfs/main.py:164
 #: src/modules/initramfscfg/main.py:85 src/modules/initramfscfg/main.py:89
 #: src/modules/openrcdmcryptcfg/main.py:72
 #: src/modules/openrcdmcryptcfg/main.py:76 src/modules/fstab/main.py:355
-#: src/modules/fstab/main.py:361 src/modules/localecfg/main.py:135
-#: src/modules/networkcfg/main.py:39
+#: src/modules/fstab/main.py:361 src/modules/fstab/main.py:388
+#: src/modules/localecfg/main.py:135 src/modules/networkcfg/main.py:42
 msgid "Configuration Error"
 msgstr "שגיאת הגדרות"
 
-#: src/modules/mount/main.py:126 src/modules/initcpiocfg/main.py:199
+#: src/modules/mount/main.py:145 src/modules/initcpiocfg/main.py:198
 #: src/modules/luksopenswaphookcfg/main.py:87 src/modules/rawfs/main.py:165
 #: src/modules/initramfscfg/main.py:86 src/modules/openrcdmcryptcfg/main.py:73
 #: src/modules/fstab/main.py:356
@@ -153,51 +153,51 @@ msgstr "איתור unsquashfs לא צלח, נא לוודא שהחבילה squash
 msgid "The destination \"{}\" in the target system is not a directory"
 msgstr "היעד „{}” במערכת הקבצים המיועדת אינו תיקייה"
 
-#: src/modules/displaymanager/main.py:514
+#: src/modules/displaymanager/main.py:526
 msgid "Cannot write KDM configuration file"
 msgstr "לא ניתן לכתוב את קובץ התצורה של KDM"
 
-#: src/modules/displaymanager/main.py:515
+#: src/modules/displaymanager/main.py:527
 msgid "KDM config file {!s} does not exist"
 msgstr "קובץ התצורה של KDM ‏{!s} אינו קיים"
 
-#: src/modules/displaymanager/main.py:576
+#: src/modules/displaymanager/main.py:588
 msgid "Cannot write LXDM configuration file"
 msgstr "לא ניתן לכתוב את קובץ התצורה של LXDM"
 
-#: src/modules/displaymanager/main.py:577
+#: src/modules/displaymanager/main.py:589
 msgid "LXDM config file {!s} does not exist"
 msgstr "קובץ התצורה של LXDM ‏{!s} אינו קיים"
 
-#: src/modules/displaymanager/main.py:660
+#: src/modules/displaymanager/main.py:672
 msgid "Cannot write LightDM configuration file"
 msgstr "לא ניתן לכתוב את קובץ התצורה של LightDM"
 
-#: src/modules/displaymanager/main.py:661
+#: src/modules/displaymanager/main.py:673
 msgid "LightDM config file {!s} does not exist"
 msgstr "קובץ התצורה של LightDM ‏{!s} אינו קיים"
 
-#: src/modules/displaymanager/main.py:735
+#: src/modules/displaymanager/main.py:747
 msgid "Cannot configure LightDM"
 msgstr "לא ניתן להגדיר את LightDM"
 
-#: src/modules/displaymanager/main.py:736
+#: src/modules/displaymanager/main.py:748
 msgid "No LightDM greeter installed."
 msgstr "לא מותקן מקבל פנים מסוג LightDM."
 
-#: src/modules/displaymanager/main.py:767
+#: src/modules/displaymanager/main.py:779
 msgid "Cannot write SLIM configuration file"
 msgstr "לא ניתן לכתוב קובץ תצורה של SLIM."
 
-#: src/modules/displaymanager/main.py:768
+#: src/modules/displaymanager/main.py:780
 msgid "SLIM config file {!s} does not exist"
 msgstr "קובץ התצורה {!s} של SLIM אינו קיים"
 
-#: src/modules/displaymanager/main.py:894
+#: src/modules/displaymanager/main.py:906
 msgid "No display managers selected for the displaymanager module."
 msgstr "לא נבחרו מנהלי תצוגה למודול displaymanager."
 
-#: src/modules/displaymanager/main.py:895
+#: src/modules/displaymanager/main.py:907
 msgid ""
 "The displaymanagers list is empty or undefined in both globalstorage and "
 "displaymanager.conf."
@@ -205,7 +205,7 @@ msgstr ""
 "רשימת מנהלי התצוגה ריקה או שאינה מוגדרת גם באחסון הכללי (globalstorage) וגם "
 "ב־displaymanager.conf."
 
-#: src/modules/displaymanager/main.py:977
+#: src/modules/displaymanager/main.py:989
 msgid "Display manager configuration was incomplete"
 msgstr "תצורת מנהל התצוגה אינה שלמה"
 
@@ -213,11 +213,11 @@ msgstr "תצורת מנהל התצוגה אינה שלמה"
 msgid "Configuring mkinitcpio."
 msgstr "mkinitcpio מותקן."
 
-#: src/modules/initcpiocfg/main.py:203
+#: src/modules/initcpiocfg/main.py:202
 #: src/modules/luksopenswaphookcfg/main.py:91
 #: src/modules/initramfscfg/main.py:90 src/modules/openrcdmcryptcfg/main.py:77
 #: src/modules/fstab/main.py:362 src/modules/localecfg/main.py:136
-#: src/modules/networkcfg/main.py:40
+#: src/modules/networkcfg/main.py:43
 msgid "No root mount point is given for <pre>{!s}</pre> to use."
 msgstr "לא סופקה נקודת עגינת שורש לשימוש של <pre>{!s}</pre>."
 
@@ -309,9 +309,50 @@ msgstr[1] "מתבצעת הסרה של %(num)d חבילות."
 msgstr[2] "מתבצעת הסרה של %(num)d חבילות."
 msgstr[3] "מתבצעת הסרה של %(num)d חבילות."
 
+#: src/modules/packages/main.py:638 src/modules/packages/main.py:650
+#: src/modules/packages/main.py:678
+msgid "Package Manager error"
+msgstr "שגיאת מנהל חבילות"
+
+#: src/modules/packages/main.py:639
+msgid ""
+"The package manager could not prepare updates. The command <pre>{!s}</pre> "
+"returned error code {!s}."
+msgstr ""
+"מנהל החבילות לא הצליח להכין את העדכונים. הפקודה <pre>{!s}</pre> החזירה את "
+"קוד השגיאה {!s}."
+
+#: src/modules/packages/main.py:651
+msgid ""
+"The package manager could not update the system. The command <pre>{!s}</pre>"
+" returned error code {!s}."
+msgstr ""
+"מנהל החבילות לא הצליח לעדכן את המערכת. הפקודה <pre>{!s}</pre> החזירה את קוד "
+"השגיאה {!s}."
+
+#: src/modules/packages/main.py:679
+msgid ""
+"The package manager could not make changes to the installed system. The "
+"command <pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"מנהל החבילות לא הצליח לערוך שינויים במערכת המותקנת. הפקודה <pre>{!s}</pre> "
+"החזירה את קוד השגיאה {!s}."
+
 #: src/modules/bootloader/main.py:43
 msgid "Install bootloader."
 msgstr "התקנת מנהל אתחול."
+
+#: src/modules/bootloader/main.py:508
+msgid "Bootloader installation error"
+msgstr "שגיאת התקנת מנהל אתחול"
+
+#: src/modules/bootloader/main.py:509
+msgid ""
+"The bootloader could not be installed. The installation command "
+"<pre>{!s}</pre> returned error code {!s}."
+msgstr ""
+"לא ניתן להתקין את מנהל האתחול. פקודת ההתקנה <pre>{!s}</pre> החזירה את קוד "
+"השגיאה {!s}."
 
 #: src/modules/hwclock/main.py:26
 msgid "Setting hardware clock."
@@ -349,6 +390,10 @@ msgstr "שירות dmcrypt ל־OpenRC מוגדר."
 msgid "Writing fstab."
 msgstr "fstab נכתב."
 
+#: src/modules/fstab/main.py:389
+msgid "No <pre>{!s}</pre> configuration is given for <pre>{!s}</pre> to use."
+msgstr "לא סופקה תצורת <pre>{!s}</pre> לשימוש <pre>{!s}</pre>."
+
 #: src/modules/dummypython/main.py:35
 msgid "Dummy python job."
 msgstr "משימת דמה של Python."
@@ -362,6 +407,6 @@ msgstr "צעד דמה של Python {}"
 msgid "Configuring locales."
 msgstr "השפות מוגדרות."
 
-#: src/modules/networkcfg/main.py:28
+#: src/modules/networkcfg/main.py:29
 msgid "Saving network configuration."
 msgstr "הגדרות הרשת נשמרות."

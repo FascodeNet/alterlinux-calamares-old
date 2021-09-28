@@ -99,7 +99,7 @@ DeviceModel::data( const QModelIndex& index, int role ) const
         return CalamaresUtils::defaultPixmap(
             CalamaresUtils::PartitionDisk,
             CalamaresUtils::Original,
-            QSize( CalamaresUtils::defaultIconSize().width() * 3, CalamaresUtils::defaultIconSize().height() * 3 ) );
+            QSize( CalamaresUtils::defaultIconSize().width() * 2, CalamaresUtils::defaultIconSize().height() * 2 ) );
     default:
         return QVariant();
     }
@@ -132,7 +132,7 @@ DeviceModel::swapDevice( Device* oldDevice, Device* newDevice )
 
     m_devices[ indexOfOldDevice ] = newDevice;
 
-    emit dataChanged( index( indexOfOldDevice ), index( indexOfOldDevice ) );
+    Q_EMIT dataChanged( index( indexOfOldDevice ), index( indexOfOldDevice ) );
 }
 
 void
